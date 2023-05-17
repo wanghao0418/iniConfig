@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import './pages/configAutomation/configAutomation_main.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 void main() {
   runApp(const MyApp());
+  doWhenWindowReady(() {
+    final win = appWindow;
+    final initialSize = Size(1360, 768);
+    win.minSize = initialSize;
+    win.size = initialSize;
+    win.alignment = Alignment.center;
+    win.title = "Eatm自动化ini文件配置工具";
+    win.show();
+  });
 }
 
 class MyApp extends StatelessWidget {
