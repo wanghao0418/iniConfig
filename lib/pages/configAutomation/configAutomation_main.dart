@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 16:31:22
+ * @LastEditTime: 2023-05-17 16:41:29
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -103,34 +103,42 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
       _sectionMap[currentSection]?.values?.toList()[index] ?? '';
 
   _findIniFile() async {
-    await copyAssetToLocal();
-    _readConfig();
+    bool result = await copyAssetToLocal();
+    if (result) {
+      _readConfig();
+    }
   }
 
   // 初始化配置文件
-  Future<void> copyAssetToLocal() async {
-    _publicPath = (await path_provider.getApplicationDocumentsDirectory()).path;
-    plcFile = new File("$_publicPath/config/plcAddress.ini");
-    userFile = new File("$_publicPath/config/userConfig.ini");
-    uiFile = new File("$_publicPath/config/ui.ini");
+  Future<bool> copyAssetToLocal() async {
+    try {
+      _publicPath =
+          (await path_provider.getApplicationDocumentsDirectory()).path;
+      plcFile = new File("$_publicPath/config/plcAddress.ini");
+      userFile = new File("$_publicPath/config/userConfig.ini");
+      uiFile = new File("$_publicPath/config/ui.ini");
 
-    [plcFile, userFile, uiFile].forEach((file) async {
-      var index = [plcFile, userFile, uiFile].indexOf(file);
-      var assetData;
-      if (!file.existsSync()) {
-        if (index == 0) {
-          assetData = await rootBundle.load('config/plcAddress.ini');
-        } else if (index == 1) {
-          assetData = await rootBundle.load('config/userConfig.ini');
-        } else if (index == 2) {
-          assetData = await rootBundle.load('config/ui.ini');
+      [plcFile, userFile, uiFile].forEach((file) async {
+        var index = [plcFile, userFile, uiFile].indexOf(file);
+        var assetData;
+        if (!file.existsSync()) {
+          if (index == 0) {
+            assetData = await rootBundle.load('config/plcAddress.ini');
+          } else if (index == 1) {
+            assetData = await rootBundle.load('config/userConfig.ini');
+          } else if (index == 2) {
+            assetData = await rootBundle.load('config/ui.ini');
+          }
+          final bytes = assetData.buffer
+              .asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
+          file.createSync(recursive: true);
+          await file.writeAsBytes(bytes);
         }
-        final bytes = assetData.buffer
-            .asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
-        file.createSync(recursive: true);
-        await file.writeAsBytes(bytes);
-      }
-    });
+      });
+      return Future.value(true);
+    } catch (e) {
+      return Future.value(false);
+    }
   }
 
   void _readConfig() async {
