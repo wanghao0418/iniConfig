@@ -35,8 +35,7 @@ class ConfigAutomation extends StatefulWidget {
 }
 
 class _ConfigAutomationState extends State<ConfigAutomation> {
-  final DataColorCustomSetting _colorCustomSetting =
-      DataColorCustomSetting.init();
+  final DataColorCustomSetting _colorCustomSetting = DataColorCustomSetting.init();
   late bool _isDart = false;
   final configController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -97,23 +96,25 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     }
   }
 
-  String _getCurrentOptionKey(index) =>
-      _sectionMap[currentSection]?.keys?.toList()[index] ?? '';
+  String _getCurrentOptionKey(index) => _sectionMap[currentSection]?.keys?.toList()[index] ?? '';
   String _getCurrentOptionValue(index) =>
       _sectionMap[currentSection]?.values?.toList()[index] ?? '';
 
   _findIniFile() async {
     bool result = await copyAssetToLocal();
     if (result) {
-      _readConfig();
+      // 1秒后执行
+      Future.delayed(Duration(seconds: 1), () {
+        _readConfig();
+      });
+      // _readConfig();
     }
   }
 
   // 初始化配置文件
   Future<bool> copyAssetToLocal() async {
     try {
-      _publicPath =
-          (await path_provider.getApplicationDocumentsDirectory()).path;
+      _publicPath = (await path_provider.getApplicationDocumentsDirectory()).path;
       plcFile = new File("$_publicPath/config/plcAddress.ini");
       userFile = new File("$_publicPath/config/userConfig.ini");
       uiFile = new File("$_publicPath/config/ui.ini");
@@ -129,8 +130,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
           } else if (index == 2) {
             assetData = await rootBundle.load('config/ui.ini');
           }
-          final bytes = assetData.buffer
-              .asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
+          final bytes =
+              assetData.buffer.asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
           file.createSync(recursive: true);
           await file.writeAsBytes(bytes);
         }
@@ -182,12 +183,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
   }
 
   // 管理拓展字段
-  void _onFieldExpand(
-      String title,
-      String field,
-      Map<String, Map<String, String>> sectionMap,
-      Config config,
-      String configName,
+  void _onFieldExpand(String title, String field, Map<String, Map<String, String>> sectionMap,
+      Config config, String configName,
       {Function? onFinishCallBack = null}) {
     // SmartDialog.show(builder: (context) {
     //   return Container(
@@ -252,10 +249,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                       onConfirmCallBack: (Map newSectionsMap) {
                         RegExp regExp = RegExp('^${field}(\\d+)\$');
                         // 先删除原有section
-                        var oldSections = config
-                            .sections()
-                            .where((section) => regExp.hasMatch(section))
-                            .toList();
+                        var oldSections =
+                            config.sections().where((section) => regExp.hasMatch(section)).toList();
                         oldSections.forEach((section) {
                           config.removeSection(section);
                           sectionMap.remove(section);
@@ -326,12 +321,9 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                           height: 40,
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: _currentConfigIndex == 0
-                                  ? Colors.white
-                                  : Color(0xff999999),
+                              color: _currentConfigIndex == 0 ? Colors.white : Color(0xff999999),
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
+                                  topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                               boxShadow: _currentConfigIndex == 0
                                   ? [
                                       BoxShadow(
@@ -343,9 +335,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                                   : []),
                           alignment: Alignment.center,
                           child: Text('plc设置').textColor(
-                              _currentConfigIndex == 0
-                                  ? Color(0xff1C5CFF)
-                                  : Colors.white)),
+                              _currentConfigIndex == 0 ? Color(0xff1C5CFF) : Colors.white)),
                     )),
                 SizedBox(
                   width: 10,
@@ -364,12 +354,9 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                           height: 40,
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: _currentConfigIndex == 1
-                                  ? Colors.white
-                                  : Color(0xff999999),
+                              color: _currentConfigIndex == 1 ? Colors.white : Color(0xff999999),
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
+                                  topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                               boxShadow: _currentConfigIndex == 1
                                   ? [
                                       BoxShadow(
@@ -380,9 +367,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                                     ]
                                   : []),
                           alignment: Alignment.center,
-                          child: Text('用户设置').textColor(_currentConfigIndex == 1
-                              ? Color(0xff1C5CFF)
-                              : Colors.white)),
+                          child: Text('用户设置').textColor(
+                              _currentConfigIndex == 1 ? Color(0xff1C5CFF) : Colors.white)),
                     )),
                 SizedBox(
                   width: 10,
@@ -401,12 +387,9 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                           height: 40,
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: _currentConfigIndex == 2
-                                  ? Colors.white
-                                  : Color(0xff999999),
+                              color: _currentConfigIndex == 2 ? Colors.white : Color(0xff999999),
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
+                                  topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                               boxShadow: _currentConfigIndex == 2
                                   ? [
                                       BoxShadow(
@@ -417,9 +400,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                                     ]
                                   : []),
                           alignment: Alignment.center,
-                          child: Text('UI设置').textColor(_currentConfigIndex == 2
-                              ? Color(0xff1C5CFF)
-                              : Colors.white)),
+                          child: Text('UI设置').textColor(
+                              _currentConfigIndex == 2 ? Color(0xff1C5CFF) : Colors.white)),
                     ))
               ],
             ),
@@ -428,8 +410,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(4),
-                        topRight: Radius.circular(4)),
+                        topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                     boxShadow: [
                       BoxShadow(
                           color: Colors.black12,
@@ -454,8 +435,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: '$_publicPath/config'));
+                          Clipboard.setData(ClipboardData(text: '$_publicPath/config'));
                           final snackBar = SnackBar(content: Text('复制成功'));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },
@@ -465,8 +445,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                     ),
                     ElevatedButton(
                         style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Color(0xff6ED760))),
+                            backgroundColor: MaterialStateProperty.all(Color(0xff6ED760))),
                         onPressed: () {
                           _writeConfig();
                         },
@@ -500,8 +479,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(4),
-                                topRight: Radius.circular(4)),
+                                topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.black12,
@@ -532,18 +510,12 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    _onFieldExpand(
-                        '机床管理',
-                        'MachineInfo',
-                        _userSectionMap,
-                        userConfig,
-                        'userConfig', onFinishCallBack: (List sections) {
-                      _userSectionMap['MacInfo']!['total'] =
-                          sections.length.toString();
+                    _onFieldExpand('机床管理', 'MachineInfo', _userSectionMap, userConfig, 'userConfig',
+                        onFinishCallBack: (List sections) {
+                      _userSectionMap['MacInfo']!['total'] = sections.length.toString();
                       _userSectionMap['MacInfo']!['index'] = sections.join('-');
                       // 更改MacInfo配置
-                      userConfig.set(
-                          'MacInfo', 'total', sections.length.toString());
+                      userConfig.set('MacInfo', 'total', sections.length.toString());
                       userConfig.set('MacInfo', 'index', sections.join('-'));
                     });
                   },
@@ -551,34 +523,24 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
               ElevatedButton(
                   onPressed: () {
                     _onFieldExpand(
-                        '线外机床管理',
-                        'TestCMMInfo',
-                        _userSectionMap,
-                        userConfig,
-                        'userConfig', onFinishCallBack: (List sections) {
-                      _userSectionMap['MacCollectionInfo']!['total'] =
-                          sections.length.toString();
-                      _userSectionMap['MacCollectionInfo']!['index'] =
-                          sections.join('-');
+                        '线外机床管理', 'TestCMMInfo', _userSectionMap, userConfig, 'userConfig',
+                        onFinishCallBack: (List sections) {
+                      _userSectionMap['MacCollectionInfo']!['total'] = sections.length.toString();
+                      _userSectionMap['MacCollectionInfo']!['index'] = sections.join('-');
                       // 更改MacInfo配置
-                      userConfig.set('MacCollectionInfo', 'total',
-                          sections.length.toString());
-                      userConfig.set(
-                          'MacCollectionInfo', 'index', sections.join('-'));
+                      userConfig.set('MacCollectionInfo', 'total', sections.length.toString());
+                      userConfig.set('MacCollectionInfo', 'index', sections.join('-'));
                     });
                   },
                   child: Text('线外机床管理')),
               ElevatedButton(
                   onPressed: () {
-                    _onFieldExpand(
-                        '货架管理', 'Shelf', _uiSectionMap, uiConfig, 'ui',
+                    _onFieldExpand('货架管理', 'Shelf', _uiSectionMap, uiConfig, 'ui',
                         onFinishCallBack: (List sections) {
-                      _uiSectionMap['ShelfInfo']!['total'] =
-                          sections.length.toString();
+                      _uiSectionMap['ShelfInfo']!['total'] = sections.length.toString();
                       _uiSectionMap['ShelfInfo']!['index'] = sections.join('-');
                       // 更改ShelfInfo配置
-                      uiConfig.set(
-                          'ShelfInfo', 'total', sections.length.toString());
+                      uiConfig.set('ShelfInfo', 'total', sections.length.toString());
                       uiConfig.set('ShelfInfo', 'index', sections.join('-'));
                     });
                   },
@@ -586,20 +548,13 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
               ElevatedButton(
                   onPressed: () {
                     _onFieldExpand(
-                        '扫码设备管理',
-                        'ScanDevice',
-                        _userSectionMap,
-                        userConfig,
-                        'userConfig', onFinishCallBack: (List sections) {
-                      _userSectionMap['ScanDeviceInfo']!['total'] =
-                          sections.length.toString();
-                      _userSectionMap['ScanDeviceInfo']!['index'] =
-                          sections.join('-');
+                        '扫码设备管理', 'ScanDevice', _userSectionMap, userConfig, 'userConfig',
+                        onFinishCallBack: (List sections) {
+                      _userSectionMap['ScanDeviceInfo']!['total'] = sections.length.toString();
+                      _userSectionMap['ScanDeviceInfo']!['index'] = sections.join('-');
                       // 更改ShelfInfo配置
-                      userConfig.set('ScanDeviceInfo', 'total',
-                          sections.length.toString());
-                      userConfig.set(
-                          'ScanDeviceInfo', 'index', sections.join('-'));
+                      userConfig.set('ScanDeviceInfo', 'total', sections.length.toString());
+                      userConfig.set('ScanDeviceInfo', 'index', sections.join('-'));
                     });
                   },
                   child: Text('扫码设备管理')),
@@ -638,8 +593,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4)),
+        borderRadius:
+            BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4)),
       ),
       child: Row(
         children: [
@@ -659,8 +614,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                       itemBuilder: ((context, index) {
                         var optionKey = _getCurrentOptionKey(index);
                         var optionValue = _getCurrentOptionValue(index);
-                        return renderComponent(optionKey, optionValue,
-                            (newVal) {
+                        return renderComponent(optionKey, optionValue, (newVal) {
                           var configList = [userConfig, plcConfig, uiConfig];
                           var currentConfig = configList
                               .where((config) =>
@@ -669,13 +623,11 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                               .toList()
                               .first;
                           if (currentConfig != null) {
-                            currentConfig.set(
-                                currentSection, optionKey, newVal);
+                            currentConfig.set(currentSection, optionKey, newVal);
                           }
                           print(newVal);
                           // 如果是拼接组件，则需要重新渲染
-                          if (getComponentType(optionKey, currentSection,
-                                  currentConfigName) ==
+                          if (getComponentType(optionKey, currentSection, currentConfigName) ==
                               RenderComponents.splitJoint) {
                             setState(() {
                               _sectionMap[currentSection]![optionKey] = newVal;
@@ -683,8 +635,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                           }
                         }, currentSection, currentConfigName, context);
                       }),
-                      itemCount:
-                          _sectionMap[currentSection]!.values.toList().length)
+                      itemCount: _sectionMap[currentSection]!.values.toList().length)
                   : Container()),
         ],
       ),
@@ -703,9 +654,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
               ? ListView.builder(
                   controller: _scrollController,
                   itemBuilder: ((context, index) {
-                    return _renderSection(
-                            _sectionMap.keys.toList()[index], index) ??
-                        Container();
+                    return _renderSection(_sectionMap.keys.toList()[index], index) ?? Container();
                   }),
                   itemCount: _sectionMap.length)
               : Container(),
@@ -731,16 +680,13 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                     getFieldChinese(section),
                     style: TextStyle(overflow: TextOverflow.ellipsis),
                   )
-                      .textColor(_currentSectionIndex == index
-                          ? Color(0xff1677FF)
-                          : Color(0xff5E5E5E))
+                      .textColor(
+                          _currentSectionIndex == index ? Color(0xff1677FF) : Color(0xff5E5E5E))
                       .fontSize(18)
                       .textAlignment(TextAlign.center))
               .decorated(
                   borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  color: _currentSectionIndex == index
-                      ? Color(0xffE9F2FF)
-                      : Colors.white,
+                  color: _currentSectionIndex == index ? Color(0xffE9F2FF) : Colors.white,
                   boxShadow: _currentSectionIndex == index
                       ? []
                       : [
@@ -850,9 +796,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     _isDart = isDarkMode(context);
     return Scaffold(
       body: Container(
-          color: _isDart
-              ? _colorCustomSetting!.ColorBg
-              : _colorCustomSetting.ColorBgLight,
+          color: _isDart ? _colorCustomSetting!.ColorBg : _colorCustomSetting.ColorBgLight,
           padding: EdgeInsets.fromLTRB(
               _colorCustomSetting!.BorderDistance,
               _colorCustomSetting!.BorderDistance,
@@ -867,10 +811,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
               padding: EdgeInsets.all(10),
               child: _renderMainContent(),
             ).backgroundColor(Colors.white).boxShadow(
-                    color: Colors.black12,
-                    offset: Offset(0, 10),
-                    blurRadius: 10,
-                    spreadRadius: 0))
+                    color: Colors.black12, offset: Offset(0, 10), blurRadius: 10, spreadRadius: 0))
           ])),
     );
   }
