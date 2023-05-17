@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 16:41:29
+ * @LastEditTime: 2023-05-17 16:46:36
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -135,8 +135,12 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
           await file.writeAsBytes(bytes);
         }
       });
+      final snackBar = SnackBar(content: Text('读取成功'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return Future.value(true);
     } catch (e) {
+      final snackBar = SnackBar(content: Text('读取失败:$e'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return Future.value(false);
     }
   }
