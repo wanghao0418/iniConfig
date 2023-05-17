@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 15:12:13
+ * @LastEditTime: 2023-05-17 16:31:22
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
 
 import 'dart:io';
 
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../components/customCard.dart';
@@ -101,6 +102,11 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
   String _getCurrentOptionValue(index) =>
       _sectionMap[currentSection]?.values?.toList()[index] ?? '';
 
+  _findIniFile() async {
+    await copyAssetToLocal();
+    _readConfig();
+  }
+
   // 初始化配置文件
   Future<void> copyAssetToLocal() async {
     _publicPath = (await path_provider.getApplicationDocumentsDirectory()).path;
@@ -125,8 +131,6 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
         await file.writeAsBytes(bytes);
       }
     });
-
-    _readConfig();
   }
 
   void _readConfig() async {
@@ -821,7 +825,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     // _readConfig();
     if (kIsWeb) {
     } else {
-      copyAssetToLocal();
+      _findIniFile();
     }
   }
 
