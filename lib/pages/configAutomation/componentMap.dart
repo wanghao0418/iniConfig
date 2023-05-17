@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-24 11:10:25
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-16 18:15:38
+ * @LastEditTime: 2023-05-17 14:41:58
  * @FilePath: /mesui/lib/pages/configAutomation/componentMap.dart
  * @Description: 组件映射
  */
@@ -186,6 +186,37 @@ Map<String, RenderComponents> componentMap = {
   'userConfig-SysInfo-RobotCarryWorkpieceTaskType': RenderComponents.select,
   'userConfig-SysInfo-ToolLifeCollectMode': RenderComponents.select,
   'userConfig-SysInfo-AbnormalairIsOffLineMac': RenderComponents.select,
+  'userConfig-FixtureInfo-AddFixtureType': RenderComponents.select,
+  'userConfig-MachineScanTask-ScanType': RenderComponents.select,
+  'userConfig-MachineScanTask-ScanClean': RenderComponents.select,
+  'userConfig-RobotInfo-RobotType': RenderComponents.select,
+  'userConfig-RobotInfo-RobotClampType': RenderComponents.select,
+  'userConfig-DataSourceType-nType': RenderComponents.select,
+  'userConfig-DataSourceType-ImportTable': RenderComponents.select,
+  'userConfig-DataBaseWorkReport-WorkReport': RenderComponents.select,
+  'userConfig-DataBaseWorkReport-EDMReportHandleMark': RenderComponents.select,
+  'userConfig-TcpScanDriverInfo-ServiceType': RenderComponents.select,
+  'userConfig-EmanWorkReport-EmanReportMode': RenderComponents.select,
+  'userConfig-EmanWorkReport-AgvStart': RenderComponents.select,
+  'userConfig-EmanWorkReport-UseEmancraftRoute': RenderComponents.select,
+  'userConfig-TestCMMInfo-MacSystemType': RenderComponents.select,
+  'userConfig-WorkOrderInfo-workOrderElecPath': RenderComponents.splitJoint,
+  'userConfig-WorkOrderInfo-WorkExcelFileName': RenderComponents.splitJoint,
+  'ui-Shelf-ShelfSensorType': RenderComponents.select,
+  'ui-Shelf-ShelfFuncType': RenderComponents.select,
+  'ui-Shelf-CraftPriority': RenderComponents.select,
+  'ui-Shelf-isNoScan': RenderComponents.select,
+  'ui-Shelf-IOlimit': RenderComponents.select,
+  'ui-Shelf-MoreWorkpieceMark': RenderComponents.select,
+  'ui-Shelf-Locationfunction': RenderComponents.select,
+  'ui-GlobelInfo-CheckStrorageExist': RenderComponents.select,
+  'ui-GlobelInfo-AgvOperBtnShowMark': RenderComponents.select,
+  'ui-GlobelInfo-ShowTipInfoMark': RenderComponents.select,
+  'ui-GlobelInfo-BtnStartUpMachineMark': RenderComponents.select,
+  'ui-GlobelInfo-BtnSetUpMachineMark': RenderComponents.select,
+  'ui-RobotManualUI-TransferUIShow': RenderComponents.select,
+  'ui-HideProgressBar-ProgressBarMode': RenderComponents.select,
+  // 'ui-HideQWidgetPage-MacUiWidgetePage': RenderComponents.select,
 };
 
 Widget renderComponent(
@@ -227,7 +258,7 @@ Widget renderComponent(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(optionKey).fontWeight(FontWeight.bold).fontSize(20),
+              Text(optionKey).fontWeight(FontWeight.bold).fontSize(16),
               SizedBox(
                 height: 10.0,
               ),
@@ -262,7 +293,7 @@ Widget renderInputWidget(
     onChanged: (value) {
       onValueChange(value);
     },
-  )).width(300);
+  )).width(500);
 }
 
 // 选择组件
@@ -284,7 +315,7 @@ Widget renderSelectWidget(
     onChanged: (v) {
       onValueChange(v);
     },
-  )).width(300);
+  )).width(500);
 }
 
 // 拼接组件
@@ -331,5 +362,5 @@ Widget renderSplitJointWidget(
             size: 20,
           ))
     ],
-  )).width(300);
+  )).width(500);
 }

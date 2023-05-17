@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-16 18:14:39
+ * @LastEditTime: 2023-05-17 14:32:53
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -111,19 +111,19 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     [plcFile, userFile, uiFile].forEach((file) async {
       var index = [plcFile, userFile, uiFile].indexOf(file);
       var assetData;
-      // if (!file.existsSync()) {
-      if (index == 0) {
-        assetData = await rootBundle.load('config/plcAddress.ini');
-      } else if (index == 1) {
-        assetData = await rootBundle.load('config/userConfig.ini');
-      } else if (index == 2) {
-        assetData = await rootBundle.load('config/ui.ini');
+      if (!file.existsSync()) {
+        if (index == 0) {
+          assetData = await rootBundle.load('config/plcAddress.ini');
+        } else if (index == 1) {
+          assetData = await rootBundle.load('config/userConfig.ini');
+        } else if (index == 2) {
+          assetData = await rootBundle.load('config/ui.ini');
+        }
+        final bytes = assetData.buffer
+            .asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
+        file.createSync(recursive: true);
+        await file.writeAsBytes(bytes);
       }
-      final bytes = assetData.buffer
-          .asUint8List(assetData.offsetInBytes, assetData.lengthInBytes);
-      file.createSync(recursive: true);
-      await file.writeAsBytes(bytes);
-      // }
     });
 
     _readConfig();
@@ -161,7 +161,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     plcFile.writeAsString(plcConfig.toString());
     userFile.writeAsString(userConfig.toString());
     uiFile.writeAsString(uiConfig.toString());
-    SmartDialog.showToast('保存成功');
+    final snackBar = SnackBar(content: Text('保存成功'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // 管理拓展字段
@@ -738,80 +739,80 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
     );
   }
 
-  // 输入组件
-  Widget _renderInputWidget(String title, String value, {String? hintText}) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title).fontWeight(FontWeight.bold).fontSize(20),
-              SizedBox(
-                height: 10.0,
-              ),
-              hintText != null
-                  ? Text(hintText).fontSize(12).textColor(Color(0xff999999))
-                  : Text('')
-            ],
-          )),
-          Container(
-              child: TextField(
-            controller: TextEditingController(text: value),
-            decoration: InputDecoration(
-                label: Text(title),
-                border: OutlineInputBorder(),
-                hintText: '请输入$title'),
-            onChanged: (value) {
-              plcConfig.set(currentSection, title, value);
-            },
-          )).width(300)
-        ],
-      ),
-    );
-  }
+  // // 输入组件
+  // Widget _renderInputWidget(String title, String value, {String? hintText}) {
+  //   return Container(
+  //     padding: EdgeInsets.all(10),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Expanded(
+  //             child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(title).fontWeight(FontWeight.bold).fontSize(20),
+  //             SizedBox(
+  //               height: 10.0,
+  //             ),
+  //             hintText != null
+  //                 ? Text(hintText).fontSize(12).textColor(Color(0xff999999))
+  //                 : Text('')
+  //           ],
+  //         )),
+  //         Container(
+  //             child: TextField(
+  //           controller: TextEditingController(text: value),
+  //           decoration: InputDecoration(
+  //               label: Text(title),
+  //               border: OutlineInputBorder(),
+  //               hintText: '请输入$title'),
+  //           onChanged: (value) {
+  //             plcConfig.set(currentSection, title, value);
+  //           },
+  //         )).width(300)
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  // 下拉选择组件
-  Widget _renderSelectWidget(String title, String value, List<String> options,
-      {String? hintText}) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title).fontWeight(FontWeight.bold).fontSize(20),
-              SizedBox(
-                height: 10.0,
-              ),
-              hintText != null
-                  ? Text(hintText).fontSize(12).textColor(Color(0xff999999))
-                  : Text('')
-            ],
-          )),
-          Container(
-              child: DropdownButton(
-            value: value,
-            items: options.map((e) {
-              return DropdownMenuItem(
-                child: Text(e),
-                value: e,
-              );
-            }).toList(),
-            onChanged: (value) {
-              plcConfig.set(currentSection, title, value.toString());
-            },
-          )).width(300)
-        ],
-      ),
-    );
-  }
+  // // 下拉选择组件
+  // Widget _renderSelectWidget(String title, String value, List<String> options,
+  //     {String? hintText}) {
+  //   return Container(
+  //     padding: EdgeInsets.all(10),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Expanded(
+  //             child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(title).fontWeight(FontWeight.bold).fontSize(20),
+  //             SizedBox(
+  //               height: 10.0,
+  //             ),
+  //             hintText != null
+  //                 ? Text(hintText).fontSize(12).textColor(Color(0xff999999))
+  //                 : Text('')
+  //           ],
+  //         )),
+  //         Container(
+  //             child: DropdownButton(
+  //           value: value,
+  //           items: options.map((e) {
+  //             return DropdownMenuItem(
+  //               child: Text(e),
+  //               value: e,
+  //             );
+  //           }).toList(),
+  //           onChanged: (value) {
+  //             plcConfig.set(currentSection, title, value.toString());
+  //           },
+  //         )).width(300)
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   void initState() {

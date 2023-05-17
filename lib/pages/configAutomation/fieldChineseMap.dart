@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-23 18:03:52
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-08 15:31:43
+ * @LastEditTime: 2023-05-17 13:38:12
  * @FilePath: /mesui/lib/pages/configAutomation/fieldChineseMap.dart
  * @Description: 字段中文映射
  */
@@ -69,4 +69,10 @@ Map<String, String> fieldChineseMap = {
   'RomoteDataBaseInfo': '采集远程数据设置',
   'MacCollectionInfo': '采集机床索引设置',
   'WorkOrderInfo': '工单读取相关配置',
+  'FixtureTypeInfo': '夹具类型信息设置',
+  'ShelfInfo': '货架配置',
+  'GlobelInfo': '全局信息设置',
+  'RobotManualUI': '机器人UI设置',
+  'HideProgressBar': '隐藏进度条',
+  'HideQWidgetPage': '隐藏QWidgetPage',
 };

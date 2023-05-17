@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-25 11:21:53
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-09 15:12:48
+ * @LastEditTime: 2023-05-17 14:40:28
  * @FilePath: /mesui/lib/pages/configAutomation/optionsMap.dart
  * @Description: 下拉选项映射
  */
@@ -1088,7 +1088,7 @@ const Map<String, List<DropdownMenuItem<String>>> optionsMap = {
       value: '2',
     ),
   ],
-  'userConfig-SysInfo-AbnormalairIsOffLineMac':[
+  'userConfig-SysInfo-AbnormalairIsOffLineMac': [
     DropdownMenuItem(
       child: Text('默认下线'),
       value: '0',
@@ -1097,5 +1097,427 @@ const Map<String, List<DropdownMenuItem<String>>> optionsMap = {
       child: Text('只提示不下线'),
       value: '1',
     ),
-  ]
+  ],
+  'userConfig-FixtureInfo-AddFixtureType': [
+    DropdownMenuItem(
+      child: Text('不添加托盘类型'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('添加托盘类型'),
+      value: '1',
+    ),
+  ],
+  'userConfig-MachineScanTask-ScanType': [
+    DropdownMenuItem(
+      child: Text('默认扫描方式，只要不下线，就只扫描一次'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('只要初始上料 就扫描'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('不扫描'),
+      value: '2',
+    ),
+  ],
+  'userConfig-MachineScanTask-ScanClean': [
+    DropdownMenuItem(
+      child: Text('扫描清洗烘干'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('不扫描清洗烘干,开悟配置1'),
+      value: '1',
+    ),
+  ],
+  'userConfig-RobotInfo-RobotType': [
+    DropdownMenuItem(
+      child: Text('接口'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('dp'),
+      value: '1',
+    ),
+  ],
+  'userConfig-RobotInfo-RobotClampType': [
+    DropdownMenuItem(
+      child: Text('单卡爪'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('双卡爪'),
+      value: '2',
+    ),
+  ],
+  'userConfig-DataSourceType-nType': [
+    DropdownMenuItem(
+      child: Text('表数据直接在EATM表中'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('表数据来源于外部视图或者其他表结构'),
+      value: '2',
+    ),
+  ],
+  'userConfig-DataSourceType-ImportTable': [
+    DropdownMenuItem(
+      child: Text('工艺表-车床表'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('工艺表-加工(CNC)表'),
+      value: '3',
+    ),
+    DropdownMenuItem(
+      child: Text('工艺表-检测表'),
+      value: '4',
+    ),
+    DropdownMenuItem(
+      child: Text('工艺表-放电表'),
+      value: '5',
+    ),
+  ],
+  'userConfig-DataBaseWorkReport-WorkReport': [
+    DropdownMenuItem(
+      child: Text('不需要'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('放电报工'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('加工检测报工'),
+      value: '2',
+    ),
+  ],
+  'userConfig-DataBaseWorkReport-EDMReportHandleMark': [
+    DropdownMenuItem(
+      child: Text('自动模式'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('手动模式'),
+      value: '1',
+    ),
+  ],
+  'userConfig-TcpScanDriverInfo-ServiceType': [
+    DropdownMenuItem(
+      child: Text('条码枪'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('巴鲁夫读头'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('倍加福读头'),
+      value: '3',
+    ),
+    DropdownMenuItem(
+      child: Text('欧姆龙读头'),
+      value: '4',
+    ),
+    DropdownMenuItem(
+      child: Text('plc读头'),
+      value: '5',
+    ),
+  ],
+  'userConfig-EmanWorkReport-EmanReportMode': [
+    DropdownMenuItem(
+      child: Text('新框架报工'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('老框架报工'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('一汽'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('标准接口'),
+      value: '3',
+    ),
+    DropdownMenuItem(
+      child: Text('威戈尔'),
+      value: '4',
+    ),
+  ],
+  'userConfig-EmanWorkReport-AgvStart': [
+    DropdownMenuItem(
+      child: Text('不开启'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('开启'),
+      value: '1',
+    ),
+  ],
+  'userConfig-EmanWorkReport-UseEmancraftRoute': [
+    DropdownMenuItem(
+      child: Text('否'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('是'),
+      value: '1',
+    ),
+  ],
+  'userConfig-TestCMMInfo-MacSystemType': [
+    DropdownMenuItem(
+      child: Text('测试'),
+      value: 'TEST',
+    ),
+    DropdownMenuItem(
+      child: Text('发那科'),
+      value: 'FANUC',
+    ),
+    DropdownMenuItem(
+      child: Text('海德汉'),
+      value: 'HDH',
+    ),
+    DropdownMenuItem(
+      child: Text('海克斯康'),
+      value: 'HEXAGON',
+    ),
+    DropdownMenuItem(
+      child: Text('哈斯'),
+      value: 'HASS',
+    ),
+    DropdownMenuItem(
+      child: Text('精雕'),
+      value: 'JD',
+    ),
+    DropdownMenuItem(
+      child: Text('牧野EDM'),
+      value: 'MAKINO',
+    ),
+    DropdownMenuItem(
+      child: Text('沙迪克'),
+      value: 'SODICK',
+    ),
+    DropdownMenuItem(
+      child: Text('视觉检测'),
+      value: 'VISUALRATE',
+    ),
+    DropdownMenuItem(
+      child: Text('蔡司检测'),
+      value: 'ZEISS',
+    ),
+    DropdownMenuItem(
+      child: Text('烘干'),
+      value: 'DRY',
+    ),
+    DropdownMenuItem(
+      child: Text('清洗'),
+      value: 'CLEAN',
+    ),
+    DropdownMenuItem(
+      child: Text('三菱'),
+      value: 'SLCNC',
+    ),
+    DropdownMenuItem(
+      child: Text('KND'),
+      value: 'KND',
+    ),
+    DropdownMenuItem(
+      child: Text('广数'),
+      value: 'GSK',
+    ),
+    DropdownMenuItem(
+      child: Text('大隈（wei）'),
+      value: 'OKUMA',
+    ),
+  ],
+  'ui-Shelf-ShelfSensorType': [
+    DropdownMenuItem(
+      child: Text('无传感器'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('平板'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('旋转'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('对射'),
+      value: '3',
+    ),
+  ],
+  'ui-Shelf-ShelfFuncType': [
+    DropdownMenuItem(
+      child: Text('加工'),
+      value: 'work',
+    ),
+    DropdownMenuItem(
+      child: Text('装载'),
+      value: 'transfer',
+    ),
+    DropdownMenuItem(
+      child: Text('接驳'),
+      value: 'connection',
+    ),
+    DropdownMenuItem(
+      child: Text('预调'),
+      value: 'preset',
+    ),
+  ],
+  'ui-Shelf-CraftPriority': [
+    DropdownMenuItem(
+      child: Text('工艺来自数据库'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('工艺来自配置文件，不更新工艺表'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('工艺来自配置文件，会更新工艺表'),
+      value: '2',
+    ),
+  ],
+  'ui-Shelf-isNoScan': [
+    DropdownMenuItem(
+      child: Text('扫描'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('不扫描'),
+      value: '1',
+    ),
+  ],
+  'ui-Shelf-IOlimit': [
+    DropdownMenuItem(
+      child: Text('出+入'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('只入'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('只出'),
+      value: '2',
+    ),
+  ],
+  'ui-Shelf-MoreWorkpieceMark': [
+    DropdownMenuItem(
+      child: Text('不查托盘表'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('查托盘表，匹配监控编号'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('查托盘表匹配barcode'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('匹配sn'),
+      value: '3',
+    ),
+  ],
+  'ui-Shelf-Locationfunction': [
+    DropdownMenuItem(
+      child: Text('通用'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('入库货位'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('出库货位'),
+      value: '2',
+    ),
+  ],
+  'ui-GlobelInfo-CheckStrorageExist': [
+    DropdownMenuItem(
+      child: Text('否'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('是'),
+      value: '1',
+    ),
+  ],
+  'ui-GlobelInfo-AgvOperBtnShowMark': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  'ui-GlobelInfo-ShowTipInfoMark': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  'ui-GlobelInfo-BtnStartUpMachineMark': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  'ui-GlobelInfo-BtnSetUpMachineMark': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  'ui-RobotManualUI-TransferUIShow': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  'ui-HideProgressBar-ProgressBarMode': [
+    DropdownMenuItem(
+      child: Text('不显示'),
+      value: '0',
+    ),
+    DropdownMenuItem(
+      child: Text('显示'),
+      value: '1',
+    ),
+  ],
+  // 'ui-HideQWidgetPage-MacUiWidgetePage': [
+  //   DropdownMenuItem(
+  //     child: Text('隐藏自动化机床界面'),
+  //     value: '1',
+  //   ),
+  //   DropdownMenuItem(
+  //     child: Text('隐藏刀具管理界面'),
+  //     value: '2',
+  //   ),
+  // ],
 };
