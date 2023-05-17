@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 14:32:53
+ * @LastEditTime: 2023-05-17 15:12:13
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -265,7 +265,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                       },
                     ),
                   )),
-            ).width(800).height(600)));
+            ).width(1200).height(600)));
   }
 
   // 导航到指定section
