@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-25 11:21:53
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 14:40:28
+ * @LastEditTime: 2023-05-17 17:21:26
  * @FilePath: /mesui/lib/pages/configAutomation/optionsMap.dart
  * @Description: 下拉选项映射
  */
@@ -1205,6 +1205,28 @@ const Map<String, List<DropdownMenuItem<String>>> optionsMap = {
     ),
   ],
   'userConfig-TcpScanDriverInfo-ServiceType': [
+    DropdownMenuItem(
+      child: Text('条码枪'),
+      value: '1',
+    ),
+    DropdownMenuItem(
+      child: Text('巴鲁夫读头'),
+      value: '2',
+    ),
+    DropdownMenuItem(
+      child: Text('倍加福读头'),
+      value: '3',
+    ),
+    DropdownMenuItem(
+      child: Text('欧姆龙读头'),
+      value: '4',
+    ),
+    DropdownMenuItem(
+      child: Text('plc读头'),
+      value: '5',
+    ),
+  ],
+  'userConfig-ScanDevice-ServiceType': [
     DropdownMenuItem(
       child: Text('条码枪'),
       value: '1',

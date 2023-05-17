@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-24 11:10:25
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 14:41:58
+ * @LastEditTime: 2023-05-17 17:20:46
  * @FilePath: /mesui/lib/pages/configAutomation/componentMap.dart
  * @Description: 组件映射
  */
@@ -196,6 +196,7 @@ Map<String, RenderComponents> componentMap = {
   'userConfig-DataBaseWorkReport-WorkReport': RenderComponents.select,
   'userConfig-DataBaseWorkReport-EDMReportHandleMark': RenderComponents.select,
   'userConfig-TcpScanDriverInfo-ServiceType': RenderComponents.select,
+  'userConfig-ScanDevice-ServiceType': RenderComponents.select,
   'userConfig-EmanWorkReport-EmanReportMode': RenderComponents.select,
   'userConfig-EmanWorkReport-AgvStart': RenderComponents.select,
   'userConfig-EmanWorkReport-UseEmancraftRoute': RenderComponents.select,
