@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 17:08:45
+ * @LastEditTime: 2023-06-05 10:30:01
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -665,6 +665,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                         var optionValue = _getCurrentOptionValue(index);
                         return renderComponent(optionKey, optionValue,
                             (newVal) {
+                          _sectionMap[currentSection]![optionKey] = newVal;
                           var configList = [userConfig, plcConfig, uiConfig];
                           var currentConfig = configList
                               .where((config) =>
