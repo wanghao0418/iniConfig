@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-12 14:36:33
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-05 10:30:01
+ * @LastEditTime: 2023-06-07 11:03:10
  * @FilePath: /mesui/lib/pages/configAutomation/configAutomation_main.dart
  * @Description: 自动化配置
  */
@@ -139,11 +139,11 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
           await file.writeAsBytes(bytes);
         }
       });
-      final snackBar = SnackBar(content: Text('读取成功'));
+      final snackBar = SnackBar(content: Text('初始化成功'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return Future.value(true);
     } catch (e) {
-      final snackBar = SnackBar(content: Text('读取失败:$e'));
+      final snackBar = SnackBar(content: Text('初始化失败:$e'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return Future.value(false);
     }
@@ -174,6 +174,8 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
       }
     });
     setState(() {});
+    final snackBar = SnackBar(content: Text('读取成功'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // 写入配置
@@ -448,6 +450,14 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
                     // SizedBox(
                     //   width: 10,
                     // ),
+                    ElevatedButton(
+                        onPressed: () {
+                          _readConfig();
+                        },
+                        child: Text('读取')),
+                    SizedBox(
+                      width: 10,
+                    ),
                     ElevatedButton(
                         onPressed: () {
                           _openDirectory();
@@ -864,7 +874,7 @@ class _ConfigAutomationState extends State<ConfigAutomation> {
               _colorCustomSetting!.BorderDistance,
               _colorCustomSetting!.BorderDistance),
           child: Column(children: [
-            _renderQuicklyEntries(),
+            // _renderQuicklyEntries(),
             _renderColumnDistanceBox(),
             _renderTopLine(),
             Expanded(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import './pages/configAutomation/configAutomation_main.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
@@ -39,10 +40,12 @@ class MyApp extends StatelessWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
-          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          // colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff1C5CFF)),
           // useMaterial3: true,
           fontFamily: 'MyFont'),
       home: ConfigAutomation(),
+      navigatorObservers: [FlutterSmartDialog.observer],
+      builder: FlutterSmartDialog.init(),
     );
   }
 }

@@ -2,15 +2,15 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-24 11:10:25
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-05-17 17:20:46
+ * @LastEditTime: 2023-06-07 13:18:41
  * @FilePath: /mesui/lib/pages/configAutomation/componentMap.dart
  * @Description: 组件映射
  */
 
 import 'dart:math';
 
-import 'package:cry/form/cry_select.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'annotationTextMap.dart';
 import 'optionsMap.dart';
 import 'splitJointContainer.dart';
@@ -226,8 +226,9 @@ Widget renderComponent(
   Function onValueChange,
   String section,
   String configName,
-  BuildContext context,
-) {
+  BuildContext context, {
+  bool? disabled = false,
+}) {
   Widget currentComponent = Container();
   switch (getComponentType(optionKey, section, configName)) {
     case RenderComponents.input:
@@ -292,6 +293,11 @@ Widget renderInputWidget(
         border: OutlineInputBorder(),
         hintText: '请输入$optionKey'),
     onChanged: (value) {
+      // 输入校验两侧是否有空格
+      if (value.startsWith(' ') || value.endsWith(' ')) {
+        SmartDialog.showToast('输入内容不能以空格开头或结尾', debounce: true);
+        value = value.trim();
+      }
       onValueChange(value);
     },
   )).width(500);
