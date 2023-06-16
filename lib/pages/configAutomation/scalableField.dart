@@ -1,5 +1,13 @@
 /*
  * @Author: wanghao wanghao@oureman.com
+ * @Date: 2023-05-17 10:05:30
+ * @LastEditors: wanghao wanghao@oureman.com
+ * @LastEditTime: 2023-06-12 14:30:31
+ * @FilePath: /eatm_ini_config/lib/pages/configAutomation/scalableField.dart
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-04-24 14:11:12
  * @LastEditors: wanghao wanghao@oureman.com
  * @LastEditTime: 2023-05-16 18:15:14
@@ -8,7 +16,7 @@
  */
 
 import 'package:flutter/material.dart';
-import '../../components/customCard.dart';
+import '../../common/widgets/customCard.dart';
 import 'fieldChineseMap.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:styled_widget/styled_widget.dart';

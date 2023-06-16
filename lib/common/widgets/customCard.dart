@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../common/data_color_custom_setting.dart';
+import '../style/data_color_custom_setting.dart';
 
 class CustomCard extends StatefulWidget {
   final Widget containChild;

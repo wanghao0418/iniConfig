@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../components/customCard.dart';
+import '../../common/widgets/customCard.dart';
 
 class SplitJointContainer extends StatefulWidget {
   SplitJointContainer(
