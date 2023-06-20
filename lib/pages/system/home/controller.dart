@@ -10,6 +10,7 @@ import '../../setting/device_settings/robot/robot_communication_protocol/view.da
 import '../../setting/device_settings/robot/robot_connection/view.dart';
 import '../../setting/device_settings/robot/robot_scan/view.dart';
 import '../../setting/device_settings/robot/robot_task/view.dart';
+import '../../setting/device_settings/shelf_management/shelf_info/view.dart';
 import '../../setting/device_settings/shelf_management/shelf_management_light/view.dart';
 import '../../setting/store_settings/database/database_connection/view.dart';
 import 'widgets/fluent_tab.dart';
@@ -74,12 +75,7 @@ class HomeController extends GetxController {
           title: '货架管理',
           iconData: FluentIcons.branch_shelveset,
           children: [
-            TertiaryMenu(
-                id: '1-3-1',
-                title: '货架信息',
-                bodyPage: Container(
-                  child: Text('货架信息'),
-                )),
+            TertiaryMenu(id: '1-3-1', title: '货架信息', bodyPage: ShelfInfoPage()),
             TertiaryMenu(
                 id: '1-3-2',
                 title: '七色灯',

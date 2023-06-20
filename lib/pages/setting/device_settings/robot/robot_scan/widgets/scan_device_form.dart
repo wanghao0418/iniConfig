@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-16 17:13:14
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-16 17:55:34
+ * @LastEditTime: 2023-06-19 17:35:45
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/widgets/scan_device.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,11 +14,11 @@ class ScanDeviceForm extends StatefulWidget {
   const ScanDeviceForm({Key? key, required this.section}) : super(key: key);
   final String section;
   @override
-  _ScanDeviceStateForm createState() => _ScanDeviceStateForm();
+  ScanDeviceStateForm createState() => ScanDeviceStateForm();
 }
 
-class _ScanDeviceStateForm extends State<ScanDeviceForm> {
-  List<RenderFieldInfo> menuList = [
+class ScanDeviceStateForm extends State<ScanDeviceForm> {
+  final List<RenderFieldInfo> menuList = [
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'ServiceType',
@@ -105,6 +105,24 @@ class _ScanDeviceStateForm extends State<ScanDeviceForm> {
       element.section = widget.section;
     }
     setState(() {});
+  }
+
+  onSave() {
+    if (changedList.length == 0) {
+      return;
+    }
+    var dataList = _makeParams();
+    changedList = [];
+    setState(() {});
+    return dataList;
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
   }
 
   @override

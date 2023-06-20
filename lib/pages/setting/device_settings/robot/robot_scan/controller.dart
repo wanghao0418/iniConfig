@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-16 18:04:52
+ * @LastEditTime: 2023-06-19 17:35:59
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import '../../../../../common/components/field_change.dart';
+import 'widgets/scan_device_form.dart';
 
 class RobotScanController extends GetxController {
   RobotScanController();
@@ -28,7 +29,7 @@ class RobotScanController extends GetxController {
   List<String> changedList = [];
   List deviceList = ['扫码1', '扫码2', '扫码3'];
   String currentDeviceId = "";
-  Key scanDeviceKey = GlobalKey<FormState>();
+  GlobalKey scanDeviceKey = GlobalKey();
 
   bool isChanged(String field) {
     return changedList.contains(field);
@@ -64,7 +65,10 @@ class RobotScanController extends GetxController {
     update(["robot_scan"]);
   }
 
-  void save() {}
+  void save() {
+    var list = (scanDeviceKey.currentState! as ScanDeviceStateForm).onSave();
+    print(list);
+  }
 
   // @override
   // void onInit() {

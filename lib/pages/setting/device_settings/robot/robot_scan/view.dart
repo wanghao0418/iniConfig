@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-16 18:03:21
+ * @LastEditTime: 2023-06-20 09:12:18
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -53,8 +53,13 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
           CommandBarSeparator(),
           CommandBarButton(
               label: Text('保存'),
-              onPressed: () {},
+              onPressed: controller.save,
               icon: Icon(FluentIcons.save)),
+          CommandBarSeparator(),
+          CommandBarButton(
+              label: Text('测试'),
+              onPressed: controller.save,
+              icon: Icon(FluentIcons.test_plan)),
         ])),
         5.verticalSpacingRadius,
         Card(
@@ -79,13 +84,16 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
               10.horizontalSpaceRadius,
               Expanded(
                   child: Container(
-                color: FluentTheme.of(context).menuColor,
-                padding: EdgeInsets.all(10.0),
-                child: ScanDeviceForm(
-                  key: controller.scanDeviceKey,
-                  section: controller.currentDeviceId,
-                ),
-              ))
+                      color: FluentTheme.of(context).menuColor,
+                      padding: EdgeInsets.all(10.0),
+                      child: controller.currentDeviceId.isEmpty
+                          ? Container(
+                              color: FluentTheme.of(context).menuColor,
+                            )
+                          : ScanDeviceForm(
+                              key: controller.scanDeviceKey,
+                              section: controller.currentDeviceId,
+                            )))
             ],
           ),
         ))
@@ -137,17 +145,18 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
-                title: const Text("扫码设置"),
-                commandBar: CommandBar(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.save),
-                      label: const Text('保存'),
-                      onPressed: controller.save,
-                    ),
-                  ],
-                )),
+              title: const Text("扫码设置"),
+              // commandBar: CommandBar(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   primaryItems: [
+              //     CommandBarButton(
+              //       icon: const Icon(FluentIcons.save),
+              //       label: const Text('保存'),
+              //       onPressed: controller.save,
+              //     ),
+              //   ],
+              // )
+            ),
             const Divider(),
             15.verticalSpacingRadius,
             _buildView(context)
