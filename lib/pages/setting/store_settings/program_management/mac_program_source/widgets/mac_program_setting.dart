@@ -1,0 +1,636 @@
+/*
+ * @Author: wanghao wanghao@oureman.com
+ * @Date: 2023-06-21 10:09:31
+ * @LastEditors: wanghao wanghao@oureman.com
+ * @LastEditTime: 2023-06-21 15:22:17
+ * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../../../common/components/field_change.dart';
+import '../../../../../../common/components/field_group.dart';
+
+class MacProgramSetting extends StatefulWidget {
+  const MacProgramSetting({Key? key, required this.section}) : super(key: key);
+  final String section;
+
+  @override
+  _MacProgramSettingState createState() => _MacProgramSettingState();
+}
+
+class _MacProgramSettingState extends State<MacProgramSetting> {
+  late PrgServerInfo prgServerInfo;
+  //
+  List<RenderField> menuList = [
+    RenderFieldInfo(
+        field: 'FileServerType',
+        section: 'PrgServerInfo',
+        name: "程序文件位置设置",
+        renderType: RenderType.radio,
+        options: {"ftp": "1", "共享目录或本地": "2"}),
+    RenderFieldGroup(groupName: "FTP登陆设置", children: [
+      RenderFieldInfo(
+        field: 'ServiceIP',
+        section: 'PrgServerInfo',
+        name: "FTP IP",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'Port',
+        section: 'PrgServerInfo',
+        name: "FTP端口",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'User',
+        section: 'PrgServerInfo',
+        name: "FTP用户",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'Pwd',
+        section: 'PrgServerInfo',
+        name: "FTP密码",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'Code',
+        section: 'PrgServerInfo',
+        name: "FTP采用编码（目前没有用到）",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "源程序命名规则设置(不带拓展名)", children: [
+      RenderFieldInfo(
+        field: 'SrcCmmElecPonitFileName',
+        section: 'PrgServerInfo',
+        name: "电极源取点文件的命名规则，PartFileName或者ELECSN",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcCmmStPonitFileName',
+        section: 'PrgServerInfo',
+        name: "钢件源取点文件的命名规则，PartFileName或者ELECSN",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcCncElecPrgName',
+        section: 'PrgServerInfo',
+        name: "电极源加工程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcCncStPrgName',
+        section: 'PrgServerInfo',
+        name: "钢件源铣工程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcLcncStPrgName',
+        section: 'PrgServerInfo',
+        name: "钢件源车工程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcEdmElecPrgName',
+        section: 'PrgServerInfo',
+        name: "电极源放电程序名命名规则",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "执行程序命名规则设置(不带拓展名)", children: [
+      RenderFieldInfo(
+        field: 'ExecCncElecPrgName',
+        section: 'PrgServerInfo',
+        name: "电极加工执行程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ExecCncStPrgName',
+        section: 'PrgServerInfo',
+        name: "钢件铣工执行程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ExecLcncStPrgName',
+        section: 'PrgServerInfo',
+        name: "钢件车工执行程序名命名规则",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ExecEdmElecPrgName',
+        section: 'PrgServerInfo',
+        name: "电极放电执行程序名命名规则",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "文件扩展名设置", children: [
+      RenderFieldInfo(
+        field: 'CmmElecPointFileExtern',
+        section: 'PrgServerInfo',
+        name: "电极检测取点文件后缀",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStPointFileExtern',
+        section: 'PrgServerInfo',
+        name: "钢件检测取点文件后缀",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcPrgExtern',
+        section: 'PrgServerInfo',
+        name: "各系统类型对应的服务器上的源程式后缀",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ExecPrgExtern',
+        section: 'PrgServerInfo',
+        name: "各系统类型对应的服务器上的执行程式后缀",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "源程序路径", children: [
+      RenderFieldInfo(
+        field: 'CmmElecPointPath',
+        section: 'PrgServerInfo',
+        name: "电极检测取点文件路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStPointPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测取点文件路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CncElecSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极加工原始程序路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'McncStSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件加工原始程序路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'LcncStSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件车工原始程序路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmElecSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极检测原始程序路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测原始程序路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'EdmElecSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极放电原始程序路径",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "执行程序路径", children: [
+      RenderFieldInfo(
+        field: 'CncElecExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极加工执行程式文件路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CncStExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件加工执行程式文件路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'LcncStExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件车工执行程式文件路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmElecExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极检测执行程式路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测执行程式路径",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'EdmPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极放电执行程式文件路径",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "接收机床完成结果的路径", children: [
+      RenderFieldInfo(
+        field: 'CmmElecReportSavePath',
+        section: 'PrgServerInfo',
+        name: "电极结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStReportSavePath',
+        section: 'PrgServerInfo',
+        name: "钢件结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldInfo(
+      field: 'MacCheckResultFileName',
+      section: 'PrgServerInfo',
+      name: "在机检测结果程序拷贝到目标路径的命名",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'CopyMacCheckResultFilePath',
+      section: 'PrgServerInfo',
+      name: "拷贝在机检测结果文件所到的路径",
+      renderType: RenderType.input,
+    ),
+    RenderFieldGroup(
+        groupName: "蔡司机床的TCP模式的驱动时由于程序名称长度的限制需要重命名拷贝进行处理",
+        children: [
+          RenderFieldInfo(
+            field: 'CmmZiessTcpCopySrcPath',
+            section: 'PrgServerInfo',
+            name: "拷贝的源程序路径",
+            renderType: RenderType.input,
+          ),
+          RenderFieldInfo(
+            field: 'CmmZiessTcpCopyDesPath',
+            section: 'PrgServerInfo',
+            name: "拷贝的目标路径",
+            renderType: RenderType.input,
+          ),
+        ])
+  ];
+  List<String> changedList = [];
+
+  bool isChanged(String field) {
+    return changedList.contains(field);
+  }
+
+  void setFieldValue(String field, String val) {
+    var temp = prgServerInfo.toSectionMap();
+    temp[field] = val;
+    prgServerInfo = PrgServerInfo.fromSectionJson(temp, widget.section);
+  }
+
+  String? getFieldValue(String field) {
+    return prgServerInfo.toSectionMap()[field];
+  }
+
+  void onFieldChange(String field, String value) {
+    if (value == getFieldValue(field)) {
+      return;
+    }
+    if (!changedList.contains(field)) {
+      changedList.add(field);
+    }
+    setFieldValue(field, value);
+    setState(() {});
+  }
+
+  initMenu() {
+    for (var element in menuList) {
+      if (element is RenderFieldInfo) {
+        element.section = widget.section;
+      } else if (element is RenderFieldGroup) {
+        for (var element in element.children) {
+          element.section = widget.section;
+        }
+      }
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    prgServerInfo = PrgServerInfo(section: widget.section);
+    initMenu();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: SingleChildScrollView(
+          child: Column(
+        children: [
+          ...menuList.map((e) {
+            if (e is RenderFieldGroup) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 5.r),
+                child: FieldGroup(
+                  groupName: e.groupName,
+                  getValue: getFieldValue,
+                  children: e.children,
+                  isChanged: isChanged,
+                  onChanged: (field, value) {
+                    onFieldChange(field, value);
+                  },
+                ),
+              );
+            } else {
+              return FieldChange(
+                renderFieldInfo: e as RenderFieldInfo,
+                showValue: getFieldValue(e.fieldKey),
+                isChanged: isChanged(e.fieldKey),
+                onChanged: (field, value) {
+                  onFieldChange(field, value);
+                },
+              );
+            }
+          }).toList()
+        ],
+      )),
+    );
+  }
+}
+
+class PrgServerInfo {
+  final String section;
+  String? fileServerType;
+  String? serviceIP;
+  String? port;
+  String? user;
+  String? pwd;
+  String? code;
+  String? srcCmmElecPonitFileName;
+  String? srcCmmStPonitFileName;
+  String? srcCncElecPrgName;
+  String? srcCncStPrgName;
+  String? srcLcncStPrgName;
+  String? srcEdmElecPrgName;
+  String? execCncElecPrgName;
+  String? execCncStPrgName;
+  String? execLcncStPrgName;
+  String? execEdmElecPrgName;
+  String? cmmElecPointFileExtern;
+  String? cmmStPointFileExtern;
+  String? srcPrgExtern;
+  String? execPrgExtern;
+  String? cmmElecPointPath;
+  String? cmmStPointPath;
+  String? cncElecSrcPrgPath;
+  String? mcncStSrcPrgPath;
+  String? lcncStSrcPrgPath;
+  String? cmmElecSrcPrgPath;
+  String? cmmStSrcPrgPath;
+  String? edmElecSrcPrgPath;
+  String? cncElecExecPrgPath;
+  String? cncStExecPrgPath;
+  String? lcncStExecPrgPath;
+  String? cmmElecExecPrgPath;
+  String? cmmStExecPrgPath;
+  String? edmPrgPath;
+  String? cmmElecReportSavePath;
+  String? cmmStReportSavePath;
+  String? macCheckResultFileName;
+  String? copyMacCheckResultFilePath;
+  String? cmmZiessTcpCopySrcPath;
+  String? cmmZiessTcpCopyDesPath;
+
+  PrgServerInfo(
+      {required this.section,
+      this.fileServerType,
+      this.serviceIP,
+      this.port,
+      this.user,
+      this.pwd,
+      this.code,
+      this.srcCmmElecPonitFileName,
+      this.srcCmmStPonitFileName,
+      this.srcCncElecPrgName,
+      this.srcCncStPrgName,
+      this.srcLcncStPrgName,
+      this.srcEdmElecPrgName,
+      this.execCncElecPrgName,
+      this.execCncStPrgName,
+      this.execLcncStPrgName,
+      this.execEdmElecPrgName,
+      this.cmmElecPointFileExtern,
+      this.cmmStPointFileExtern,
+      this.srcPrgExtern,
+      this.execPrgExtern,
+      this.cmmElecPointPath,
+      this.cmmStPointPath,
+      this.cncElecSrcPrgPath,
+      this.mcncStSrcPrgPath,
+      this.lcncStSrcPrgPath,
+      this.cmmElecSrcPrgPath,
+      this.cmmStSrcPrgPath,
+      this.edmElecSrcPrgPath,
+      this.cncElecExecPrgPath,
+      this.cncStExecPrgPath,
+      this.lcncStExecPrgPath,
+      this.cmmElecExecPrgPath,
+      this.cmmStExecPrgPath,
+      this.edmPrgPath,
+      this.cmmElecReportSavePath,
+      this.cmmStReportSavePath,
+      this.macCheckResultFileName,
+      this.copyMacCheckResultFilePath,
+      this.cmmZiessTcpCopySrcPath,
+      this.cmmZiessTcpCopyDesPath});
+
+  PrgServerInfo.fromJson(Map<String, dynamic> json, this.section) {
+    fileServerType = json['FileServerType'];
+    serviceIP = json['ServiceIP'];
+    port = json['Port'];
+    user = json['User'];
+    pwd = json['Pwd'];
+    code = json['Code'];
+    srcCmmElecPonitFileName = json['SrcCmmElecPonitFileName'];
+    srcCmmStPonitFileName = json['SrcCmmStPonitFileName'];
+    srcCncElecPrgName = json['SrcCncElecPrgName'];
+    srcCncStPrgName = json['SrcCncStPrgName'];
+    srcLcncStPrgName = json['SrcLcncStPrgName'];
+    srcEdmElecPrgName = json['SrcEdmElecPrgName'];
+    execCncElecPrgName = json['ExecCncElecPrgName'];
+    execCncStPrgName = json['ExecCncStPrgName'];
+    execLcncStPrgName = json['ExecLcncStPrgName'];
+    execEdmElecPrgName = json['ExecEdmElecPrgName'];
+    cmmElecPointFileExtern = json['CmmElecPointFileExtern'];
+    cmmStPointFileExtern = json['CmmStPointFileExtern'];
+    srcPrgExtern = json['SrcPrgExtern'];
+    execPrgExtern = json['ExecPrgExtern'];
+    cmmElecPointPath = json['CmmElecPointPath'];
+    cmmStPointPath = json['CmmStPointPath'];
+    cncElecSrcPrgPath = json['CncElecSrcPrgPath'];
+    mcncStSrcPrgPath = json['McncStSrcPrgPath'];
+    lcncStSrcPrgPath = json['LcncStSrcPrgPath'];
+    cmmElecSrcPrgPath = json['CmmElecSrcPrgPath'];
+    cmmStSrcPrgPath = json['CmmStSrcPrgPath'];
+    edmElecSrcPrgPath = json['EdmElecSrcPrgPath'];
+    cncElecExecPrgPath = json['CncElecExecPrgPath'];
+    cncStExecPrgPath = json['CncStExecPrgPath'];
+    lcncStExecPrgPath = json['LcncStExecPrgPath'];
+    cmmElecExecPrgPath = json['CmmElecExecPrgPath'];
+    cmmStExecPrgPath = json['CmmStExecPrgPath'];
+    edmPrgPath = json['EdmPrgPath'];
+    cmmElecReportSavePath = json['CmmElecReportSavePath'];
+    cmmStReportSavePath = json['CmmStReportSavePath'];
+    macCheckResultFileName = json['MacCheckResultFileName'];
+    copyMacCheckResultFilePath = json['CopyMacCheckResultFilePath'];
+    cmmZiessTcpCopySrcPath = json['CmmZiessTcpCopySrcPath'];
+    cmmZiessTcpCopyDesPath = json['CmmZiessTcpCopyDesPath'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FileServerType'] = this.fileServerType;
+    data['ServiceIP'] = this.serviceIP;
+    data['Port'] = this.port;
+    data['User'] = this.user;
+    data['Pwd'] = this.pwd;
+    data['Code'] = this.code;
+    data['SrcCmmElecPonitFileName'] = this.srcCmmElecPonitFileName;
+    data['SrcCmmStPonitFileName'] = this.srcCmmStPonitFileName;
+    data['SrcCncElecPrgName'] = this.srcCncElecPrgName;
+    data['SrcCncStPrgName'] = this.srcCncStPrgName;
+    data['SrcLcncStPrgName'] = this.srcLcncStPrgName;
+    data['SrcEdmElecPrgName'] = this.srcEdmElecPrgName;
+    data['ExecCncElecPrgName'] = this.execCncElecPrgName;
+    data['ExecCncStPrgName'] = this.execCncStPrgName;
+    data['ExecLcncStPrgName'] = this.execLcncStPrgName;
+    data['ExecEdmElecPrgName'] = this.execEdmElecPrgName;
+    data['CmmElecPointFileExtern'] = this.cmmElecPointFileExtern;
+    data['CmmStPointFileExtern'] = this.cmmStPointFileExtern;
+    data['SrcPrgExtern'] = this.srcPrgExtern;
+    data['ExecPrgExtern'] = this.execPrgExtern;
+    data['CmmElecPointPath'] = this.cmmElecPointPath;
+    data['CmmStPointPath'] = this.cmmStPointPath;
+    data['CncElecSrcPrgPath'] = this.cncElecSrcPrgPath;
+    data['McncStSrcPrgPath'] = this.mcncStSrcPrgPath;
+    data['LcncStSrcPrgPath'] = this.lcncStSrcPrgPath;
+    data['CmmElecSrcPrgPath'] = this.cmmElecSrcPrgPath;
+    data['CmmStSrcPrgPath'] = this.cmmStSrcPrgPath;
+    data['EdmElecSrcPrgPath'] = this.edmElecSrcPrgPath;
+    data['CncElecExecPrgPath'] = this.cncElecExecPrgPath;
+    data['CncStExecPrgPath'] = this.cncStExecPrgPath;
+    data['LcncStExecPrgPath'] = this.lcncStExecPrgPath;
+    data['CmmElecExecPrgPath'] = this.cmmElecExecPrgPath;
+    data['CmmStExecPrgPath'] = this.cmmStExecPrgPath;
+    data['EdmPrgPath'] = this.edmPrgPath;
+    data['CmmElecReportSavePath'] = this.cmmElecReportSavePath;
+    data['CmmStReportSavePath'] = this.cmmStReportSavePath;
+    data['MacCheckResultFileName'] = this.macCheckResultFileName;
+    data['CopyMacCheckResultFilePath'] = this.copyMacCheckResultFilePath;
+    data['CmmZiessTcpCopySrcPath'] = this.cmmZiessTcpCopySrcPath;
+    data['CmmZiessTcpCopyDesPath'] = this.cmmZiessTcpCopyDesPath;
+    return data;
+  }
+
+  PrgServerInfo.fromSectionJson(Map<String, dynamic> json, this.section) {
+    fileServerType = json['$section/FileServerType'];
+    serviceIP = json['$section/ServiceIP'];
+    port = json['$section/Port'];
+    user = json['$section/User'];
+    pwd = json['$section/Pwd'];
+    code = json['$section/Code'];
+    srcCmmElecPonitFileName = json['$section/SrcCmmElecPonitFileName'];
+    srcCmmStPonitFileName = json['$section/SrcCmmStPonitFileName'];
+    srcCncElecPrgName = json['$section/SrcCncElecPrgName'];
+    srcCncStPrgName = json['$section/SrcCncStPrgName'];
+    srcLcncStPrgName = json['$section/SrcLcncStPrgName'];
+    srcEdmElecPrgName = json['$section/SrcEdmElecPrgName'];
+    execCncElecPrgName = json['$section/ExecCncElecPrgName'];
+    execCncStPrgName = json['$section/ExecCncStPrgName'];
+    execLcncStPrgName = json['$section/ExecLcncStPrgName'];
+    execEdmElecPrgName = json['$section/ExecEdmElecPrgName'];
+    cmmElecPointFileExtern = json['$section/CmmElecPointFileExtern'];
+    cmmStPointFileExtern = json['$section/CmmStPointFileExtern'];
+    srcPrgExtern = json['$section/SrcPrgExtern'];
+    execPrgExtern = json['$section/ExecPrgExtern'];
+    cmmElecPointPath = json['$section/CmmElecPointPath'];
+    cmmStPointPath = json['$section/CmmStPointPath'];
+    cncElecSrcPrgPath = json['$section/CncElecSrcPrgPath'];
+    mcncStSrcPrgPath = json['$section/McncStSrcPrgPath'];
+    lcncStSrcPrgPath = json['$section/LcncStSrcPrgPath'];
+    cmmElecSrcPrgPath = json['$section/CmmElecSrcPrgPath'];
+    cmmStSrcPrgPath = json['$section/CmmStSrcPrgPath'];
+    edmElecSrcPrgPath = json['$section/EdmElecSrcPrgPath'];
+    cncElecExecPrgPath = json['$section/CncElecExecPrgPath'];
+    cncStExecPrgPath = json['$section/CncStExecPrgPath'];
+    lcncStExecPrgPath = json['$section/LcncStExecPrgPath'];
+    cmmElecExecPrgPath = json['$section/CmmElecExecPrgPath'];
+    cmmStExecPrgPath = json['$section/CmmStExecPrgPath'];
+    edmPrgPath = json['$section/EdmPrgPath'];
+    cmmElecReportSavePath = json['$section/CmmElecReportSavePath'];
+    cmmStReportSavePath = json['$section/CmmStReportSavePath'];
+    macCheckResultFileName = json['$section/MacCheckResultFileName'];
+    copyMacCheckResultFilePath = json['$section/CopyMacCheckResultFilePath'];
+    cmmZiessTcpCopySrcPath = json['$section/CmmZiessTcpCopySrcPath'];
+    cmmZiessTcpCopyDesPath = json['$section/CmmZiessTcpCopyDesPath'];
+  }
+
+  Map<String, dynamic> toSectionMap() {
+    String section = this.section;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['$section/FileServerType'] = this.fileServerType;
+    data['$section/ServiceIP'] = this.serviceIP;
+    data['$section/Port'] = this.port;
+    data['$section/User'] = this.user;
+    data['$section/Pwd'] = this.pwd;
+    data['$section/Code'] = this.code;
+    data['$section/SrcCmmElecPonitFileName'] = this.srcCmmElecPonitFileName;
+    data['$section/SrcCmmStPonitFileName'] = this.srcCmmStPonitFileName;
+    data['$section/SrcCncElecPrgName'] = this.srcCncElecPrgName;
+    data['$section/SrcCncStPrgName'] = this.srcCncStPrgName;
+    data['$section/SrcLcncStPrgName'] = this.srcLcncStPrgName;
+    data['$section/SrcEdmElecPrgName'] = this.srcEdmElecPrgName;
+    data['$section/ExecCncElecPrgName'] = this.execCncElecPrgName;
+    data['$section/ExecCncStPrgName'] = this.execCncStPrgName;
+    data['$section/ExecLcncStPrgName'] = this.execLcncStPrgName;
+    data['$section/ExecEdmElecPrgName'] = this.execEdmElecPrgName;
+    data['$section/CmmElecPointFileExtern'] = this.cmmElecPointFileExtern;
+    data['$section/CmmStPointFileExtern'] = this.cmmStPointFileExtern;
+    data['$section/SrcPrgExtern'] = this.srcPrgExtern;
+    data['$section/ExecPrgExtern'] = this.execPrgExtern;
+    data['$section/CmmElecPointPath'] = this.cmmElecPointPath;
+    data['$section/CmmStPointPath'] = this.cmmStPointPath;
+    data['$section/CncElecSrcPrgPath'] = this.cncElecSrcPrgPath;
+    data['$section/McncStSrcPrgPath'] = this.mcncStSrcPrgPath;
+    data['$section/LcncStSrcPrgPath'] = this.lcncStSrcPrgPath;
+    data['$section/CmmElecSrcPrgPath'] = this.cmmElecSrcPrgPath;
+    data['$section/CmmStSrcPrgPath'] = this.cmmStSrcPrgPath;
+    data['$section/EdmElecSrcPrgPath'] = this.edmElecSrcPrgPath;
+    data['$section/CncElecExecPrgPath'] = this.cncElecExecPrgPath;
+    data['$section/CncStExecPrgPath'] = this.cncStExecPrgPath;
+    data['$section/LcncStExecPrgPath'] = this.lcncStExecPrgPath;
+    data['$section/CmmElecExecPrgPath'] = this.cmmElecExecPrgPath;
+    data['$section/CmmStExecPrgPath'] = this.cmmStExecPrgPath;
+    data['$section/EdmPrgPath'] = this.edmPrgPath;
+    data['$section/CmmElecReportSavePath'] = this.cmmElecReportSavePath;
+    data['$section/CmmStReportSavePath'] = this.cmmStReportSavePath;
+    data['$section/MacCheckResultFileName'] = this.macCheckResultFileName;
+    data['$section/CopyMacCheckResultFilePath'] =
+        this.copyMacCheckResultFilePath;
+    data['$section/CmmZiessTcpCopySrcPath'] = this.cmmZiessTcpCopySrcPath;
+    data['$section/CmmZiessTcpCopyDesPath'] = this.cmmZiessTcpCopyDesPath;
+    return data;
+  }
+}

@@ -1,9 +1,9 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-06-15 11:39:57
+ * @Date: 2023-06-21 09:22:59
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:28:05
- * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_task/view.dart
+ * @LastEditTime: 2023-06-21 14:28:25
+ * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/clamping_management/tray_settings/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
@@ -13,14 +13,14 @@ import 'package:get/get.dart';
 import '../../../../../common/components/field_change.dart';
 import 'index.dart';
 
-class RobotTaskPage extends StatefulWidget {
-  const RobotTaskPage({Key? key}) : super(key: key);
+class TraySettingsPage extends StatefulWidget {
+  const TraySettingsPage({Key? key}) : super(key: key);
 
   @override
-  State<RobotTaskPage> createState() => _RobotTaskPageState();
+  State<TraySettingsPage> createState() => _TraySettingsPageState();
 }
 
-class _RobotTaskPageState extends State<RobotTaskPage>
+class _TraySettingsPageState extends State<TraySettingsPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -28,12 +28,12 @@ class _RobotTaskPageState extends State<RobotTaskPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return const _RobotTaskViewGetX();
+    return const _TraySettingsViewGetX();
   }
 }
 
-class _RobotTaskViewGetX extends GetView<RobotTaskController> {
-  const _RobotTaskViewGetX({Key? key}) : super(key: key);
+class _TraySettingsViewGetX extends GetView<TraySettingsController> {
+  const _TraySettingsViewGetX({Key? key}) : super(key: key);
 
   // 主视图
   Widget _buildView() {
@@ -58,15 +58,15 @@ class _RobotTaskViewGetX extends GetView<RobotTaskController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<RobotTaskController>(
-      init: RobotTaskController(),
-      id: "robot_task",
+    return GetBuilder<TraySettingsController>(
+      init: TraySettingsController(),
+      id: "tray_settings",
       builder: (_) {
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
                 title: Text(
-                  "机器人任务设置",
+                  "托盘管理",
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
                 commandBar: CommandBar(

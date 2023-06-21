@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ShelfInfoController extends GetxController {
   ShelfInfoController();
   List shelfList = ['1', '2', '3'];
   var currentShelf = "".obs;
+  GlobalKey shelfInfoSettingKey = GlobalKey();
 
   _initData() {
     update(["shelf_info"]);

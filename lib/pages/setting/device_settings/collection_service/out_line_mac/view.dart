@@ -1,28 +1,27 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-06-20 09:20:48
+ * @Date: 2023-06-21 15:58:11
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:28:12
- * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/view.dart
+ * @LastEditTime: 2023-06-21 18:03:14
+ * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/out_line_mac/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:styled_widget/styled_widget.dart';
 
+import '../../machine/machine_info/widgets/mac_info_setting.dart';
 import 'index.dart';
-import 'widgets/shelf_info_setting.dart';
+import 'widgets/out_line_mac.dart';
 
-class ShelfInfoPage extends StatefulWidget {
-  const ShelfInfoPage({Key? key}) : super(key: key);
+class OutLineMacPage extends StatefulWidget {
+  const OutLineMacPage({Key? key}) : super(key: key);
 
   @override
-  State<ShelfInfoPage> createState() => _ShelfInfoPageState();
+  State<OutLineMacPage> createState() => _OutLineMacPageState();
 }
 
-class _ShelfInfoPageState extends State<ShelfInfoPage>
+class _OutLineMacPageState extends State<OutLineMacPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -30,12 +29,12 @@ class _ShelfInfoPageState extends State<ShelfInfoPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return const _ShelfInfoViewGetX();
+    return const _OutLineMacViewGetX();
   }
 }
 
-class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
-  const _ShelfInfoViewGetX({Key? key}) : super(key: key);
+class _OutLineMacViewGetX extends GetView<OutLineMacController> {
+  const _OutLineMacViewGetX({Key? key}) : super(key: key);
 
   // 主视图
   Widget _buildView(BuildContext context) {
@@ -43,19 +42,9 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
       children: [
         PageHeader(
           title: Text(
-            "货架设置",
+            "线外机床管理",
             style: FluentTheme.of(context).typography.subtitle,
           ),
-          // commandBar: CommandBar(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   primaryItems: [
-          //     CommandBarButton(
-          //       icon: const Icon(FluentIcons.save),
-          //       label: const Text('保存'),
-          //       onPressed: controller.save,
-          //     ),
-          //   ],
-          // )
         ),
         const Divider(),
         15.verticalSpacingRadius,
@@ -93,14 +82,14 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                 SizedBox(
                   width: 200,
                   child: ListView.builder(
-                      itemCount: controller.shelfList.length,
+                      itemCount: controller.sectionList.length,
                       itemBuilder: (context, index) {
-                        final contact = controller.shelfList[index];
+                        final contact = controller.sectionList[index];
                         return ListTile.selectable(
                           title: Text(contact),
-                          selected: controller.currentShelf.value == contact,
+                          selected: controller.currentSection.value == contact,
                           onSelectionChange: (v) =>
-                              controller.onShelfChange(contact),
+                              controller.onSectionChange(contact),
                         );
                       }),
                 ),
@@ -109,13 +98,13 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                     child: Container(
                         color: FluentTheme.of(context).menuColor,
                         padding: EdgeInsets.all(10.0),
-                        child: controller.currentShelf.value.isEmpty
+                        child: controller.currentSection.value.isEmpty
                             ? Container(
                                 color: FluentTheme.of(context).menuColor,
                               )
-                            : ShelfInfoSetting(
-                                key: Key(controller.currentShelf.value),
-                                section: controller.currentShelf.value,
+                            : OutLineMac(
+                                key: Key(controller.currentSection.value),
+                                section: controller.currentSection.value,
                               )))
               ],
             ),
@@ -127,14 +116,15 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ShelfInfoController>(
-      init: ShelfInfoController(),
-      id: "shelf_info",
+    return GetBuilder<OutLineMacController>(
+      init: OutLineMacController(),
+      id: "out_line_mac",
       builder: (_) {
         return ScaffoldPage(
-            content: Padding(
-                padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
-                child: _buildView(context)));
+          content: Padding(
+              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              child: _buildView(context)),
+        );
       },
     );
   }

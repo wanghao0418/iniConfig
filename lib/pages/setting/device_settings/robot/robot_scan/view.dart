@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-20 09:12:18
+ * @LastEditTime: 2023-06-21 18:20:17
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -40,32 +40,51 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
   // 扫码设备列表
   Widget _buildScanDeviceList(context) {
     return Column(
+      children: [],
+    );
+  }
+
+  // 主视图
+  Widget _buildView(context) {
+    return Column(
       children: [
+        PageHeader(
+          title: Text(
+            "扫码设置",
+            style: FluentTheme.of(context).typography.subtitle,
+          ),
+        ),
+        const Divider(),
+        15.verticalSpacingRadius,
         CommandBarCard(
+            margin: EdgeInsets.symmetric(horizontal: 10.r),
             child: CommandBar(primaryItems: [
-          CommandBarButton(
-              label: Text('新增'), onPressed: () {}, icon: Icon(FluentIcons.add)),
-          CommandBarSeparator(),
-          CommandBarButton(
-              label: Text('删除'),
-              onPressed: () {},
-              icon: Icon(FluentIcons.delete)),
-          CommandBarSeparator(),
-          CommandBarButton(
-              label: Text('保存'),
-              onPressed: controller.save,
-              icon: Icon(FluentIcons.save)),
-          CommandBarSeparator(),
-          CommandBarButton(
-              label: Text('测试'),
-              onPressed: controller.save,
-              icon: Icon(FluentIcons.test_plan)),
-        ])),
+              CommandBarButton(
+                  label: Text('新增'),
+                  onPressed: () {},
+                  icon: Icon(FluentIcons.add)),
+              CommandBarSeparator(),
+              CommandBarButton(
+                  label: Text('删除'),
+                  onPressed: () {},
+                  icon: Icon(FluentIcons.delete)),
+              CommandBarSeparator(),
+              CommandBarButton(
+                  label: Text('保存'),
+                  onPressed: controller.save,
+                  icon: Icon(FluentIcons.save)),
+              CommandBarSeparator(),
+              CommandBarButton(
+                  label: Text('测试'),
+                  onPressed: controller.save,
+                  icon: Icon(FluentIcons.test_plan)),
+            ])),
         5.verticalSpacingRadius,
-        Card(
-            child: SizedBox(
-          height: 500.0,
-          child: Row(
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.r),
+          child: Card(
+              child: Row(
             children: [
               SizedBox(
                 width: 200,
@@ -95,42 +114,8 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
                               section: controller.currentDeviceId,
                             )))
             ],
-          ),
-        ))
-      ],
-    );
-  }
-
-  // 主视图
-  Widget _buildView(context) {
-    return Column(
-      children: [
-        SizedBox(
-            child: Column(children: [
-          // ...controller.menuList
-          //     .map((e) => FieldChange(
-          //           isChanged: controller.isChanged("${e.section}/${e.field}"),
-          //           renderFieldInfo: e,
-          //           showValue:
-          //               controller.getFieldValue("${e.section}/${e.field}"),
-          //           onChanged: controller.onFieldChange,
-          //         ))
-          //     .toList(),
-          // Padding(
-          //   padding: const EdgeInsetsDirectional.only(
-          //       top: 14.0, bottom: 14.0, start: 14.0),
-          //   child: DefaultTextStyle(
-          //     style: FluentTheme.of(context).typography.subtitle!,
-          //     child: SizedBox(
-          //       width: double.infinity,
-          //       child: Text(
-          //         '扫码设备列表',
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          _buildScanDeviceList(context)
-        ])),
+          )),
+        )),
         // 15.verticalSpacingRadius,
       ],
     );
@@ -142,25 +127,10 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
       init: RobotScanController(),
       id: "robot_scan",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-              title: const Text("扫码设置"),
-              // commandBar: CommandBar(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   primaryItems: [
-              //     CommandBarButton(
-              //       icon: const Icon(FluentIcons.save),
-              //       label: const Text('保存'),
-              //       onPressed: controller.save,
-              //     ),
-              //   ],
-              // )
-            ),
-            const Divider(),
-            15.verticalSpacingRadius,
-            _buildView(context)
-          ],
+        return ScaffoldPage(
+          content: Padding(
+              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              child: _buildView(context)),
         );
       },
     );

@@ -1,9 +1,9 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-06-15 11:39:57
+ * @Date: 2023-06-20 15:48:32
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:28:05
- * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_task/view.dart
+ * @LastEditTime: 2023-06-21 14:28:31
+ * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/database/acquisition_database/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
@@ -13,14 +13,15 @@ import 'package:get/get.dart';
 import '../../../../../common/components/field_change.dart';
 import 'index.dart';
 
-class RobotTaskPage extends StatefulWidget {
-  const RobotTaskPage({Key? key}) : super(key: key);
+class AcquisitionDatabasePage extends StatefulWidget {
+  const AcquisitionDatabasePage({Key? key}) : super(key: key);
 
   @override
-  State<RobotTaskPage> createState() => _RobotTaskPageState();
+  State<AcquisitionDatabasePage> createState() =>
+      _AcquisitionDatabasePageState();
 }
 
-class _RobotTaskPageState extends State<RobotTaskPage>
+class _AcquisitionDatabasePageState extends State<AcquisitionDatabasePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -28,15 +29,16 @@ class _RobotTaskPageState extends State<RobotTaskPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return const _RobotTaskViewGetX();
+    return const _AcquisitionDatabaseViewGetX();
   }
 }
 
-class _RobotTaskViewGetX extends GetView<RobotTaskController> {
-  const _RobotTaskViewGetX({Key? key}) : super(key: key);
+class _AcquisitionDatabaseViewGetX
+    extends GetView<AcquisitionDatabaseController> {
+  const _AcquisitionDatabaseViewGetX({Key? key}) : super(key: key);
 
   // 主视图
-  Widget _buildView() {
+  Widget _buildView(context) {
     return Column(
       children: [
         SizedBox(
@@ -58,15 +60,15 @@ class _RobotTaskViewGetX extends GetView<RobotTaskController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<RobotTaskController>(
-      init: RobotTaskController(),
-      id: "robot_task",
+    return GetBuilder<AcquisitionDatabaseController>(
+      init: AcquisitionDatabaseController(),
+      id: "acquisition_database",
       builder: (_) {
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
                 title: Text(
-                  "机器人任务设置",
+                  "采集数据库连接设置",
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
                 commandBar: CommandBar(
@@ -81,7 +83,7 @@ class _RobotTaskViewGetX extends GetView<RobotTaskController> {
                 )),
             const Divider(),
             15.verticalSpacingRadius,
-            _buildView()
+            _buildView(context)
           ],
         );
       },

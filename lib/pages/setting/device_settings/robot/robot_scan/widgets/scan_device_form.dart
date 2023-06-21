@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-16 17:13:14
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-19 17:35:45
+ * @LastEditTime: 2023-06-21 18:19:22
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/widgets/scan_device.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -44,22 +44,22 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'LeftReadPos',
-        name: '读取的字符串左边截取位置，默认:0，开悟配 2',
+        name: '读取的字符串左边截取位置',
         renderType: RenderType.numberInput),
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'RightReadPos',
-        name: '读取的字符串右边截取位置，默认:0，星宇配 1',
+        name: '读取的字符串右边截取位置',
         renderType: RenderType.numberInput),
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'RightReadPos',
-        name: '读取的字符串右边截取位置，默认:0，星宇配 1',
+        name: '读取的字符串右边截取位置',
         renderType: RenderType.numberInput),
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'ReadUnitSize',
-        name: '单个芯片的存储大小，单位WORD 只能写入被120整除的数',
+        name: '单个芯片的存储大小',
         renderType: RenderType.numberInput),
     RenderFieldInfo(
         section: 'ScanDevice',
@@ -82,7 +82,7 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
   void setFieldValue(String field, String val) {
     var temp = scanDevice.toUpdateMap();
     temp[field] = val;
-    scanDevice = ScanDevice.fromSectionJson(temp);
+    scanDevice = ScanDevice.fromSectionJson(temp, widget.section);
   }
 
   String? getFieldValue(String field) {
@@ -136,25 +136,27 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        width: double.infinity,
+        height: double.infinity,
         child: SingleChildScrollView(
-      child: Column(
-        children: [
-          ...menuList.map((e) => FieldChange(
-                renderFieldInfo: e,
-                showValue: getFieldValue(e.fieldKey),
-                isChanged: isChanged(e.fieldKey),
-                onChanged: (field, value) {
-                  onFieldChange(field, value);
-                },
-              ))
-        ],
-      ),
-    ));
+          child: Column(
+            children: [
+              ...menuList.map((e) => FieldChange(
+                    renderFieldInfo: e,
+                    showValue: getFieldValue(e.fieldKey),
+                    isChanged: isChanged(e.fieldKey),
+                    onChanged: (field, value) {
+                      onFieldChange(field, value);
+                    },
+                  ))
+            ],
+          ),
+        ));
   }
 }
 
 class ScanDevice {
-  String? section;
+  String section;
   String? serviceType;
   String? serviceAddr;
   String? servicePort;
@@ -165,7 +167,7 @@ class ScanDevice {
   String? scanHeadFlag;
 
   ScanDevice(
-      {this.section,
+      {required this.section,
       this.serviceType,
       this.serviceAddr,
       this.servicePort,
@@ -175,7 +177,7 @@ class ScanDevice {
       this.scanTimes,
       this.scanHeadFlag});
 
-  ScanDevice.fromJson(Map<String, dynamic> json) {
+  ScanDevice.fromJson(Map<String, dynamic> json, this.section) {
     serviceType = json['ServiceType'];
     serviceAddr = json['ServiceAddr'];
     servicePort = json['ServicePort'];
@@ -199,8 +201,8 @@ class ScanDevice {
     return data;
   }
 
-  ScanDevice.fromSectionJson(Map<String, dynamic> json) {
-    var sectionStr = this.section ?? '';
+  ScanDevice.fromSectionJson(Map<String, dynamic> json, this.section) {
+    var sectionStr = section;
     serviceType = json['${sectionStr}/ServiceType'];
     serviceAddr = json['${sectionStr}/ServiceAddr'];
     servicePort = json['${sectionStr}/ServicePort'];
@@ -213,7 +215,7 @@ class ScanDevice {
 
   Map<String, dynamic> toUpdateMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    var sectionStr = this.section ?? '';
+    var sectionStr = this.section;
     data['${sectionStr}/ServiceType'] = this.serviceType;
     data['${sectionStr}/ServiceAddr'] = this.serviceAddr;
     data['${sectionStr}/ServicePort'] = this.servicePort;

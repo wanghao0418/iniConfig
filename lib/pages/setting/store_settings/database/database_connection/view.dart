@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-13 11:34:05
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 09:52:22
+ * @LastEditTime: 2023-06-21 14:28:37
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/database/database_connection/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -66,7 +66,10 @@ class _DatabaseConnectionViewGetX
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
-                title: const Text("数据库连接设置"),
+                title: Text(
+                  "自动化数据库连接设置",
+                  style: FluentTheme.of(context).typography.subtitle,
+                ),
                 commandBar: CommandBar(
                   mainAxisAlignment: MainAxisAlignment.end,
                   primaryItems: [

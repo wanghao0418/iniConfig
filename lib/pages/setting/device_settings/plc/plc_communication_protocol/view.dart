@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 09:26:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 14:12:02
+ * @LastEditTime: 2023-06-21 14:27:16
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_communication_protocol/view.dart
  * @Description: 通讯协议设置界面
  */
@@ -175,7 +175,10 @@ class _PlcCommunicationProtocolViewGetX
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
-                title: Text('plc通讯协议设置'),
+                title: Text(
+                  'plc通讯协议设置',
+                  style: FluentTheme.of(context).typography.subtitle,
+                ),
                 commandBar: CommandBar(
                   mainAxisAlignment: MainAxisAlignment.end,
                   primaryItems: [

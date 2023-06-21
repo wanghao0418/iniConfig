@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 15:30:08
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 09:58:42
+ * @LastEditTime: 2023-06-21 14:27:31
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_connection/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -58,7 +58,10 @@ class _PlcConnectionViewGetX extends GetView<PlcConnectionController> {
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
-                title: const Text("plc连接设置"),
+                title: Text(
+                  "plc连接设置",
+                  style: FluentTheme.of(context).typography.subtitle,
+                ),
                 commandBar: CommandBar(
                   mainAxisAlignment: MainAxisAlignment.end,
                   primaryItems: [

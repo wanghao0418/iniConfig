@@ -53,7 +53,10 @@ class _RobotCommunicationProtocolViewGetX
         return ScaffoldPage.scrollable(
           children: [
             PageHeader(
-                title: const Text("机器人连接设置"),
+                title: Text(
+                  "机器人连接设置",
+                  style: FluentTheme.of(context).typography.subtitle,
+                ),
                 commandBar: CommandBar(
                   mainAxisAlignment: MainAxisAlignment.end,
                   primaryItems: [

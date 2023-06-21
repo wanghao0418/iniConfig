@@ -13,11 +13,11 @@ class ShelfManagementLightController extends GetxController {
       renderType: RenderType.toggleSwitch,
       options: {"自动": "0", "手动": "1"},
     ),
-    RenderFieldInfo(
-        section: "MoreLightsInfo",
-        field: "StorageLightDeviceNode",
-        name: "存储灯设备节点",
-        renderType: RenderType.input),
+    // RenderFieldInfo(
+    //     section: "MoreLightsInfo",
+    //     field: "StorageLightDeviceNode",
+    //     name: "存储灯设备节点",
+    //     renderType: RenderType.input),
     RenderFieldInfo(
         section: "MoreLightsInfo",
         field: "SenSorLightColorSet",
@@ -25,6 +25,8 @@ class ShelfManagementLightController extends GetxController {
         renderType: RenderType.input),
   ];
   List<String> changedList = [];
+  List sectionList = ['1', '2', '3'];
+  var currentSection = "".obs;
 
   bool isChanged(String field) {
     return changedList.contains(field);
@@ -48,6 +50,11 @@ class ShelfManagementLightController extends GetxController {
       changedList.add(field);
     }
     setFieldValue(field, value);
+    update(["shelf_management_light"]);
+  }
+
+  void onSectionChange(String section) {
+    currentSection.value = section;
     update(["shelf_management_light"]);
   }
 

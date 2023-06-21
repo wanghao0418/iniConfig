@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../setting/device_settings/collection_service/in_line_mac/view.dart';
+import '../../setting/device_settings/collection_service/out_line_mac/view.dart';
+import '../../setting/device_settings/machine/machine_info/view.dart';
 import '../../setting/device_settings/plc/plc_communication_protocol/view.dart';
 import '../../setting/device_settings/plc/plc_connection/view.dart';
 import '../../setting/device_settings/plc/plc_function/view.dart';
@@ -12,7 +15,12 @@ import '../../setting/device_settings/robot/robot_scan/view.dart';
 import '../../setting/device_settings/robot/robot_task/view.dart';
 import '../../setting/device_settings/shelf_management/shelf_info/view.dart';
 import '../../setting/device_settings/shelf_management/shelf_management_light/view.dart';
+import '../../setting/store_settings/clamping_management/clamp_type_management/view.dart';
+import '../../setting/store_settings/clamping_management/tray_settings/view.dart';
+import '../../setting/store_settings/database/acquisition_database/view.dart';
 import '../../setting/store_settings/database/database_connection/view.dart';
+import '../../setting/store_settings/program_management/local_store_path/view.dart';
+import '../../setting/store_settings/program_management/mac_program_source/view.dart';
 import 'widgets/fluent_tab.dart';
 
 class HomeController extends GetxController {
@@ -87,17 +95,13 @@ class HomeController extends GetxController {
           iconData: FluentIcons.connect_virtual_machine,
           children: [
             TertiaryMenu(
-                id: '1-4-1',
-                title: '机床信息',
-                bodyPage: Container(
-                  child: Text('机床信息'),
-                )),
-            TertiaryMenu(
-                id: '1-4-2',
-                title: '自动化设置',
-                bodyPage: Container(
-                  child: Text('自动化设置'),
-                )),
+                id: '1-4-1', title: '机床管理', bodyPage: MachineInfoPage()),
+            // TertiaryMenu(
+            //     id: '1-4-2',
+            //     title: '自动化设置',
+            //     bodyPage: Container(
+            //       child: Text('自动化设置'),
+            //     )),
           ]),
       SecondaryMenu(
           id: '1-5',
@@ -105,26 +109,17 @@ class HomeController extends GetxController {
           iconData: FluentIcons.server,
           children: [
             TertiaryMenu(
-                id: '1-5-1',
-                title: '线外机床',
-                bodyPage: Container(
-                  child: Text('线外机床'),
-                )),
-            TertiaryMenu(
-                id: '1-5-2',
-                title: '线体机床',
-                bodyPage: Container(
-                  child: Text('线体机床'),
-                )),
+                id: '1-5-1', title: '线外机床', bodyPage: OutLineMacPage()),
+            TertiaryMenu(id: '1-5-2', title: '线体机床', bodyPage: InLineMacPage()),
           ]),
-      SecondaryMenu(id: '1-6', title: '其他', children: [
-        TertiaryMenu(
-            id: '1-6-1',
-            title: '七色灯',
-            bodyPage: Container(
-              child: Text('七色灯'),
-            )),
-      ]),
+      // SecondaryMenu(id: '1-6', title: '其他', children: [
+      //   TertiaryMenu(
+      //       id: '1-6-1',
+      //       title: '七色灯',
+      //       bodyPage: Container(
+      //         child: Text('七色灯'),
+      //       )),
+      // ]),
     ]),
     PrimaryMenu(id: '2', title: '存储设置', iconData: FluentIcons.list, children: [
       SecondaryMenu(
@@ -133,7 +128,13 @@ class HomeController extends GetxController {
           iconData: FluentIcons.save_all,
           children: [
             TertiaryMenu(
-                id: '2-1-1', title: '连接设置', bodyPage: DatabaseConnectionPage()),
+                id: '2-1-1',
+                title: '自动化数据库',
+                bodyPage: DatabaseConnectionPage()),
+            TertiaryMenu(
+                id: '2-1-2',
+                title: '采集数据库',
+                bodyPage: AcquisitionDatabasePage()),
           ]),
       SecondaryMenu(
           id: '2-2',
@@ -141,25 +142,14 @@ class HomeController extends GetxController {
           iconData: FluentIcons.system,
           children: [
             TertiaryMenu(
-                id: '2-2-1',
-                title: '机床程序来源',
-                bodyPage: Container(
-                  child: Text('机床程序来源'),
-                )),
+                id: '2-2-1', title: '机床程序来源', bodyPage: MacProgramSourcePage()),
             TertiaryMenu(
-                id: '2-2-2',
-                title: '本地存储路径',
-                bodyPage: Container(
-                  child: Text('本地存储路径'),
-                )),
+                id: '2-2-2', title: '本地存储路径', bodyPage: LocalStorePathPage()),
           ]),
-      SecondaryMenu(id: '2-3', title: '托盘管理', children: [
+      SecondaryMenu(id: '2-3', title: '装夹管理', children: [
         TertiaryMenu(
-            id: '2-3-1',
-            title: '托盘设置',
-            bodyPage: Container(
-              child: Text('托盘设置'),
-            )),
+            id: '2-3-1', title: '夹具类型管理', bodyPage: ClampTypeManagementPage()),
+        TertiaryMenu(id: '2-3-2', title: '托盘管理', bodyPage: TraySettingsPage()),
       ]),
     ]),
     PrimaryMenu(id: '3', title: '系统设置', iconData: FluentIcons.list, children: [

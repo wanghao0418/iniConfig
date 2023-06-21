@@ -2,9 +2,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import 'field_group.dart';
+
 enum RenderType { input, numberInput, select, toggleSwitch, radio }
 
-class RenderFieldInfo {
+class RenderFieldInfo implements RenderField {
   String field;
   String section;
   String? name;
@@ -68,10 +70,10 @@ class _FieldChangeState extends State<FieldChange> {
     return Container(
       margin: EdgeInsets.only(bottom: 5.r),
       child: Card(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(0),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 20.r, horizontal: 40.r),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40.r),
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -115,15 +117,15 @@ class _FieldChangeState extends State<FieldChange> {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: SizedBox(
-                      width: 500.r,
+                      width: 300.r,
                       child: Text(
                         renderFieldInfo.name ?? '',
                         softWrap: true,
                         maxLines: null,
-                      ).fontSize(22.sp).fontWeight(FontWeight.bold),
+                      ).fontSize(14).fontWeight(FontWeight.bold),
                     ),
                   )),
-              10.horizontalSpaceRadius,
+              30.horizontalSpaceRadius,
               (renderType == RenderType.input ||
                       renderType == RenderType.numberInput)
                   ? Expanded(
@@ -217,7 +219,7 @@ class _FieldChangeState extends State<FieldChange> {
   // 渲染下拉组件
   Widget renderSelect(BuildContext context, RenderFieldInfo fieldInfo) {
     return SizedBox(
-      width: 500.r,
+      width: 400.r,
       child: ComboBox<String>(
         isExpanded: true,
         value: widget.showValue,
