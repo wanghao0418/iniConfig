@@ -2,13 +2,16 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 15:30:08
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 09:56:49
+ * @LastEditTime: 2023-06-25 14:19:50
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_connection/controller.dart
  * @Description: plc连接设置
  */
 import 'package:get/get.dart';
+import 'package:iniConfig/common/api/common.dart';
 
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class PlcConnectionController extends GetxController {
   PlcConnectionController();
@@ -49,16 +52,48 @@ class PlcConnectionController extends GetxController {
     return changedList.contains(field);
   }
 
-  save() {
-    changedList.clear();
-    update(["plc_connection"]);
+  query() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": plcConnection.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      plcConnection = PlcConnection.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
+
+  // 保存
+  save() async {
+    // 组装传参
+    List<Map<String, dynamic>> params = _makeParams();
+    print(params);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    if (res.success == true) {
+      // 保存成功
+      changedList.clear();
+      PopupMessage.showSuccessInfoBar('保存成功');
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
   }
 
   _initData() {
     update(["plc_connection"]);
   }
-
-  void onTap() {}
 
   // @override
   // void onInit() {
@@ -68,6 +103,7 @@ class PlcConnectionController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     _initData();
   }
 

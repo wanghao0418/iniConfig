@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class ShelfManagementLightController extends GetxController {
   ShelfManagementLightController();
@@ -50,12 +53,33 @@ class ShelfManagementLightController extends GetxController {
       changedList.add(field);
     }
     setFieldValue(field, value);
-    update(["shelf_management_light"]);
+    _initData();
   }
 
   void onSectionChange(String section) {
     currentSection.value = section;
-    update(["shelf_management_light"]);
+    _initData();
+  }
+
+  void getSectionList() async {
+    ResponseApiBody res = await CommonApi.getSectionList({
+      "params": [
+        {
+          "list_node": "ScanDevice",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 查询成功
+      var data = res.data;
+      sectionList = ((data as List).first as String).split('-');
+      currentSection = sectionList.isNotEmpty ? sectionList.first : "";
+      _initData();
+    } else {
+      // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
   }
 
   _initData() {
@@ -72,6 +96,7 @@ class ShelfManagementLightController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    getSectionList();
     _initData();
   }
 

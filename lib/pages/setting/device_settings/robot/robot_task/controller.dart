@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class RobotTaskController extends GetxController {
   RobotTaskController();
@@ -49,6 +52,16 @@ class RobotTaskController extends GetxController {
         field: "TaskType",
         name: "机器人可执行任务配置",
         renderType: RenderType.input),
+    RenderFieldInfo(
+        section: "RobotTaskConfig",
+        field: "TrackLubricationTaskExecTime",
+        name: "轨道润滑任务执行时间",
+        renderType: RenderType.input),
+    RenderFieldInfo(
+        section: "RobotTaskConfig",
+        field: "TrackLubricationTaskSpaceTime",
+        name: "轨道润滑任务间隔时间,单位：天",
+        renderType: RenderType.numberInput),
   ];
   List<String> changedList = [];
 
@@ -77,11 +90,48 @@ class RobotTaskController extends GetxController {
     update(["robot_task"]);
   }
 
+  query() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": robotTask.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      robotTask = RobotTask.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
+
+  // 保存
+  save() async {
+    // 组装传参
+    List<Map<String, dynamic>> params = _makeParams();
+    print(params);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    if (res.success == true) {
+      // 保存成功
+      changedList.clear();
+      PopupMessage.showSuccessInfoBar('保存成功');
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   _initData() {
     update(["robot_task"]);
   }
-
-  void save() {}
 
   // @override
   // void onInit() {
@@ -91,6 +141,7 @@ class RobotTaskController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     _initData();
   }
 
@@ -108,6 +159,8 @@ class RobotTask {
   String? robotTaskConfigRobotCarryWorkpieceTaskType;
   String? robotTaskConfigTransferUIShow;
   String? robotTaskConfigTaskType;
+  String? robotTaskConfigTrackLubricationTaskExecTime;
+  String? robotTaskConfigTrackLubricationTaskSpaceTime;
 
   RobotTask(
       {this.robotTaskConfigRobotClampType,
@@ -116,7 +169,9 @@ class RobotTask {
       this.robotTaskConfigOnJumpRobotTask,
       this.robotTaskConfigRobotCarryWorkpieceTaskType,
       this.robotTaskConfigTransferUIShow,
-      this.robotTaskConfigTaskType});
+      this.robotTaskConfigTaskType,
+      this.robotTaskConfigTrackLubricationTaskExecTime,
+      this.robotTaskConfigTrackLubricationTaskSpaceTime});
 
   RobotTask.fromJson(Map<String, dynamic> json) {
     robotTaskConfigRobotClampType = json['RobotTaskConfig/RobotClampType'];
@@ -129,6 +184,10 @@ class RobotTask {
         json['RobotTaskConfig/RobotCarryWorkpieceTaskType'];
     robotTaskConfigTransferUIShow = json['RobotTaskConfig/TransferUIShow'];
     robotTaskConfigTaskType = json['RobotTaskConfig/TaskType'];
+    robotTaskConfigTrackLubricationTaskExecTime =
+        json['RobotTaskConfig/TrackLubricationTaskExecTime'];
+    robotTaskConfigTrackLubricationTaskSpaceTime =
+        json['RobotTaskConfig/TrackLubricationTaskSpaceTime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -144,6 +203,10 @@ class RobotTask {
         this.robotTaskConfigRobotCarryWorkpieceTaskType;
     data['RobotTaskConfig/TransferUIShow'] = this.robotTaskConfigTransferUIShow;
     data['RobotTaskConfig/TaskType'] = this.robotTaskConfigTaskType;
+    data['RobotTaskConfig/TrackLubricationTaskExecTime'] =
+        this.robotTaskConfigTrackLubricationTaskExecTime;
+    data['RobotTaskConfig/TrackLubricationTaskSpaceTime'] =
+        this.robotTaskConfigTrackLubricationTaskSpaceTime;
     return data;
   }
 }

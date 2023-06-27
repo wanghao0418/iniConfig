@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
+import 'package:iniConfig/common/api/plc.dart';
 
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class PlcCommunicationProtocolController extends GetxController {
   PlcCommunicationProtocolController();
@@ -525,7 +528,44 @@ class PlcCommunicationProtocolController extends GetxController {
     update(["plc_communication_protocol"]);
   }
 
-  void save() {}
+  query() async {
+    ResponseApiBody res = await PlcApi.fieldQuery({
+      "params": plcCommunicationProtocol.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      plcCommunicationProtocol = PlcCommunicationProtocol.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
+
+  // 保存
+  save() async {
+    // 组装传参
+    List<Map<String, dynamic>> params = _makeParams();
+    print(params);
+    ResponseApiBody res = await PlcApi.fieldUpdate({"params": params});
+    if (res.success == true) {
+      // 保存成功
+      changedList.clear();
+      PopupMessage.showSuccessInfoBar('保存成功');
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
 
   // @override
   // void onInit() {
@@ -535,6 +575,7 @@ class PlcCommunicationProtocolController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     _initData();
   }
 

@@ -2,15 +2,18 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 17:30:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 17:48:33
+ * @LastEditTime: 2023-06-25 18:05:25
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/out_line_mac/widgets/out_line_mac.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_change.dart';
 import '../../../../../../common/components/field_group.dart';
+import '../../../../../../common/utils/http.dart';
+import '../../../../../../common/utils/popup_message.dart';
 
 class OutLineMac extends StatefulWidget {
   const OutLineMac({Key? key, required this.section}) : super(key: key);
@@ -156,11 +159,48 @@ class _OutLineMacState extends State<OutLineMac> {
         element.section = widget.section;
       } else if (element is RenderFieldGroup) {
         for (var element in element.children) {
-          element.section = widget.section;
+          if (element is RenderFieldInfo) element.section = widget.section;
         }
       }
     }
     setState(() {});
+  }
+
+  getSectionDetail() async {
+    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    if (res.success == true) {
+      outLineMacInfo = OutLineMacInfo.fromSectionJson(res.data, widget.section);
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
+    var dataList = _makeParams();
+    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  test() {
+    PopupMessage.showWarningInfoBar('暂未开放');
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
   }
 
   @override
@@ -169,6 +209,7 @@ class _OutLineMacState extends State<OutLineMac> {
     super.initState();
     outLineMacInfo = OutLineMacInfo(section: widget.section);
     initMenu();
+    getSectionDetail();
   }
 
   @override
@@ -176,36 +217,54 @@ class _OutLineMacState extends State<OutLineMac> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      child: SingleChildScrollView(
-          child: Column(
+      child: Column(
         children: [
-          ...macInfoMenuList.map((e) {
-            if (e is RenderFieldGroup) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 5.r),
-                child: FieldGroup(
-                  groupName: e.groupName,
-                  getValue: getFieldValue,
-                  children: e.children,
-                  isChanged: isChanged,
-                  onChanged: (field, value) {
-                    onFieldChange(field, value);
-                  },
-                ),
-              );
-            } else {
-              return FieldChange(
-                renderFieldInfo: e as RenderFieldInfo,
-                showValue: getFieldValue(e.fieldKey),
-                isChanged: isChanged(e.fieldKey),
-                onChanged: (field, value) {
-                  onFieldChange(field, value);
-                },
-              );
-            }
-          }).toList()
+          CommandBarCard(
+              child: CommandBar(primaryItems: [
+            CommandBarButton(
+                label: Text('保存'),
+                onPressed: save,
+                icon: Icon(FluentIcons.save)),
+            CommandBarSeparator(),
+            CommandBarButton(
+                label: Text('测试'),
+                onPressed: save,
+                icon: Icon(FluentIcons.test_plan)),
+          ])),
+          5.verticalSpacingRadius,
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Column(
+            children: [
+              ...macInfoMenuList.map((e) {
+                if (e is RenderFieldGroup) {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 5.r),
+                    child: FieldGroup(
+                      groupName: e.groupName,
+                      getValue: getFieldValue,
+                      children: e.children,
+                      isChanged: isChanged,
+                      onChanged: (field, value) {
+                        onFieldChange(field, value);
+                      },
+                    ),
+                  );
+                } else {
+                  return FieldChange(
+                    renderFieldInfo: e as RenderFieldInfo,
+                    showValue: getFieldValue(e.fieldKey),
+                    isChanged: isChanged(e.fieldKey),
+                    onChanged: (field, value) {
+                      onFieldChange(field, value);
+                    },
+                  );
+                }
+              }).toList()
+            ],
+          )))
         ],
-      )),
+      ),
     );
   }
 }

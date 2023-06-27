@@ -2,15 +2,19 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 10:09:31
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 15:22:17
+ * @LastEditTime: 2023-06-27 10:29:53
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/components/field_subTitle.dart';
 
+import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_change.dart';
 import '../../../../../../common/components/field_group.dart';
+import '../../../../../../common/utils/http.dart';
+import '../../../../../../common/utils/popup_message.dart';
 
 class MacProgramSetting extends StatefulWidget {
   const MacProgramSetting({Key? key, required this.section}) : super(key: key);
@@ -30,13 +34,25 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         name: "程序文件位置设置",
         renderType: RenderType.radio,
         options: {"ftp": "1", "共享目录或本地": "2"}),
+    RenderFieldInfo(
+      field: 'ServiceIP',
+      section: 'PrgServerInfo',
+      name: "ftp或共享文件夹的IP",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'SrcPrgExtern',
+      section: 'PrgServerInfo',
+      name: "各系统类型对应的服务器上的源程式后缀",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ExecPrgExtern',
+      section: 'PrgServerInfo',
+      name: "各系统类型对应的服务器上的执行程式后缀",
+      renderType: RenderType.input,
+    ),
     RenderFieldGroup(groupName: "FTP登陆设置", children: [
-      RenderFieldInfo(
-        field: 'ServiceIP',
-        section: 'PrgServerInfo',
-        name: "FTP IP",
-        renderType: RenderType.input,
-      ),
       RenderFieldInfo(
         field: 'Port',
         section: 'PrgServerInfo',
@@ -62,7 +78,20 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         renderType: RenderType.input,
       ),
     ]),
-    RenderFieldGroup(groupName: "源程序命名规则设置(不带拓展名)", children: [
+    RenderFieldSubTitle(title: "检测"),
+    RenderFieldGroup(groupName: "源程序路径", children: [
+      RenderFieldInfo(
+        field: 'CmmElecPointPath',
+        section: 'PrgServerInfo',
+        name: "电极检测取点文件路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStPointPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测取点文件路径",
+        renderType: RenderType.path,
+      ),
       RenderFieldInfo(
         field: 'SrcCmmElecPonitFileName',
         section: 'PrgServerInfo',
@@ -75,6 +104,73 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         name: "钢件源取点文件的命名规则，PartFileName或者ELECSN",
         renderType: RenderType.input,
       ),
+      RenderFieldInfo(
+        field: 'CmmElecPointFileExtern',
+        section: 'PrgServerInfo',
+        name: "电极检测取点文件后缀",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStPointFileExtern',
+        section: 'PrgServerInfo',
+        name: "钢件检测取点文件后缀",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CmmElecSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极检测原始程序路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStSrcPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测原始程序路径",
+        renderType: RenderType.path,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "执行程序", children: [
+      RenderFieldInfo(
+        field: 'CmmElecExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "电极检测执行程式路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStExecPrgPath',
+        section: 'PrgServerInfo',
+        name: "钢件检测执行程式路径",
+        renderType: RenderType.path,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "蔡司专属", children: [
+      RenderFieldInfo(
+        field: 'CmmZiessTcpCopySrcPath',
+        section: 'PrgServerInfo',
+        name: "拷贝的源程序路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmZiessTcpCopyDesPath',
+        section: 'PrgServerInfo',
+        name: "拷贝的目标路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmElecReportSavePath',
+        section: 'PrgServerInfo',
+        name: "电极结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmStReportSavePath',
+        section: 'PrgServerInfo',
+        name: "钢件结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
+        renderType: RenderType.path,
+      ),
+    ]),
+    RenderFieldSubTitle(title: "加工"),
+    RenderFieldGroup(groupName: "源程序名称", children: [
       RenderFieldInfo(
         field: 'SrcCncElecPrgName',
         section: 'PrgServerInfo',
@@ -93,14 +189,8 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         name: "钢件源车工程序名命名规则",
         renderType: RenderType.input,
       ),
-      RenderFieldInfo(
-        field: 'SrcEdmElecPrgName',
-        section: 'PrgServerInfo',
-        name: "电极源放电程序名命名规则",
-        renderType: RenderType.input,
-      ),
     ]),
-    RenderFieldGroup(groupName: "执行程序命名规则设置(不带拓展名)", children: [
+    RenderFieldGroup(groupName: "执行程序名称", children: [
       RenderFieldInfo(
         field: 'ExecCncElecPrgName',
         section: 'PrgServerInfo',
@@ -119,169 +209,90 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         name: "钢件车工执行程序名命名规则",
         renderType: RenderType.input,
       ),
-      RenderFieldInfo(
-        field: 'ExecEdmElecPrgName',
-        section: 'PrgServerInfo',
-        name: "电极放电执行程序名命名规则",
-        renderType: RenderType.input,
-      ),
-    ]),
-    RenderFieldGroup(groupName: "文件扩展名设置", children: [
-      RenderFieldInfo(
-        field: 'CmmElecPointFileExtern',
-        section: 'PrgServerInfo',
-        name: "电极检测取点文件后缀",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'CmmStPointFileExtern',
-        section: 'PrgServerInfo',
-        name: "钢件检测取点文件后缀",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'SrcPrgExtern',
-        section: 'PrgServerInfo',
-        name: "各系统类型对应的服务器上的源程式后缀",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'ExecPrgExtern',
-        section: 'PrgServerInfo',
-        name: "各系统类型对应的服务器上的执行程式后缀",
-        renderType: RenderType.input,
-      ),
     ]),
     RenderFieldGroup(groupName: "源程序路径", children: [
-      RenderFieldInfo(
-        field: 'CmmElecPointPath',
-        section: 'PrgServerInfo',
-        name: "电极检测取点文件路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'CmmStPointPath',
-        section: 'PrgServerInfo',
-        name: "钢件检测取点文件路径",
-        renderType: RenderType.input,
-      ),
       RenderFieldInfo(
         field: 'CncElecSrcPrgPath',
         section: 'PrgServerInfo',
         name: "电极加工原始程序路径",
-        renderType: RenderType.input,
+        renderType: RenderType.path,
       ),
       RenderFieldInfo(
         field: 'McncStSrcPrgPath',
         section: 'PrgServerInfo',
         name: "钢件加工原始程序路径",
-        renderType: RenderType.input,
+        renderType: RenderType.path,
       ),
       RenderFieldInfo(
         field: 'LcncStSrcPrgPath',
         section: 'PrgServerInfo',
         name: "钢件车工原始程序路径",
-        renderType: RenderType.input,
+        renderType: RenderType.path,
       ),
-      RenderFieldInfo(
-        field: 'CmmElecSrcPrgPath',
-        section: 'PrgServerInfo',
-        name: "电极检测原始程序路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'CmmStSrcPrgPath',
-        section: 'PrgServerInfo',
-        name: "钢件检测原始程序路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'EdmElecSrcPrgPath',
-        section: 'PrgServerInfo',
-        name: "电极放电原始程序路径",
-        renderType: RenderType.input,
-      ),
+      // RenderFieldInfo(
+      //   field: 'SrcEdmElecPrgName',
+      //   section: 'PrgServerInfo',
+      //   name: "电极源放电程序名命名规则",
+      //   renderType: RenderType.input,
+      // ),
     ]),
     RenderFieldGroup(groupName: "执行程序路径", children: [
       RenderFieldInfo(
         field: 'CncElecExecPrgPath',
         section: 'PrgServerInfo',
         name: "电极加工执行程式文件路径",
-        renderType: RenderType.input,
+        renderType: RenderType.path,
       ),
       RenderFieldInfo(
         field: 'CncStExecPrgPath',
         section: 'PrgServerInfo',
         name: "钢件加工执行程式文件路径",
-        renderType: RenderType.input,
+        renderType: RenderType.path,
       ),
       RenderFieldInfo(
         field: 'LcncStExecPrgPath',
         section: 'PrgServerInfo',
         name: "钢件车工执行程式文件路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'MacCheckResultFileName',
+        section: 'PrgServerInfo',
+        name: "在机检测结果程序拷贝到目标路径的命名",
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
-        field: 'CmmElecExecPrgPath',
+        field: 'CopyMacCheckResultFilePath',
         section: 'PrgServerInfo',
-        name: "电极检测执行程式路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'CmmStExecPrgPath',
-        section: 'PrgServerInfo',
-        name: "钢件检测执行程式路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'EdmPrgPath',
-        section: 'PrgServerInfo',
-        name: "电极放电执行程式文件路径",
-        renderType: RenderType.input,
+        name: "拷贝在机检测结果文件所到的路径",
+        renderType: RenderType.path,
       ),
     ]),
-    RenderFieldGroup(groupName: "接收机床完成结果的路径", children: [
-      RenderFieldInfo(
-        field: 'CmmElecReportSavePath',
-        section: 'PrgServerInfo',
-        name: "电极结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'CmmStReportSavePath',
-        section: 'PrgServerInfo',
-        name: "钢件结果文件拷贝至eact服务器判断是否合格(目前蔡司专用)",
-        renderType: RenderType.input,
-      ),
-    ]),
+    RenderFieldSubTitle(title: "放电"),
     RenderFieldInfo(
-      field: 'MacCheckResultFileName',
+      field: 'EdmElecPrgName',
       section: 'PrgServerInfo',
-      name: "在机检测结果程序拷贝到目标路径的命名",
+      name: "电极源放电程序名命名规则",
       renderType: RenderType.input,
     ),
     RenderFieldInfo(
-      field: 'CopyMacCheckResultFilePath',
+      field: 'ExecEdmElecPrgName',
       section: 'PrgServerInfo',
-      name: "拷贝在机检测结果文件所到的路径",
+      name: "电极放电执行程序名命名规则",
       renderType: RenderType.input,
     ),
-    RenderFieldGroup(
-        groupName: "蔡司机床的TCP模式的驱动时由于程序名称长度的限制需要重命名拷贝进行处理",
-        children: [
-          RenderFieldInfo(
-            field: 'CmmZiessTcpCopySrcPath',
-            section: 'PrgServerInfo',
-            name: "拷贝的源程序路径",
-            renderType: RenderType.input,
-          ),
-          RenderFieldInfo(
-            field: 'CmmZiessTcpCopyDesPath',
-            section: 'PrgServerInfo',
-            name: "拷贝的目标路径",
-            renderType: RenderType.input,
-          ),
-        ])
+    RenderFieldInfo(
+      field: 'EdmElecSrcPrgPath',
+      section: 'PrgServerInfo',
+      name: "电极放电原始程序路径",
+      renderType: RenderType.path,
+    ),
+    RenderFieldInfo(
+      field: 'EdmPrgPath',
+      section: 'PrgServerInfo',
+      name: "电极放电执行程式文件路径",
+      renderType: RenderType.path,
+    ),
   ];
   List<String> changedList = [];
 
@@ -316,11 +327,48 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         element.section = widget.section;
       } else if (element is RenderFieldGroup) {
         for (var element in element.children) {
-          element.section = widget.section;
+          if (element is RenderFieldInfo) element.section = widget.section;
         }
       }
     }
     setState(() {});
+  }
+
+  getSectionDetail() async {
+    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    if (res.success == true) {
+      prgServerInfo = PrgServerInfo.fromSectionJson(res.data, widget.section);
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
+    var dataList = _makeParams();
+    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  test() {
+    PopupMessage.showWarningInfoBar('暂未开放');
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
   }
 
   @override
@@ -329,6 +377,7 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     super.initState();
     prgServerInfo = PrgServerInfo(section: widget.section);
     initMenu();
+    getSectionDetail();
   }
 
   @override
@@ -336,36 +385,61 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      child: SingleChildScrollView(
-          child: Column(
+      child: Column(
         children: [
-          ...menuList.map((e) {
-            if (e is RenderFieldGroup) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 5.r),
-                child: FieldGroup(
-                  groupName: e.groupName,
-                  getValue: getFieldValue,
-                  children: e.children,
-                  isChanged: isChanged,
-                  onChanged: (field, value) {
-                    onFieldChange(field, value);
-                  },
-                ),
-              );
-            } else {
-              return FieldChange(
-                renderFieldInfo: e as RenderFieldInfo,
-                showValue: getFieldValue(e.fieldKey),
-                isChanged: isChanged(e.fieldKey),
-                onChanged: (field, value) {
-                  onFieldChange(field, value);
-                },
-              );
-            }
-          }).toList()
+          CommandBarCard(
+              child: CommandBar(primaryItems: [
+            CommandBarButton(
+                label: Text('保存'),
+                onPressed: save,
+                icon: Icon(FluentIcons.save)),
+            CommandBarSeparator(),
+            CommandBarButton(
+                label: Text('测试'),
+                onPressed: save,
+                icon: Icon(FluentIcons.test_plan)),
+          ])),
+          5.verticalSpacingRadius,
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Column(
+            children: [
+              ...menuList.map((e) {
+                if (e is RenderFieldGroup) {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 5.r),
+                    child: FieldGroup(
+                      groupName: e.groupName,
+                      getValue: getFieldValue,
+                      children: e.children,
+                      isChanged: isChanged,
+                      onChanged: (field, value) {
+                        onFieldChange(field, value);
+                      },
+                    ),
+                  );
+                } else if (e is RenderFieldSubTitle) {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 5.r),
+                    child: FieldSubTitle(
+                      title: e.title,
+                    ),
+                  );
+                } else {
+                  return FieldChange(
+                    renderFieldInfo: e as RenderFieldInfo,
+                    showValue: getFieldValue(e.fieldKey),
+                    isChanged: isChanged(e.fieldKey),
+                    onChanged: (field, value) {
+                      onFieldChange(field, value);
+                    },
+                  );
+                }
+              }).toList()
+            ],
+          )))
         ],
-      )),
+      ),
     );
   }
 }
@@ -412,6 +486,7 @@ class PrgServerInfo {
   String? copyMacCheckResultFilePath;
   String? cmmZiessTcpCopySrcPath;
   String? cmmZiessTcpCopyDesPath;
+  String? edmElecPrgName;
 
   PrgServerInfo(
       {required this.section,
@@ -454,7 +529,8 @@ class PrgServerInfo {
       this.macCheckResultFileName,
       this.copyMacCheckResultFilePath,
       this.cmmZiessTcpCopySrcPath,
-      this.cmmZiessTcpCopyDesPath});
+      this.cmmZiessTcpCopyDesPath,
+      this.edmElecPrgName});
 
   PrgServerInfo.fromJson(Map<String, dynamic> json, this.section) {
     fileServerType = json['FileServerType'];
@@ -497,6 +573,7 @@ class PrgServerInfo {
     copyMacCheckResultFilePath = json['CopyMacCheckResultFilePath'];
     cmmZiessTcpCopySrcPath = json['CmmZiessTcpCopySrcPath'];
     cmmZiessTcpCopyDesPath = json['CmmZiessTcpCopyDesPath'];
+    edmElecPrgName = json['EdmElecPrgName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -541,6 +618,7 @@ class PrgServerInfo {
     data['CopyMacCheckResultFilePath'] = this.copyMacCheckResultFilePath;
     data['CmmZiessTcpCopySrcPath'] = this.cmmZiessTcpCopySrcPath;
     data['CmmZiessTcpCopyDesPath'] = this.cmmZiessTcpCopyDesPath;
+    data['EdmElecPrgName'] = this.edmElecPrgName;
     return data;
   }
 
@@ -585,6 +663,7 @@ class PrgServerInfo {
     copyMacCheckResultFilePath = json['$section/CopyMacCheckResultFilePath'];
     cmmZiessTcpCopySrcPath = json['$section/CmmZiessTcpCopySrcPath'];
     cmmZiessTcpCopyDesPath = json['$section/CmmZiessTcpCopyDesPath'];
+    edmElecPrgName = json['$section/EdmElecPrgName'];
   }
 
   Map<String, dynamic> toSectionMap() {
@@ -631,6 +710,7 @@ class PrgServerInfo {
         this.copyMacCheckResultFilePath;
     data['$section/CmmZiessTcpCopySrcPath'] = this.cmmZiessTcpCopySrcPath;
     data['$section/CmmZiessTcpCopyDesPath'] = this.cmmZiessTcpCopyDesPath;
+    data['$section/EdmElecPrgName'] = this.edmElecPrgName;
     return data;
   }
 }

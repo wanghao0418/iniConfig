@@ -1,10 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart' hide Tab;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/components/field_change.dart';
+import 'package:iniConfig/common/index.dart';
 
+import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_group.dart';
+import '../../../../../../common/utils/http.dart';
+import '../../../../../../common/utils/popup_message.dart';
 import '../../../../../system/home/widgets/cached_page_view.dart';
 import '../../../../../system/home/widgets/fluent_tab.dart';
+import 'enum.dart';
 
 class MacInfoSetting extends StatefulWidget {
   const MacInfoSetting(
@@ -21,81 +26,50 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
   late MacInfo macInfo;
   ValueNotifier<int> currentTabIndex = ValueNotifier<int>(0);
   late PageController pageController;
+  // 机床信息
   List<RenderField> macInfoMenuList = [
-    RenderFieldGroup(groupName: "连接参数", children: [
-      RenderFieldInfo(
-        field: 'MachineNum',
-        section: 'MachineInfo',
-        name: "机床号",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'ServiceAddr',
-        section: 'MachineInfo',
-        name: "机床IP",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'ServicePort',
-        section: 'MachineInfo',
-        name: "机床端口",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'ServiceMonitorPort',
-        section: 'MachineInfo',
-        name: "机床的第二个端口（一般不用）",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MachineUser',
-        section: 'MachineInfo',
-        name: "机床用户",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MachinePassowrd',
-        section: 'MachineInfo',
-        name: "机床密码",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MacSystemVersion',
-        section: 'MachineInfo',
-        name: "机床系统版本",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MachineAxes',
-        section: 'MachineInfo',
-        name: "机床轴数",
-        renderType: RenderType.numberInput,
-      ),
-    ]),
+    RenderFieldInfo(
+      field: 'MachineNum',
+      section: 'MachineInfo',
+      name: "机床号",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ServiceAddr',
+      section: 'MachineInfo',
+      name: "机床IP",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ServicePort',
+      section: 'MachineInfo',
+      name: "机床端口",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ServiceMonitorPort',
+      section: 'MachineInfo',
+      name: "机床的第二个端口（一般不用）",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'MachineUser',
+      section: 'MachineInfo',
+      name: "机床用户",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'MachinePassowrd',
+      section: 'MachineInfo',
+      name: "机床密码",
+      renderType: RenderType.input,
+    ),
     RenderFieldInfo(
       field: 'MachineName',
       section: 'MachineInfo',
       name: "机床名称，不同机床间不能重复",
       renderType: RenderType.input,
     ),
-    RenderFieldInfo(
-        field: 'MacDefaultConnect',
-        section: 'MachineInfo',
-        name: "默认连接",
-        renderType: RenderType.select,
-        options: {"无": "0", "自动触发上线": "1", "上线后校验钢件是否开料": "2"}),
-    RenderFieldInfo(
-        field: 'MachineType',
-        section: 'MachineInfo',
-        name: "机床类型",
-        renderType: RenderType.select,
-        options: {
-          "CNC": "CNC",
-          "CMM": "CMM",
-          "EDM": "EDM",
-          "CLEAN": "CLEAN",
-          "DRY": "DRY"
-        }),
     RenderFieldInfo(
         field: 'MacSystemType',
         section: 'MachineInfo',
@@ -120,6 +94,12 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           "大隈（wei）": "OKUMA"
         }),
     RenderFieldInfo(
+      field: 'MacSystemVersion',
+      section: 'MachineInfo',
+      name: "机床系统版本",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
         field: 'MacBrand',
         section: 'MachineInfo',
         name: "机床品牌",
@@ -142,9 +122,28 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           "广数": "GSK",
           "大隈（wei）": "OKUMA"
         }),
+    RenderFieldInfo(
+      field: 'MachineAxes',
+      section: 'MachineInfo',
+      name: "机床轴数",
+      renderType: RenderType.numberInput,
+    ),
   ];
+  // 自动化相关
   List<RenderField> eatmSettingMenuList = [
-    RenderFieldGroup(groupName: "自动化相关", children: [
+    RenderFieldGroup(groupName: "上下料相关", isExpanded: true, children: [
+      RenderFieldInfo(
+          field: 'MachineType',
+          section: 'MachineInfo',
+          name: "机床类型",
+          renderType: RenderType.select,
+          options: {
+            "CNC": "CNC",
+            "CMM": "CMM",
+            "EDM": "EDM",
+            "CLEAN": "CLEAN",
+            "DRY": "DRY"
+          }),
       RenderFieldInfo(
         field: 'ChuckNum',
         section: 'MachineInfo',
@@ -163,40 +162,26 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           name: "加工机床程序调用模式",
           renderType: RenderType.radio,
           options: {"MAIN": "MAIN", "M198": "M198", "M98": "M98"}),
-    ]),
-    RenderFieldGroup(groupName: "程序管理", children: [
       RenderFieldInfo(
-        field: 'SrcPrgServerNodeName',
-        section: 'MachineInfo',
-        name: "源程序服务节点名称",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'SrcPrgLocalNodeName',
-        section: 'MachineInfo',
-        name: "源程序本地节点名称",
-        renderType: RenderType.input,
-      ),
+          field: 'MacDefaultConnect',
+          section: 'MachineInfo',
+          name: "软件开始时触发",
+          renderType: RenderType.select,
+          options: {"无": "0", "自动触发上线": "1", "上线后校验钢件是否开料": "2"}),
       RenderFieldInfo(
         field: 'ExecPrgServerNodeName',
         section: 'MachineInfo',
         name: "执行程序服务节点名称",
-        renderType: RenderType.input,
+        renderType: RenderType.choose,
+        chooseType: ChooseType.macProgramSource,
       ),
       RenderFieldInfo(
         field: 'ExecPrgLocalNodeName',
         section: 'MachineInfo',
         name: "执行程序本地节点名称",
-        renderType: RenderType.input,
+        renderType: RenderType.choose,
+        chooseType: ChooseType.localStorePath,
       ),
-      RenderFieldInfo(
-        field: 'OutPutNodeName',
-        section: 'MachineInfo',
-        name: "执行程序本地节点名称",
-        renderType: RenderType.input,
-      ),
-    ]),
-    RenderFieldGroup(groupName: "下载上传相关", children: [
       RenderFieldInfo(
           field: 'MainPrgUpMode',
           section: 'MachineInfo',
@@ -204,55 +189,16 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           renderType: RenderType.select,
           options: {"无需上传": "0", "FTP上传": "1", "机床共享目录拷贝": "2", "API上传": "3"}),
       RenderFieldInfo(
-          field: 'SubPrgUpMode',
-          section: 'MachineInfo',
-          name: "子程序上传方式",
-          renderType: RenderType.select,
-          options: {
-            "无子程序调用": "0",
-            "FTP上传": "1",
-            "机床共享目录拷贝": "2",
-            "API上传": "3"
-          }),
-      RenderFieldInfo(
-          field: 'SubUpPrgNumbarMode',
-          section: 'MachineInfo',
-          name: "子程序个数上传模式",
-          renderType: RenderType.select,
-          options: {
-            "默认按照顺序全部上传": "0",
-            "加工完成一个上传一个": "1",
-            "加工中上传": "2",
-          }),
-      RenderFieldInfo(
-        field: 'MacMainPrgPath',
-        section: 'MachineInfo',
-        name: "机床主程式上传路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MacSubPrgPath',
-        section: 'MachineInfo',
-        name: "机床子程式上传路径",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
         field: 'MainPrgName',
         section: 'MachineInfo',
         name: "机床主程序命名",
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
-        field: 'MacFirstSubPrgName',
+        field: 'MacMainPrgPath',
         section: 'MachineInfo',
-        name: "机床子程序命名",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'MacOriginPrgName',
-        section: 'MachineInfo',
-        name: "机床原点程式命名",
-        renderType: RenderType.input,
+        name: "机床主程式上传路径",
+        renderType: RenderType.path,
       ),
       RenderFieldInfo(
         field: 'FileExtension',
@@ -261,25 +207,861 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
-        field: 'CleanPrgName',
+        field: 'AutoOfflineType',
         section: 'MachineInfo',
-        name: "机床吹气清洁程序命名",
+        name: "单个工件加工完后机床下线控制",
+        renderType: RenderType.radio,
+        options: {
+          "不下线": "0",
+          "下料后下线": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'MacFenceDoorExistMark',
+        section: 'MachineInfo',
+        name: "机床围栏门存在标志",
+        renderType: RenderType.radio,
+        options: {
+          "其他项目": "0",
+          "联塑项目": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'MachineAheadTask',
+        section: 'MachineInfo',
+        name: "提前上料标志",
+        renderType: RenderType.radio,
+        options: {
+          "不提前上料": "0",
+          "提前上料": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'MachineAheadLine',
+        section: 'MachineInfo',
+        name: "提前上料的行数或者蔡司提前上料的点数",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'MacExceptionHandle',
+        section: 'MachineInfo',
+        name: "机床异常操作",
+        renderType: RenderType.radio,
+        options: {
+          "异常后暂停": "0",
+          "异常后下线,并清空卡盘": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'MacFinishNotToCleanMac',
+        section: 'MachineInfo',
+        name: "机床完成是否上清洗机",
+        renderType: RenderType.radio,
+        options: {
+          "上清洗机": "0",
+          "不上清洗机": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'MacStartWaitTime',
+        section: 'MachineInfo',
+        name: "机床启动后等待时长",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'ChuckScanJustAnyone',
+        section: 'MachineInfo',
+        name: "标记初始上料前，机床内的卡盘是否需全部扫描。还是任意扫描某一个卡盘即可。",
+        renderType: RenderType.radio,
+        options: {
+          "默认全部扫描": "0",
+          "只扫描一个": "1",
+        },
+      ),
+      RenderFieldInfo(
+        field: 'IsAutoMachineOnline',
+        section: 'MachineInfo',
+        name: "机床上线按钮和软件界面的上线按钮是否关联上线",
+        renderType: RenderType.radio,
+        options: {
+          "不关联": "0",
+          "关联": "1",
+        },
+      ),
+    ]),
+  ];
+  // 加工相关
+  List<RenderField> processingMenuList = [
+    RenderFieldInfo(
+        field: 'SubPrgUpMode',
+        section: 'MachineInfo',
+        name: "子程序上传方式",
+        renderType: RenderType.select,
+        options: {"无子程序调用": "0", "FTP上传": "1", "机床共享目录拷贝": "2", "API上传": "3"}),
+    RenderFieldInfo(
+        field: 'SubUpPrgNumbarMode',
+        section: 'MachineInfo',
+        name: "子程序个数上传模式",
+        renderType: RenderType.select,
+        options: {
+          "默认按照顺序全部上传": "0",
+          "加工完成一个上传一个": "1",
+          "加工中上传": "2",
+        }),
+    RenderFieldInfo(
+      field: 'MacSubPrgPath',
+      section: 'MachineInfo',
+      name: "机床子程式上传路径",
+      renderType: RenderType.path,
+    ),
+    RenderFieldInfo(
+      field: 'MacFirstSubPrgName',
+      section: 'MachineInfo',
+      name: "机床子程序命名",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'CleanPrgName',
+      section: 'MachineInfo',
+      name: "机床吹气清洁程序命名",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'CleanChuckPrgName',
+      section: 'MachineInfo',
+      name: "机床清洁卡盘程序命名",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+        field: 'AutoDoor',
+        section: 'MachineInfo',
+        name: "自动门",
+        renderType: RenderType.radio,
+        options: {
+          "机床自带自动门": "1",
+          "EATM PLC控制": "2",
+        }),
+    RenderFieldInfo(
+      field: 'OpenDoorComm',
+      section: 'MachineInfo',
+      name: "机床开门M指令",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'CloseDoorComm',
+      section: 'MachineInfo',
+      name: "机床关门M指令",
+      renderType: RenderType.input,
+    ),
+    RenderFieldGroup(groupName: "FTP信息", children: [
+      RenderFieldInfo(
+        field: 'FtpAddr',
+        section: 'MachineInfo',
+        name: "机床FTP服务器IP",
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
-        field: 'CleanChuckPrgName',
+        field: 'FtpPort',
         section: 'MachineInfo',
-        name: "机床清洁卡盘程序命名",
+        name: "机床FTP服务器端口",
         renderType: RenderType.input,
       ),
+      RenderFieldInfo(
+        field: 'FtpUser',
+        section: 'MachineInfo',
+        name: "机床FTP服务器用户名",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FtpPwd',
+        section: 'MachineInfo',
+        name: "机床FTP服务器密码",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FtpCodeType',
+        section: 'MachineInfo',
+        name: "机床FTP编码类型",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FtpTransferType',
+        section: 'MachineInfo',
+        name: "读取FTP信息所使用的本地编码",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FtpPath',
+        section: 'MachineInfo',
+        name: "机床本身FTP服务器程式的默认访问路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'FtpRootDir',
+        section: 'MachineInfo',
+        name: "机床FTP根目录",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "刀具设置", children: [
+      RenderFieldInfo(
+        field: 'ToolMagazineSize',
+        section: 'MachineInfo',
+        name: "刀库上限",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'MacExistToolManagement',
+        section: 'MachineInfo',
+        name: "机床是否存在刀具管理",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'ToolOpenPermissionMark',
+        section: 'MachineInfo',
+        name: "机床刀具权限 开通标志",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'MacUseOutToolMark',
+        section: 'MachineInfo',
+        name: "机床使用机外刀库标志",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'MacOutToolUsedToolNum',
+        section: 'MachineInfo',
+        name: "机外刀具在机内使用的刀具号",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'ChangeToolName',
+        section: 'MachineInfo',
+        name: "换刀程序名称",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'ToolLifeOverflowOffineMark',
+          section: 'MachineInfo',
+          name: "刀具寿命到期机床离线标志",
+          renderType: RenderType.radio,
+          options: {"不离线": "0", "离线": "1"}),
+      RenderFieldInfo(
+        field: 'WorkTimeLowerLimit',
+        section: 'MachineInfo',
+        name: "工作时间最低限制",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'MacCleanToolPrgName',
+        section: 'MachineInfo',
+        name: "机床清洁刀具程序名称",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "宏变量读取设置", children: [
+      RenderFieldInfo(
+          field: 'MacReadAxesMacroMark',
+          section: 'MachineInfo',
+          name: "读取机床轴的宏变量标志",
+          renderType: RenderType.radio,
+          options: {"不读取": "0", "读取": "1"}),
+      RenderFieldInfo(
+        field: 'IsWriteAxesMacroToSqlDB',
+        section: 'MachineInfo',
+        name: "是否将轴宏变量写入数据库",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'ReadMacroPosX',
+        section: 'MachineInfo',
+        name: "X方向偏移量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'ReadMacroPosY',
+        section: 'MachineInfo',
+        name: "Y方向偏移量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'ReadMacroPosZ',
+        section: 'MachineInfo',
+        name: "Z方向偏移量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+          field: 'MacReadRotateMacroMark',
+          section: 'MachineInfo',
+          name: "读取机床旋转的宏变量标志",
+          renderType: RenderType.radio,
+          options: {"不读取": "0", "读取": "1"}),
+      RenderFieldInfo(
+        field: 'IsWriteRotateMacroToSqlDB',
+        section: 'MachineInfo',
+        name: "是否将旋转宏变量写入数据库",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'ReadRotateMacroPos',
+        section: 'MachineInfo',
+        name: "R方向(旋转)偏移量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'RotateOffsetAddMode',
+        section: 'MachineInfo',
+        name: "是否添加旋转角度偏移量",
+        renderType: RenderType.select,
+        options: {"不添加": "0", "必须添加(无数据则报错)": "1", "自动添加(有数据则添加，无数据则不添加)": "2"},
+      ),
+      RenderFieldInfo(
+        field: 'RotateOffsetAddPos',
+        section: 'MachineInfo',
+        name: "添加位置",
+        renderType: RenderType.select,
+        options: {"插入至标识文本上方": "1", "插入至标识文本下方": "2"},
+      ),
+    ]),
+    RenderFieldGroup(groupName: "在机检测相关配置", children: [
+      RenderFieldInfo(
+          field: 'CopyCmmResultMark',
+          section: 'MachineInfo',
+          name: "检测结果是否需要拷贝到服务器",
+          renderType: RenderType.radio,
+          options: {"不拷贝": "0", "拷贝至服务器": "1"}),
+      RenderFieldInfo(
+        field: 'ReadMacroStartPos',
+        section: 'MachineInfo',
+        name: "读取 检测点开始 宏变量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'MacCmmCheckPosMacroPos',
+        section: 'MachineInfo',
+        name: "读取宏变量检测点位置",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacCmmResultMacroPos',
+        section: 'MachineInfo',
+        name: "读取 检测结果 宏变量位置",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+          field: 'CmmResultFilePathPos',
+          section: 'MachineInfo',
+          name: "检测结果文件路径位置",
+          renderType: RenderType.select,
+          options: {"机床主程序路径（一汽，EAct生成）": "0", "机床本地Src路径（铸造，EAtm生成）": "1"}),
+      RenderFieldInfo(
+        field: 'SteelCheckPrgName',
+        section: 'MachineInfo',
+        name: "钢件在机检测程序名",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CopyMacCheckResultFileMark',
+        section: 'MachineInfo',
+        name: "在机检测结果文件是否拷贝",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'OnMacCheckResultFilePath',
+        section: 'MachineInfo',
+        name: "在机检测结果文件路径",
+        renderType: RenderType.path,
+      ),
+      RenderFieldInfo(
+        field: 'CmmResultName',
+        section: 'MachineInfo',
+        name: "在机检测结果文件名称",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "程序修改", children: [
+      RenderFieldSubTitle(title: "机床G代码，M代码"),
+      RenderFieldInfo(
+        field: 'MainPrgFinishMark',
+        section: 'MachineInfo',
+        name: "主程序结束标志",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SubPrgFinishMark',
+        section: 'MachineInfo',
+        name: "子程序结束标志",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'UseQieXyAndTieXcRecordMark',
+          section: 'MachineInfo',
+          name: "启用切削液和铁屑槽记录的标志",
+          renderType: RenderType.radio,
+          options: {"不启用": "0", "启用": "1"}),
+      RenderFieldInfo(
+          field: 'MacMergerProgramMark',
+          section: 'MachineInfo',
+          name: "机床合并程序",
+          renderType: RenderType.radio,
+          options: {"不合并": "0", "合并": "1"}),
+      RenderFieldInfo(
+        field: 'MacCloseDoorPrgName',
+        section: 'MachineInfo',
+        name: "机床关门程序名称",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'BeforePrgCalibrationKnifeAddMode',
+          section: 'MachineInfo',
+          name: "序前对刀开关",
+          renderType: RenderType.radio,
+          options: {"不需要": "0", "需要": "1"}),
+      RenderFieldInfo(
+        field: 'BeforePrgCalibrationKnifeTarget',
+        section: 'MachineInfo',
+        name: "序前对刀目标，0/NULL:所有，具体值：具体刀具",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'BeforePrgCalibrationKnifeFlag',
+        section: 'MachineInfo',
+        name: "序前对刀标志位",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'BeforePrgCalibrationKnifeMark',
+        section: 'MachineInfo',
+        name: "序前对刀 所需要添加的程序",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'BeforePrgCalibrationKnifePos',
+          section: 'MachineInfo',
+          name: "序前对刀程序添加位置",
+          renderType: RenderType.radio,
+          options: {"不添加": "0", "上方": "1", "下方": "2"}),
+      RenderFieldInfo(
+          field: 'AfterPrgCalibrationKnifeAddMode',
+          section: 'MachineInfo',
+          name: "序后对刀开关",
+          renderType: RenderType.radio,
+          options: {"不需要": "0", "需要": "1"}),
+      RenderFieldInfo(
+        field: 'AfterPrgCalibrationKnifeTarget',
+        section: 'MachineInfo',
+        name: "序后对刀目标，0/NULL:所有，具体值：具体刀具",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'AfterPrgCalibrationKnifeFlag',
+        section: 'MachineInfo',
+        name: "序后对刀标志位",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'AfterPrgCalibrationKnifeMark',
+        section: 'MachineInfo',
+        name: "序前对刀 所需要添加的程序",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'AfterPrgCalibrationKnifePos',
+          section: 'MachineInfo',
+          name: "序后对刀程序添加位置",
+          renderType: RenderType.radio,
+          options: {"不添加": "0", "上方": "1", "下方": "2"}),
+      RenderFieldInfo(
+          field: 'ToolReplaceMode',
+          section: 'MachineInfo',
+          name: "刀具替换标识",
+          renderType: RenderType.radio,
+          options: {"不替换": "0", "替换": "1"}),
+      RenderFieldInfo(
+        field: 'ToolReplaceStyle',
+        section: 'MachineInfo',
+        name: "替换样式",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'Tool_H_ReplaceMode',
+          section: 'MachineInfo',
+          name: "刀补替换模式",
+          renderType: RenderType.radio,
+          options: {"不替换": "0", "替换": "1"}),
+      RenderFieldInfo(
+        field: 'Tool_H_ReplaceStyle',
+        section: 'MachineInfo',
+        name: "刀补替换样式",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'DelTopAddMode',
+          section: 'MachineInfo',
+          name: "是否需要添加杀顶",
+          renderType: RenderType.radio,
+          options: {"不添加": "0", "添加": "1"}),
+      RenderFieldInfo(
+        field: 'DelTopMark',
+        section: 'MachineInfo',
+        name: "添加杀顶开始文本标志",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'DelTopToolNums',
+        section: 'MachineInfo',
+        name: "杀顶用到的刀号",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'KillTopPrgName',
+        section: 'MachineInfo',
+        name: "杀顶头部程序名",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'CheckCoordSystem',
+        section: 'MachineInfo',
+        name: "卡盘补正坐标系",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'KillToolDiameter',
+        section: 'MachineInfo',
+        name: "杀顶刀的直径(mm)",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'KillToolWidth',
+        section: 'MachineInfo',
+        name: "杀顶每一刀Y方向或者X方向走的宽度(mm)",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'KillToolHight',
+        section: 'MachineInfo',
+        name: "杀顶Z方向每一刀下的深度[最好带上正负号](mm)",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'SubPrgFinishReplaceMode',
+        section: 'MachineInfo',
+        name: "子程序结尾替换为回到主程序的标志",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'SubPrgFinishReplaceMark',
+        section: 'MachineInfo',
+        name: "子程序结尾替换为回到主程序的标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'ModifyInfoAddPositionMode',
+          section: 'MachineInfo',
+          name: "修改程序内容插入位置",
+          renderType: RenderType.radio,
+          options: {"主程序": "0", "子程序": "1"}),
+      RenderFieldInfo(
+        field: 'MainPrgTopInsertMark',
+        section: 'MachineInfo',
+        name: "主程式顶部插入标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'MainPrgGoOrginAddMode',
+          section: 'MachineInfo',
+          name: "主程序回原点内容添加方式",
+          renderType: RenderType.radio,
+          options: {"不修改": "0", "插入至MainPrgFinishMark上方": "1"}),
+      RenderFieldInfo(
+        field: 'SubPrgTopInsertMark',
+        section: 'MachineInfo',
+        name: "子程式顶部插入标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'SubPrgGoOrginAddMode',
+          section: 'MachineInfo',
+          name: "子程序回原点内容添加方式",
+          renderType: RenderType.radio,
+          options: {"不修改": "0", "插入至SubPrgCallFinishMark上方": "1"}),
+      RenderFieldInfo(
+          field: 'SubInsertDoorCtrlMode',
+          section: 'MachineInfo',
+          name: "子插入门控制模式",
+          renderType: RenderType.radio,
+          options: {"不添加": "0", "添加": "1"}),
+      RenderFieldInfo(
+          field: 'ElecHeightAddMode',
+          section: 'MachineInfo',
+          name: "是否添加电极测高",
+          renderType: RenderType.select,
+          options: {"不添加": "0", "插入至标识文本上方": "1", "插入至标识文本下方": "2"}),
+      RenderFieldInfo(
+          field: 'SteelSetOffAddMode',
+          section: 'MachineInfo',
+          name: "是否添加钢件偏移量",
+          renderType: RenderType.select,
+          options: {
+            "不添加": "0",
+            "必须添加(无数据则报错)": "1",
+            "自动添加(有数据则添加，无数据则不添加)": "2"
+          }),
+      RenderFieldInfo(
+          field: 'SteelSetOffAddPos',
+          section: 'MachineInfo',
+          name: "添加位置",
+          renderType: RenderType.select,
+          options: {
+            "插入至标识文本上方": "1",
+            "插入至标识文本下方": "2",
+          }),
+      RenderFieldInfo(
+        field: 'OffsetStartMark',
+        section: 'MachineInfo',
+        name: "偏移量开始添加标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'OffsetEndMark',
+        section: 'MachineInfo',
+        name: "偏移量结束添加标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'RepSpecifiedContentMode',
+          section: 'MachineInfo',
+          name: "替换程序中指定的内容模式",
+          renderType: RenderType.radio,
+          options: {
+            "不替换": "0",
+            "替换": "1",
+          }),
+      RenderFieldInfo(
+        field: 'RepSpecifiedContentStartNum',
+        section: 'MachineInfo',
+        name: "开始替换的位置(就是从第几个开始替换)",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+          field: 'RepSpecifiedContentNum',
+          section: 'MachineInfo',
+          name: "替换的次数",
+          renderType: RenderType.radio,
+          options: {
+            "替换一次": "0",
+            "全部替换": "1",
+          }),
+      RenderFieldInfo(
+        field: 'RepSpecifiedContentOldMark',
+        section: 'MachineInfo',
+        name: "需要替换的原始内容",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'RepSpecifiedContentNewMark',
+        section: 'MachineInfo',
+        name: "需要替换的新内容",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'RotatCoordinateAddMode',
+          section: 'MachineInfo',
+          name: "程序添加坐标旋转模式",
+          renderType: RenderType.radio,
+          options: {
+            "添加标识之前": "1",
+            "添加标识之后": "2",
+          }),
+      RenderFieldInfo(
+          field: 'RotatCoordinateAddNum',
+          section: 'MachineInfo',
+          name: "程序添加坐标旋转次数",
+          renderType: RenderType.radio,
+          options: {
+            "添加一次": "0",
+            "所有标识处全部添加": "1",
+          }),
+      RenderFieldInfo(
+        field: 'RotatCoordinateMark',
+        section: 'MachineInfo',
+        name: "程序坐标旋转添加文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'RotatCoordinateFlag',
+        section: 'MachineInfo',
+        name: "程序坐标旋转标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'ReturnRotatCoordinateMode',
+          section: 'MachineInfo',
+          name: "程序取消坐标旋转模式",
+          renderType: RenderType.radio,
+          options: {
+            "取消标识之前": "1",
+            "取消标识之后": "2",
+          }),
+      RenderFieldInfo(
+          field: 'ReturnRotatCoordinateNum',
+          section: 'MachineInfo',
+          name: "程序取消坐标旋转次数",
+          renderType: RenderType.radio,
+          options: {
+            "取消一次": "0",
+            "所有标识处全部取消": "1",
+          }),
+      RenderFieldInfo(
+        field: 'ReturnRotatCoordinateMark',
+        section: 'MachineInfo',
+        name: "程序坐标旋转取消添加文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ReturnRotatCoordinateFlag',
+        section: 'MachineInfo',
+        name: "程序坐标旋转取消标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ZCorrectionValueMode',
+        section: 'MachineInfo',
+        name: "卡盘Z方向补正值添加标识",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'szZCorrectionValueMark',
+        section: 'MachineInfo',
+        name: "卡盘Z方向补正添加标识文本",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ZCorrectionMargin',
+        section: 'MachineInfo',
+        name: "补正余量",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ChuckCoordZValue',
+        section: 'MachineInfo',
+        name: "卡盘Z值",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'CoordinatePeplaceMode',
+          section: 'MachineInfo',
+          name: "坐标系替换标志",
+          renderType: RenderType.select,
+          options: {"不替换": "0", "替换为配置 ChuckNum 里面的坐标系名称（对于单卡盘）": "1"}),
+      RenderFieldInfo(
+          field: 'CoordinatePeplaceNum',
+          section: 'MachineInfo',
+          name: "坐标替换次数",
+          renderType: RenderType.radio,
+          options: {"只替换一次": "0", "全部替换": "1"}),
+      RenderFieldInfo(
+        field: 'CoordinatePeplaceMark',
+        section: 'MachineInfo',
+        name: "坐标系替换文本，程序里面原来的坐标系名称",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'DeleteSpecifiedContentMode',
+          section: 'MachineInfo',
+          name: "删除程序中的指定内容标志",
+          renderType: RenderType.radio,
+          options: {"不删除": "0", "删除": "1"}),
+      RenderFieldInfo(
+          field: 'DeleteSpecifiedContentNum',
+          section: 'MachineInfo',
+          name: "删除程序指定内容的次数",
+          renderType: RenderType.radio,
+          options: {"删除一次": "0", "删除多次": "1"}),
+      RenderFieldInfo(
+        field: 'DeleteSpecifiedContentMark',
+        section: 'MachineInfo',
+        name: "删除程序中的指定内容",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'AddProgramNameMode',
+          section: 'MachineInfo',
+          name: "程序开头是否加主程序名",
+          renderType: RenderType.select,
+          options: {"不添加": "0", "添加之前": "1", "添加标志之后": "2"}),
+      RenderFieldInfo(
+        field: 'AddProgramNameMak',
+        section: 'MachineInfo',
+        name: "程序名出现%",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'IsRemoveSpacesMode',
+          section: 'MachineInfo',
+          name: "是否去掉空格",
+          renderType: RenderType.radio,
+          options: {"不去掉": "0", "去掉": "1"}),
+      RenderFieldInfo(
+        field: 'AddClampStatusMode',
+        section: 'MachineInfo',
+        name: "添加夹具状态标志",
+        renderType: RenderType.toggleSwitch,
+      ),
+      RenderFieldInfo(
+        field: 'ClampCloseMark',
+        section: 'MachineInfo',
+        name: "夹具夹紧",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ClampRelaxMark',
+        section: 'MachineInfo',
+        name: "夹具放松",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'AddPrgLineNumNode',
+          section: 'MachineInfo',
+          name: "程序添加行号的标志",
+          renderType: RenderType.radio,
+          options: {"不添加": "0", "添加": "1"}),
+      RenderFieldInfo(
+          field: 'MacBlowMode',
+          section: 'MachineInfo',
+          name: "机床吹气的标志",
+          renderType: RenderType.select,
+          options: {
+            "不吹气": "0",
+            "电气(PLC)控制吹气(机床加工完成软件控制开始吹气)": "1",
+            "按照指定行(程序倒数指定行)开始吹气": "2"
+          }),
+      RenderFieldInfo(
+        field: 'MacBlowTime',
+        section: 'MachineInfo',
+        name: "吹气时间配置(单位：秒)(吹气时常软件控制)",
+        renderType: RenderType.numberInput,
+      ),
+      RenderFieldInfo(
+        field: 'MacBlowAheadLine',
+        section: 'MachineInfo',
+        name: "机床提前吹气的行数",
+        renderType: RenderType.numberInput,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "加工放电相关", children: [
       RenderFieldInfo(
         field: 'SteelPosBallPrgName',
         section: 'MachineInfo',
         name: "钢件分中程序名",
         renderType: RenderType.input,
       ),
-    ]),
-    RenderFieldGroup(groupName: "上下料相关", children: [
+      RenderFieldInfo(
+        field: 'MacOriginPrgName',
+        section: 'MachineInfo',
+        name: "机床原点程式命名",
+        renderType: RenderType.input,
+      ),
       RenderFieldInfo(
           field: 'OrginAbsoluteType',
           section: 'MachineInfo',
@@ -311,12 +1093,6 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'OrginAbsoluteU',
         section: 'MachineInfo',
         name: "用于机器人上料时的机床的坐标U",
-        renderType: RenderType.input,
-      ),
-      RenderFieldInfo(
-        field: 'OrginAbsoluteW',
-        section: 'MachineInfo',
-        name: "用于机器人上料时的机床的坐标W",
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
@@ -361,8 +1137,477 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         name: "机床原点程序名称信息",
         renderType: RenderType.input,
       ),
+      RenderFieldInfo(
+          field: 'WorkSteelAbalmIsPutDown',
+          section: 'MachineInfo',
+          name: "钢件异常是否下料",
+          renderType: RenderType.radio,
+          options: {"不下料": "0", "下料": "1"}),
+      RenderFieldInfo(
+        field: 'MacOrgionInterceptStartMark',
+        section: 'MachineInfo',
+        name: "回原点截取开始文本标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOrgionInterceptEndMark',
+        section: 'MachineInfo',
+        name: "回原点截取结束文本标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOrgoinInsertMark',
+        section: 'MachineInfo',
+        name: "回原点插入位置文本标志",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'SteelPosBallMark',
+          section: 'MachineInfo',
+          name: "钢件是否需要分中",
+          renderType: RenderType.select,
+          options: {
+            "不需要分中": "0",
+            "需要分中但不需要生成分中程序": "1",
+            "需要分中同时需要生成分中程序": "2"
+          }),
+    ]),
+    RenderFieldGroup(groupName: "加工检测相关", children: [
+      RenderFieldInfo(
+        field: 'SrcPrgServerNodeName',
+        section: 'MachineInfo',
+        name: "源程序服务节点名称",
+        renderType: RenderType.choose,
+        chooseType: ChooseType.macProgramSource,
+      ),
+      RenderFieldInfo(
+        field: 'SrcPrgLocalNodeName',
+        section: 'MachineInfo',
+        name: "源程序本地节点名称",
+        renderType: RenderType.choose,
+        chooseType: ChooseType.localStorePath,
+      ),
     ])
   ];
+  // 检测相关
+  List<RenderField> detectionMenuList = [
+    RenderFieldInfo(
+      field: 'OutPutNodeName',
+      section: 'MachineInfo',
+      name: "执行程序本地节点名称",
+      renderType: RenderType.choose,
+      chooseType: ChooseType.localStorePath,
+    ),
+    RenderFieldInfo(
+        field: 'ExtServerConnectMak',
+        section: 'MachineInfo',
+        name: "外部服务器连接标识",
+        renderType: RenderType.radio,
+        options: {"不需要连接": "0", "需要连接": "1"}),
+    RenderFieldInfo(
+      field: 'ExtServiceAddr',
+      section: 'MachineInfo',
+      name: "外部连接服务器IP",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ExtServicePort',
+      section: 'MachineInfo',
+      name: "外部连接服务器端口",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'AheadTaskMonitorFolder',
+      section: 'MachineInfo',
+      name: "提前任务监控文件夹，CMM快检测完成时，eact会在该文件夹下生成txt通知eatm",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ZeissStartFileFolder',
+      section: 'MachineInfo',
+      name: "创建蔡司startinfo.txt 启动文件的路径(若不在本机上，则为共享路径)",
+      renderType: RenderType.path,
+    ),
+    RenderFieldInfo(
+      field: 'ZeissConnectMode',
+      section: 'MachineInfo',
+      name: "蔡司连接模式",
+      renderType: RenderType.radio,
+      options: {"IO模式": "0", "TCP模式": "1"},
+    ),
+    RenderFieldInfo(
+      field: 'CmmDriveMode',
+      section: 'MachineInfo',
+      name: "仅用于检测机床驱动模式",
+      renderType: RenderType.select,
+      options: {
+        "仅驱动(zeiss)": "1",
+        "编程+驱动(hexagon)": "2",
+        "EATM仅驱动（展会）": "3",
+        "EATM编程+驱动": "4"
+      },
+    ),
+    RenderFieldInfo(
+      field: 'MacWaitFinishTime',
+      section: 'MachineInfo',
+      name: "机床超时未完成检测一个点需要的时间(单位:秒)",
+      renderType: RenderType.numberInput,
+    ),
+    RenderFieldGroup(groupName: "加工检测相关", children: [
+      RenderFieldInfo(
+        field: 'SrcPrgServerNodeName',
+        section: 'MachineInfo',
+        name: "源程序服务节点名称",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SrcPrgLocalNodeName',
+        section: 'MachineInfo',
+        name: "源程序本地节点名称",
+        renderType: RenderType.input,
+      ),
+    ])
+  ];
+  // 放电相关
+  List<RenderField> dischargeMenuList = [
+    RenderFieldInfo(
+      field: 'OrginAbsoluteW',
+      section: 'MachineInfo',
+      name: "用于机器人上料时的机床的坐标W",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'MacOilLiftPumpMode',
+      section: 'MachineInfo',
+      name: "机床添加升油泵标志",
+      renderType: RenderType.toggleSwitch,
+    ),
+    RenderFieldInfo(
+      field: 'MacOilLiftPumpMark',
+      section: 'MachineInfo',
+      name: "机床添加升油泵标识文本",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+        field: 'EdmMoreSteelTask',
+        section: 'MachineInfo',
+        name: "手动上钢件是否是多钢件连续放电",
+        renderType: RenderType.radio,
+        options: {"单钢件放完下线": "0", "多钢件连续放电": "1"}),
+    RenderFieldInfo(
+      field: 'OilTankReserve',
+      section: 'MachineInfo',
+      name: "油槽上升的预留量,单位:毫米",
+      renderType: RenderType.numberInput,
+    ),
+    RenderFieldInfo(
+        field: 'OilGrooveCtrlType',
+        section: 'MachineInfo',
+        name: "用于火花机油槽的驱动",
+        renderType: RenderType.radio,
+        options: {"机床自身驱动": "0", "PLC来驱动": "1"}),
+    RenderFieldInfo(
+      field: 'SpAccuracyRange',
+      section: 'MachineInfo',
+      name: "分中球精度范围",
+      renderType: RenderType.input,
+    ),
+    RenderFieldGroup(groupName: '分中球校验坐标', children: [
+      RenderFieldInfo(
+        field: 'SplitBallChuckCoordinateX',
+        section: 'MachineInfo',
+        name: "分中球卡盘X坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckCoordinateY',
+        section: 'MachineInfo',
+        name: "分中球卡盘Y坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckCoordinateZ',
+        section: 'MachineInfo',
+        name: "分中球卡盘Z坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckCoordinateU',
+        section: 'MachineInfo',
+        name: "分中球卡盘U坐标",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "分中球卡盘结果坐标", children: [
+      RenderFieldInfo(
+        field: 'SplitBallChuckResultCoordinateX',
+        section: 'MachineInfo',
+        name: "分中球卡盘结果X坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckResultCoordinateY',
+        section: 'MachineInfo',
+        name: "分中球卡盘结果Y坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckResultCoordinateZ',
+        section: 'MachineInfo',
+        name: "分中球卡盘结果Z坐标",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'SplitBallChuckResultCoordinateU',
+        section: 'MachineInfo',
+        name: "分中球卡盘结果U坐标",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "平面度检测校验坐标系", children: [
+      RenderFieldInfo(
+        field: 'FlatnessChuckCoordinationX',
+        section: 'MachineInfo',
+        name: "平面度卡盘协调X",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FlatnessChuckCoordinationY',
+        section: 'MachineInfo',
+        name: "平面度卡盘协调Y",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FlatnessChuckCoordinationZ',
+        section: 'MachineInfo',
+        name: "平面度卡盘协调Z",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'FlatnessChuckCoordinationU',
+        section: 'MachineInfo',
+        name: "平面度卡盘协调U",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldInfo(
+      field: 'FlatnessChuckAccuracyRange',
+      section: 'MachineInfo',
+      name: "平面度检测精度范围",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ReferenceToMacHeadSpace',
+      section: 'MachineInfo',
+      name: "基准台上表面~机头零点距离",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'DistanceFromTubingToMacX',
+      section: 'MachineInfo',
+      name: "吸油管相对于机头的位置X",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'DistanceFromTubingToMacY',
+      section: 'MachineInfo',
+      name: "吸油管相对于机头的位置Y",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'DistanceFromTubingToMacZ',
+      section: 'MachineInfo',
+      name: "吸油管相对于机头的位置Z",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'DistanceFromTubingToMacU',
+      section: 'MachineInfo',
+      name: "吸油管相对于机头的位置U",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'PumpingFaultDistance',
+      section: 'MachineInfo',
+      name: "抽油下降距离容错空间",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'UpperChuckHeight',
+      section: 'MachineInfo',
+      name: "上卡盘高度",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'LowerChuckHeight',
+      section: 'MachineInfo',
+      name: "下卡盘高度",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'G54CoordinateZ',
+      section: 'MachineInfo',
+      name: "G54坐标Z值",
+      renderType: RenderType.input,
+    ),
+    RenderFieldInfo(
+      field: 'ChuckZeroCoordinateZ',
+      section: 'MachineInfo',
+      name: "卡盘零点Z值",
+      renderType: RenderType.input,
+    ),
+    RenderFieldGroup(groupName: "卡盘中心坐标", children: [
+      RenderFieldInfo(
+        field: 'ChuckCenterCoordinateX',
+        section: 'MachineInfo',
+        name: "卡盘中心坐标X",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ChuckCenterCoordinateY',
+        section: 'MachineInfo',
+        name: "卡盘中心坐标Y",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ChuckCenterCoordinateZ',
+        section: 'MachineInfo',
+        name: "卡盘中心坐标Z",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'ChuckCenterCoordinateU',
+        section: 'MachineInfo',
+        name: "卡盘中心坐标U",
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: "加工放电相关", children: [
+      RenderFieldInfo(
+        field: 'SteelPosBallPrgName',
+        section: 'MachineInfo',
+        name: "钢件分中程序名",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOriginPrgName',
+        section: 'MachineInfo',
+        name: "机床原点程式命名",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'OrginAbsoluteType',
+          section: 'MachineInfo',
+          name: "坐标类型",
+          renderType: RenderType.radio,
+          options: {
+            "机械坐标": "0",
+            "绝对坐标": "1",
+          }),
+      RenderFieldInfo(
+        field: 'OrginAbsoluteX',
+        section: 'MachineInfo',
+        name: "用于机器人上料时的机床的坐标X",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'OrginAbsoluteY',
+        section: 'MachineInfo',
+        name: "用于机器人上料时的机床的坐标Y",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'OrginAbsoluteZ',
+        section: 'MachineInfo',
+        name: "用于机器人上料时的机床的坐标Z",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'OrginAbsoluteU',
+        section: 'MachineInfo',
+        name: "用于机器人上料时的机床的坐标U",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosX',
+        section: 'MachineInfo',
+        name: "电极原点坐标X",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosY',
+        section: 'MachineInfo',
+        name: "电极原点坐标Y",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosZ',
+        section: 'MachineInfo',
+        name: "电极原点坐标Z",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosU',
+        section: 'MachineInfo',
+        name: "电极原点坐标U",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosA',
+        section: 'MachineInfo',
+        name: "电极原点坐标A",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacPosW',
+        section: 'MachineInfo',
+        name: "电极原点坐标W",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOriginPrgNameInfo',
+        section: 'MachineInfo',
+        name: "机床原点程序名称信息",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'WorkSteelAbalmIsPutDown',
+          section: 'MachineInfo',
+          name: "钢件异常是否下料",
+          renderType: RenderType.radio,
+          options: {"不下料": "0", "下料": "1"}),
+      RenderFieldInfo(
+        field: 'MacOrgionInterceptStartMark',
+        section: 'MachineInfo',
+        name: "回原点截取开始文本标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOrgionInterceptEndMark',
+        section: 'MachineInfo',
+        name: "回原点截取结束文本标识",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        field: 'MacOrgoinInsertMark',
+        section: 'MachineInfo',
+        name: "回原点插入位置文本标志",
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+          field: 'SteelPosBallMark',
+          section: 'MachineInfo',
+          name: "钢件是否需要分中",
+          renderType: RenderType.select,
+          options: {
+            "不需要分中": "0",
+            "需要分中但不需要生成分中程序": "1",
+            "需要分中同时需要生成分中程序": "2"
+          }),
+    ])
+  ];
+
+  String get currentMachineType => macInfo.machineType ?? "";
 
   List<String> changedList = [];
 
@@ -392,25 +1637,63 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
   }
 
   initMenu() {
-    for (var element in macInfoMenuList) {
-      if (element is RenderFieldInfo) {
-        element.section = widget.section;
-      } else if (element is RenderFieldGroup) {
-        for (var element in element.children) {
+    var menuList = [
+      macInfoMenuList,
+      eatmSettingMenuList,
+      processingMenuList,
+      detectionMenuList,
+      dischargeMenuList
+    ];
+
+    for (var menu in menuList) {
+      for (var element in menu) {
+        if (element is RenderFieldInfo) {
           element.section = widget.section;
-        }
-      }
-    }
-    for (var element in eatmSettingMenuList) {
-      if (element is RenderFieldInfo) {
-        element.section = widget.section;
-      } else if (element is RenderFieldGroup) {
-        for (var element in element.children) {
-          element.section = widget.section;
+        } else if (element is RenderFieldGroup) {
+          for (var element in element.children) {
+            if (element is RenderFieldInfo) element.section = widget.section;
+          }
         }
       }
     }
     setState(() {});
+  }
+
+  getSectionDetail() async {
+    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    if (res.success == true) {
+      macInfo = MacInfo.fromSectionJson(res.data, widget.section);
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
+    var dataList = _makeParams();
+    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  test() {
+    PopupMessage.showWarningInfoBar('暂未开放');
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
   }
 
   @override
@@ -427,6 +1710,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       // pageController.jumpToPage(currentTabIndex.value);
     });
     initMenu();
+    getSectionDetail();
   }
 
   _buildRenderField(RenderField info) {
@@ -434,6 +1718,8 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       return Container(
         margin: EdgeInsets.only(bottom: 5.r),
         child: FieldGroup(
+          isExpanded: info.isExpanded ?? false,
+          visible: info.visible ?? true,
           groupName: info.groupName,
           getValue: getFieldValue,
           children: info.children,
@@ -482,7 +1768,49 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
                       .toList(),
                 ]),
               )),
-        )
+        ),
+        if (currentMachineType == MachineType.CNC.value)
+          KeyedSubtree(
+            key: Key('3'),
+            child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    ...processingMenuList
+                        .map((e) => _buildRenderField(e))
+                        .toList(),
+                  ]),
+                )),
+          ),
+        if (currentMachineType == MachineType.CMM.value)
+          KeyedSubtree(
+            key: Key('4'),
+            child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    ...detectionMenuList
+                        .map((e) => _buildRenderField(e))
+                        .toList(),
+                  ]),
+                )),
+          ),
+        if (currentMachineType == MachineType.EDM.value)
+          KeyedSubtree(
+            key: Key('5'),
+            child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    ...dischargeMenuList
+                        .map((e) => _buildRenderField(e))
+                        .toList(),
+                  ]),
+                )),
+          )
       ],
       onPageChanged: (value) {},
       onPageControllerCreated: (pcontroller) {
@@ -496,6 +1824,17 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
     return Container(
       child: Column(children: [
         // _buildCustomTab(context),
+        CommandBarCard(
+            child: CommandBar(primaryItems: [
+          CommandBarButton(
+              label: Text('保存'), onPressed: save, icon: Icon(FluentIcons.save)),
+          CommandBarSeparator(),
+          CommandBarButton(
+              label: Text('测试'),
+              onPressed: test,
+              icon: Icon(FluentIcons.test_plan)),
+        ])),
+        5.verticalSpacingRadius,
         FluentTab(
           currentIndex: currentTabIndex.value,
           tabs: [
@@ -511,9 +1850,36 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
               Tab(
                 id: '2',
                 key: Key('2'),
-                text: Text('自动化设置'),
+                text: Text('自动化相关'),
                 body: Container(
-                  child: Text('自动化设置'),
+                  child: Text('自动化相关'),
+                ),
+              ),
+            if (currentMachineType == MachineType.CNC.value)
+              Tab(
+                id: '3',
+                key: Key('3'),
+                text: Text('加工相关'),
+                body: Container(
+                  child: Text('加工相关'),
+                ),
+              ),
+            if (currentMachineType == MachineType.CMM.value)
+              Tab(
+                id: '4',
+                key: Key('4'),
+                text: Text('检测相关'),
+                body: Container(
+                  child: Text('检测相关'),
+                ),
+              ),
+            if (currentMachineType == MachineType.EDM.value)
+              Tab(
+                id: '5',
+                key: Key('5'),
+                text: Text('放电相关'),
+                body: Container(
+                  child: Text('放电相关'),
                 ),
               )
           ],

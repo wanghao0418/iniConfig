@@ -2,11 +2,15 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-16 17:13:14
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 18:19:22
+ * @LastEditTime: 2023-06-26 11:08:04
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/widgets/scan_device.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/api/common.dart';
+import 'package:iniConfig/common/utils/http.dart';
+import 'package:iniConfig/common/utils/popup_message.dart';
 
 import '../../../../../../common/components/field_change.dart';
 
@@ -69,7 +73,22 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
     RenderFieldInfo(
         section: 'ScanDevice',
         field: 'ScanHeadFlag',
-        name: '条码枪头部标识, 瑞德 配 BO',
+        name: '条码枪头部标识',
+        renderType: RenderType.input),
+    RenderFieldInfo(
+        section: 'ScanDevice',
+        field: 'IsScanMark',
+        name: '是否有检验码',
+        renderType: RenderType.toggleSwitch),
+    RenderFieldInfo(
+        section: 'ScanDevice',
+        field: 'ScanStartMark',
+        name: '条码起始校验码',
+        renderType: RenderType.input),
+    RenderFieldInfo(
+        section: 'ScanDevice',
+        field: 'ScanEndMark',
+        name: '条码结束校验码',
         renderType: RenderType.input),
   ];
   late ScanDevice scanDevice;
@@ -107,14 +126,33 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
     setState(() {});
   }
 
-  onSave() {
-    if (changedList.length == 0) {
+  getSectionDetail() async {
+    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    if (res.success == true) {
+      scanDevice = ScanDevice.fromSectionJson(res.data, widget.section);
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  save() async {
+    if (changedList.isEmpty) {
       return;
     }
     var dataList = _makeParams();
-    changedList = [];
-    setState(() {});
-    return dataList;
+    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  test() {
+    PopupMessage.showWarningInfoBar('暂未开放');
   }
 
   _makeParams() {
@@ -131,6 +169,7 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
     super.initState();
     scanDevice = ScanDevice(section: widget.section);
     initMenu();
+    getSectionDetail();
   }
 
   @override
@@ -138,19 +177,37 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
     return Container(
         width: double.infinity,
         height: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ...menuList.map((e) => FieldChange(
-                    renderFieldInfo: e,
-                    showValue: getFieldValue(e.fieldKey),
-                    isChanged: isChanged(e.fieldKey),
-                    onChanged: (field, value) {
-                      onFieldChange(field, value);
-                    },
-                  ))
-            ],
-          ),
+        child: Column(
+          children: [
+            CommandBarCard(
+                child: CommandBar(primaryItems: [
+              CommandBarButton(
+                  label: Text('保存'),
+                  onPressed: save,
+                  icon: Icon(FluentIcons.save)),
+              CommandBarSeparator(),
+              CommandBarButton(
+                  label: Text('测试'),
+                  onPressed: test,
+                  icon: Icon(FluentIcons.test_plan)),
+            ])),
+            5.verticalSpacingRadius,
+            Expanded(
+                child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ...menuList.map((e) => FieldChange(
+                        renderFieldInfo: e,
+                        showValue: getFieldValue(e.fieldKey),
+                        isChanged: isChanged(e.fieldKey),
+                        onChanged: (field, value) {
+                          onFieldChange(field, value);
+                        },
+                      ))
+                ],
+              ),
+            ))
+          ],
         ));
   }
 }
@@ -165,6 +222,9 @@ class ScanDevice {
   String? readUnitSize;
   String? scanTimes;
   String? scanHeadFlag;
+  String? isScanMark;
+  String? scanStartMark;
+  String? scanEndMark;
 
   ScanDevice(
       {required this.section,
@@ -175,7 +235,10 @@ class ScanDevice {
       this.rightReadPos,
       this.readUnitSize,
       this.scanTimes,
-      this.scanHeadFlag});
+      this.scanHeadFlag,
+      this.isScanMark,
+      this.scanStartMark,
+      this.scanEndMark});
 
   ScanDevice.fromJson(Map<String, dynamic> json, this.section) {
     serviceType = json['ServiceType'];
@@ -186,6 +249,9 @@ class ScanDevice {
     readUnitSize = json['ReadUnitSize'];
     scanTimes = json['ScanTimes'];
     scanHeadFlag = json['ScanHeadFlag'];
+    isScanMark = json['IsScanMark'];
+    scanStartMark = json['ScanStartMark'];
+    scanEndMark = json['ScanEndMark'];
   }
 
   Map<String, dynamic> toJson() {
@@ -198,6 +264,9 @@ class ScanDevice {
     data['ReadUnitSize'] = this.readUnitSize;
     data['ScanTimes'] = this.scanTimes;
     data['ScanHeadFlag'] = this.scanHeadFlag;
+    data['IsScanMark'] = this.isScanMark;
+    data['ScanStartMark'] = this.scanStartMark;
+    data['ScanEndMark'] = this.scanEndMark;
     return data;
   }
 
@@ -211,6 +280,9 @@ class ScanDevice {
     readUnitSize = json['${sectionStr}/ReadUnitSize'];
     scanTimes = json['${sectionStr}/ScanTimes'];
     scanHeadFlag = json['${sectionStr}/ScanHeadFlag'];
+    isScanMark = json['${sectionStr}/IsScanMark'];
+    scanStartMark = json['${sectionStr}/ScanStartMark'];
+    scanEndMark = json['${sectionStr}/ScanEndMark'];
   }
 
   Map<String, dynamic> toUpdateMap() {
@@ -224,6 +296,9 @@ class ScanDevice {
     data['${sectionStr}/ReadUnitSize'] = this.readUnitSize;
     data['${sectionStr}/ScanTimes'] = this.scanTimes;
     data['${sectionStr}/ScanHeadFlag'] = this.scanHeadFlag;
+    data['${sectionStr}/IsScanMark'] = this.isScanMark;
+    data['${sectionStr}/ScanStartMark'] = this.scanStartMark;
+    data['${sectionStr}/ScanEndMark'] = this.scanEndMark;
     return data;
   }
 }

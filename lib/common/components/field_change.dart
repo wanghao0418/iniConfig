@@ -2,9 +2,19 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import 'choose_list.dart';
 import 'field_group.dart';
+import 'path_edit.dart';
 
-enum RenderType { input, numberInput, select, toggleSwitch, radio }
+enum RenderType {
+  input,
+  numberInput,
+  select,
+  toggleSwitch,
+  radio,
+  path,
+  choose
+}
 
 class RenderFieldInfo implements RenderField {
   String field;
@@ -12,12 +22,14 @@ class RenderFieldInfo implements RenderField {
   String? name;
   RenderType? renderType;
   Map<String, String>? options;
+  ChooseType? chooseType;
   RenderFieldInfo({
     required this.field,
     required this.section,
     this.name,
     this.renderType,
     this.options,
+    this.chooseType,
   });
 
   String get fieldKey => '$section/$field';
@@ -63,6 +75,12 @@ class _FieldChangeState extends State<FieldChange> {
         break;
       case RenderType.radio:
         currentComponent = renderRadio(context, renderFieldInfo);
+        break;
+      case RenderType.path:
+        currentComponent = renderPath(context, renderFieldInfo);
+        break;
+      case RenderType.choose:
+        currentComponent = renderChooseList(context, renderFieldInfo);
         break;
       default:
         currentComponent = Container();
@@ -127,9 +145,14 @@ class _FieldChangeState extends State<FieldChange> {
                   )),
               30.horizontalSpaceRadius,
               (renderType == RenderType.input ||
-                      renderType == RenderType.numberInput)
+                      renderType == RenderType.numberInput ||
+                      renderType == RenderType.path ||
+                      renderType == RenderType.choose)
                   ? Expanded(
-                      child: Text(widget.showValue ?? '').fontSize(20.sp))
+                      child: Text(
+                      widget.showValue ?? '',
+                      overflow: TextOverflow.ellipsis,
+                    ).fontSize(14))
                   : Expanded(
                       child: Container(),
                     ),
@@ -167,7 +190,7 @@ class _FieldChangeState extends State<FieldChange> {
                         onPressed: () {
                           widget.onChanged!(
                               "${widget.renderFieldInfo.section}/${widget.renderFieldInfo.field}",
-                              controller.text);
+                              controller.text.trim());
                           Navigator.of(context).pop();
                         },
                         child: const Text('确定'))
@@ -275,6 +298,90 @@ class _FieldChangeState extends State<FieldChange> {
             .toList(),
       ),
     );
+  }
+
+  // 渲染编辑路径组件
+  Widget renderPath(BuildContext context, RenderFieldInfo fieldInfo) {
+    var pathKey = GlobalKey();
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  title: Text('${fieldInfo.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 240,
+                    child: PathEdit(
+                      showValue: widget.showValue ?? '',
+                      key: pathKey,
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var pathEditState =
+                              pathKey.currentState as PathEditState;
+                          var value = pathEditState.currentValue.trim();
+                          widget.onChanged!(
+                              "${widget.renderFieldInfo.section}/${widget.renderFieldInfo.field}",
+                              value);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 渲染选择查询列表组件
+  Widget renderChooseList(BuildContext context, RenderFieldInfo fieldInfo) {
+    var chooseListKey = GlobalKey();
+    return FilledButton(
+        child: const Text('选择'),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  title: Text('${fieldInfo.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 40,
+                    child: ChooseList(
+                      showValue: widget.showValue ?? '',
+                      chooseType:
+                          fieldInfo.chooseType ?? ChooseType.macProgramSource,
+                      key: chooseListKey,
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var chooseListState =
+                              chooseListKey.currentState as ChooseListState;
+                          var value = chooseListState.currentValue.trim();
+                          widget.onChanged!(
+                              "${widget.renderFieldInfo.section}/${widget.renderFieldInfo.field}",
+                              value);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
   }
 
   @override

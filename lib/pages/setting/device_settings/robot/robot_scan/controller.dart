@@ -2,13 +2,16 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-19 17:35:59
+ * @LastEditTime: 2023-06-27 10:46:29
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
+import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 import 'widgets/scan_device_form.dart';
 
 class RobotScanController extends GetxController {
@@ -61,13 +64,72 @@ class RobotScanController extends GetxController {
     update(["robot_scan"]);
   }
 
-  _initData() {
-    update(["robot_scan"]);
+  void getSectionList() async {
+    ResponseApiBody res = await CommonApi.getSectionList({
+      "params": [
+        {
+          "list_node": "TcpScanDriverInfo",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 查询成功
+      var data = res.data;
+      deviceList = ((data as List).first as String).split('-');
+      currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
+      _initData();
+    } else {
+      // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
   }
 
-  void save() {
-    var list = (scanDeviceKey.currentState! as ScanDeviceStateForm).onSave();
-    print(list);
+  // 新增
+  void add() async {
+    var res = await CommonApi.addSection({
+      "params": [
+        {
+          "list_node": "TcpScanDriverInfo",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 新增成功
+      // getSectionList();
+      deviceList.add((res.data as List).first as String);
+      _initData();
+    } else {
+      // 新增失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 删除
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentDeviceId,
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      deviceList.remove(currentDeviceId);
+      currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
+      _initData();
+    } else {
+      // 删除失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _initData() {
+    update(["robot_scan"]);
   }
 
   // @override
@@ -78,6 +140,7 @@ class RobotScanController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    getSectionList();
     _initData();
   }
 

@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class AcquisitionDatabaseController extends GetxController {
   AcquisitionDatabaseController();
@@ -71,15 +74,6 @@ class AcquisitionDatabaseController extends GetxController {
     acquisitionDatabase = AcquisitionDatabase.fromJson(temp);
   }
 
-  _makeParams() {
-    List<Map<String, dynamic>> params = [];
-    for (var element in changedList) {
-      params.add({"key": element, "value": getFieldValue(element)});
-    }
-    return params;
-  }
-
-  // 通用的修改字段方法
   onFieldChange(String field, String val) {
     if (getFieldValue(field) == val) {
       return;
@@ -91,11 +85,48 @@ class AcquisitionDatabaseController extends GetxController {
     update(["acquisition_database"]);
   }
 
+  query() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": acquisitionDatabase.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      acquisitionDatabase = AcquisitionDatabase.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
+
+  // 保存
+  save() async {
+    // 组装传参
+    List<Map<String, dynamic>> params = _makeParams();
+    print(params);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    if (res.success == true) {
+      // 保存成功
+      changedList.clear();
+      PopupMessage.showSuccessInfoBar('保存成功');
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   _initData() {
     update(["acquisition_database"]);
   }
-
-  void save() {}
 
   // @override
   // void onInit() {
@@ -105,6 +136,7 @@ class AcquisitionDatabaseController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     _initData();
   }
 

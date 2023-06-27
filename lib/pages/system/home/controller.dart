@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
+import '../../setting/device_settings/collection_service/collection_service_setting/view.dart';
 import '../../setting/device_settings/collection_service/in_line_mac/view.dart';
 import '../../setting/device_settings/collection_service/out_line_mac/view.dart';
 import '../../setting/device_settings/machine/machine_info/view.dart';
@@ -21,6 +22,10 @@ import '../../setting/store_settings/database/acquisition_database/view.dart';
 import '../../setting/store_settings/database/database_connection/view.dart';
 import '../../setting/store_settings/program_management/local_store_path/view.dart';
 import '../../setting/store_settings/program_management/mac_program_source/view.dart';
+import '../../setting/system_settings/behavior_setting/behavior_setting/view.dart';
+import '../../setting/system_settings/function_setting/function_setting/view.dart';
+import '../../setting/third_party_settings/mes_settings/EACT_setting/view.dart';
+import '../../setting/third_party_settings/mes_settings/EMAN_setting/view.dart';
 import 'widgets/fluent_tab.dart';
 
 class HomeController extends GetxController {
@@ -44,7 +49,11 @@ class HomeController extends GetxController {
       icon: const Icon(FluentIcons.settings),
       title: const Text('Settings'),
       body: const SizedBox.shrink(),
-      onTap: () {},
+      onTap: () {
+        // // 切换主题
+        // Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+        // print(Get.isDarkMode);
+      },
     ),
   ];
 
@@ -111,6 +120,10 @@ class HomeController extends GetxController {
             TertiaryMenu(
                 id: '1-5-1', title: '线外机床', bodyPage: OutLineMacPage()),
             TertiaryMenu(id: '1-5-2', title: '线体机床', bodyPage: InLineMacPage()),
+            TertiaryMenu(
+                id: '1-5-3',
+                title: '采集服务设置',
+                bodyPage: CollectionServiceSettingPage()),
           ]),
       // SecondaryMenu(id: '1-6', title: '其他', children: [
       //   TertiaryMenu(
@@ -131,10 +144,10 @@ class HomeController extends GetxController {
                 id: '2-1-1',
                 title: '自动化数据库',
                 bodyPage: DatabaseConnectionPage()),
-            TertiaryMenu(
-                id: '2-1-2',
-                title: '采集数据库',
-                bodyPage: AcquisitionDatabasePage()),
+            // TertiaryMenu(
+            //     id: '2-1-2',
+            //     title: '采集数据库',
+            //     bodyPage: AcquisitionDatabasePage()),
           ]),
       SecondaryMenu(
           id: '2-2',
@@ -155,35 +168,17 @@ class HomeController extends GetxController {
     PrimaryMenu(id: '3', title: '系统设置', iconData: FluentIcons.list, children: [
       SecondaryMenu(id: '3-1', title: '功能设置', children: [
         TertiaryMenu(
-            id: '3-1-1',
-            title: '用户信息',
-            bodyPage: Container(
-              child: Text('用户信息'),
-            )),
+            id: '3-1-1', title: '功能设置', bodyPage: FunctionSettingPage()),
       ]),
       SecondaryMenu(id: '3-2', title: '行为设置', children: [
         TertiaryMenu(
-            id: '3-2-1',
-            title: '权限信息',
-            bodyPage: Container(
-              child: Text('权限信息'),
-            )),
+            id: '3-2-1', title: '行为设置', bodyPage: BehaviorSettingPage()),
       ]),
     ]),
     PrimaryMenu(id: '4', title: '第三方设置', iconData: FluentIcons.list, children: [
       SecondaryMenu(id: '4-1', title: 'mes设置', children: [
-        TertiaryMenu(
-            id: '4-1-1',
-            title: 'EACT',
-            bodyPage: Container(
-              child: Text('EACT'),
-            )),
-        TertiaryMenu(
-            id: '4-1-2',
-            title: 'EMAN',
-            bodyPage: Container(
-              child: Text('EMAN'),
-            )),
+        TertiaryMenu(id: '4-1-1', title: 'EACT', bodyPage: EactSettingPage()),
+        TertiaryMenu(id: '4-1-2', title: 'EMAN', bodyPage: EmanSettingPage()),
       ]),
     ]),
   ];

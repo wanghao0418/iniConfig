@@ -2,13 +2,16 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:14:25
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 14:27:34
+ * @LastEditTime: 2023-06-25 14:29:30
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_communication_protocol/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:get/get.dart';
 
+import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/utils/http.dart';
+import '../../../../../common/utils/popup_message.dart';
 
 class RobotCommunicationProtocolController extends GetxController {
   RobotCommunicationProtocolController();
@@ -148,11 +151,49 @@ class RobotCommunicationProtocolController extends GetxController {
     update(["robot_communication_protocol"]);
   }
 
+  query() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": robotCommunicationProtocol.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      robotCommunicationProtocol =
+          RobotCommunicationProtocol.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
+
+  // 保存
+  save() async {
+    // 组装传参
+    List<Map<String, dynamic>> params = _makeParams();
+    print(params);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    if (res.success == true) {
+      // 保存成功
+      changedList.clear();
+      PopupMessage.showSuccessInfoBar('保存成功');
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   _initData() {
     update(["robot_communication_protocol"]);
   }
-
-  void save() {}
 
   // @override
   // void onInit() {
@@ -162,6 +203,7 @@ class RobotCommunicationProtocolController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     _initData();
   }
 

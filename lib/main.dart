@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-14 15:10:08
+ * @LastEditTime: 2023-06-26 09:37:42
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,16 +62,18 @@ class MyApp extends StatelessWidget {
               // color: AppTheme.systemAccentColor,
               themeMode: Get.isDarkMode ? ThemeMode.dark : ThemeMode.light,
               theme: material.ThemeData(
+                brightness: Brightness.light,
                 primarySwatch: material.Colors.blue,
                 visualDensity: VisualDensity.standard,
                 fontFamily: 'MyFont',
-                // primaryColor: AppTheme.systemAccentColor,
+                primaryColor: material.Colors.blue,
               ),
               darkTheme: material.ThemeData(
+                brightness: Brightness.dark,
                 primarySwatch: material.Colors.blue,
                 visualDensity: VisualDensity.standard,
                 fontFamily: 'MyFont',
-                // primaryColor: systemAccentColor,
+                primaryColor: material.Colors.black87,
               ),
               title: 'Eatm自动化ini文件配置工具',
               initialRoute: RouteNames.main,

@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-12 13:34:49
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:34:33
+ * @LastEditTime: 2023-06-25 09:05:24
  * @FilePath: /eatm_ini_config/lib/pages/system/home/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -117,26 +117,27 @@ class _HomeViewGetX extends GetView<HomeController> {
           openWidth: 200,
         ),
         selected: controller.calculateSelectedIndex(),
-        // header: SizedBox(
-        //   height: kOneLineTileHeight,
-        //   child: ShaderMask(
-        //     shaderCallback: (rect) {
-        //       final color = AppTheme.systemAccentColor.defaultBrushFor(
-        //         Get.theme.brightness,
-        //       );
-        //       return LinearGradient(
-        //         colors: [
-        //           color,
-        //           color,
-        //         ],
-        //       ).createShader(rect);
-        //     },
-        //     child: Image.asset(
-        //       'assets/images/layout/eman.png',
-        //       fit: BoxFit.cover,
-        //     ),
-        //   ),
-        // ),
+        header: SizedBox(
+          height: kOneLineTileHeight,
+          child: ShaderMask(
+            shaderCallback: (rect) {
+              // final color = AppTheme.systemAccentColor.defaultBrushFor(
+              //   Get.theme.brightness,
+              // );
+              final color = Colors.blue;
+              return LinearGradient(
+                colors: [
+                  color,
+                  color,
+                ],
+              ).createShader(rect);
+            },
+            child: Image.asset(
+              'assets/images/home/eman.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         displayMode: PaneDisplayMode.open,
         items: controller.menuItems,
         autoSuggestBox: AutoSuggestBox(
