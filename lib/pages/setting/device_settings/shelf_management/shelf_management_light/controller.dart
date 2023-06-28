@@ -28,7 +28,7 @@ class ShelfManagementLightController extends GetxController {
         renderType: RenderType.input),
   ];
   List<String> changedList = [];
-  List sectionList = ['1', '2', '3'];
+  List sectionList = [];
   var currentSection = "".obs;
 
   bool isChanged(String field) {
@@ -65,7 +65,7 @@ class ShelfManagementLightController extends GetxController {
     ResponseApiBody res = await CommonApi.getSectionList({
       "params": [
         {
-          "list_node": "ScanDevice",
+          "list_node": "StorageLightDevice",
           "parent_node": null,
         }
       ],
@@ -74,10 +74,53 @@ class ShelfManagementLightController extends GetxController {
       // 查询成功
       var data = res.data;
       sectionList = ((data as List).first as String).split('-');
-      currentSection = sectionList.isNotEmpty ? sectionList.first : "";
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
       _initData();
     } else {
       // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 新增
+  void add() async {
+    var res = await CommonApi.addSection({
+      "params": [
+        {
+          "list_node": "TcpScanDriverInfo",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 新增成功
+      // getSectionList();
+      sectionList.add((res.data as List).first as String);
+      _initData();
+    } else {
+      // 新增失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 删除
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentSection.value,
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      sectionList.remove(currentSection.value);
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      _initData();
+    } else {
+      // 删除失败
       PopupMessage.showFailInfoBar(res.message as String);
     }
   }

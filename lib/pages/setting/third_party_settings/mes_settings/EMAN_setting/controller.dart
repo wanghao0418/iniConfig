@@ -37,7 +37,7 @@ class EmanSettingController extends GetxController {
     RenderFieldInfo(
         field: "WorkpieceCraft",
         section: "EManServer",
-        name: "零件工艺配置",
+        name: "EMan与EAtm对应工艺",
         renderType: RenderType.input),
     RenderFieldInfo(
         field: "LoginUser",
@@ -107,17 +107,17 @@ class EmanSettingController extends GetxController {
       renderType: RenderType.numberInput,
     ),
     RenderFieldInfo(
-      field: "AppointMachine",
-      section: "EManServer",
-      name: "指定机床",
-      renderType: RenderType.toggleSwitch,
-    ),
+        field: "AppointMachine",
+        section: "EManServer",
+        name: "指定机床",
+        renderType: RenderType.select,
+        options: {"默认": "0", "走Eman指定路线": "1"}),
     RenderFieldInfo(
-      field: "PrgDownSource",
-      section: "EManServer",
-      name: "prg下载源",
-      renderType: RenderType.toggleSwitch,
-    ),
+        field: "PrgDownSource",
+        section: "EManServer",
+        name: "prg下载源",
+        renderType: RenderType.select,
+        options: {"默认从eman下载": "0", "从别的途径": "1"}),
     RenderFieldInfo(
       field: "ProduceReGroupName",
       section: "EManServer",

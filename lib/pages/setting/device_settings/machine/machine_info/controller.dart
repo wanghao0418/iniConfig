@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 11:35:32
+ * @LastEditTime: 2023-06-28 13:18:23
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -18,8 +18,8 @@ import 'widgets/add_mac_form.dart';
 class MachineInfoController extends GetxController {
   MachineInfoController();
   MachineGlobelConfig machineGlobelConfig = MachineGlobelConfig();
-  List sectionList = ['mac01', 'mac02', 'mac03'];
-  var currentSection = 'mac01'.obs;
+  List sectionList = [];
+  var currentSection = ''.obs;
   GlobalKey addFormKey = GlobalKey();
   List<RenderField> menuList = [
     RenderFieldGroup(groupName: "全局配置", children: [
@@ -117,7 +117,7 @@ class MachineInfoController extends GetxController {
     ResponseApiBody res = await CommonApi.getSectionList({
       "params": [
         {
-          "list_node": "ScanDevice",
+          "list_node": "MachineInfo",
           "parent_node": null,
         }
       ],
@@ -126,7 +126,7 @@ class MachineInfoController extends GetxController {
       // 查询成功
       var data = res.data;
       sectionList = ((data as List).first as String).split('-');
-      currentSection = sectionList.isNotEmpty ? sectionList.first : "";
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
       _initData();
     } else {
       // 查询失败
@@ -152,18 +152,57 @@ class MachineInfoController extends GetxController {
               ),
               FilledButton(
                 child: Text('确定'),
-                onPressed: () {
+                onPressed: () async {
                   var addForm = (addFormKey.currentState! as AddMacFormState);
                   if (!(addForm.formKey.currentState as FormState).validate()) {
                     return;
                   }
                   print(addForm.addMacForm.toJson());
+                  var res = await CommonApi.addSection({
+                    "params": [
+                      {
+                        "list_node": addForm.addMacForm.system,
+                        "parent_node": null,
+                      }
+                    ],
+                  });
+                  if (res.success == true) {
+                    // 新增成功
+                    // getSectionList();
+                    sectionList.add((res.data as List).first as String);
+                    _initData();
+                  } else {
+                    // 新增失败
+                    PopupMessage.showFailInfoBar(res.message as String);
+                  }
                   Navigator.of(context).pop();
                 },
               ),
             ],
           );
         });
+  }
+
+  // 删除
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentSection.value,
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      sectionList.remove(currentSection.value);
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      _initData();
+    } else {
+      // 删除失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
   }
 
   // @override

@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:09:04
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 20:21:45
+ * @LastEditTime: 2023-06-28 10:52:24
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -35,12 +35,8 @@ class CollectionServiceSettingController extends GetxController {
       renderType: RenderType.numberInput,
     ),
   ];
-  List sectionList = [
-    'RomoteDataBaseInfo01',
-    'RomoteDataBaseInfo02',
-    'RomoteDataBaseInfo03'
-  ];
-  var currentSection = 'RomoteDataBaseInfo01'.obs;
+  List sectionList = [];
+  var currentSection = ''.obs;
 
   List<String> changedList = [];
 
@@ -113,6 +109,70 @@ class CollectionServiceSettingController extends GetxController {
     _initData();
   }
 
+  void getSectionList() async {
+    ResponseApiBody res = await CommonApi.getSectionList({
+      "params": [
+        {
+          "list_node": "RomoteDataBaseInfo",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 查询成功
+      var data = res.data;
+      sectionList = ((data as List).first as String).split('-');
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      _initData();
+    } else {
+      // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 新增
+  void add() async {
+    var res = await CommonApi.addSection({
+      "params": [
+        {
+          "list_node": "RomoteDataBaseInfo",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 新增成功
+      // getSectionList();
+      sectionList.add((res.data as List).first as String);
+      _initData();
+    } else {
+      // 新增失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 删除
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentSection.value,
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      sectionList.remove(currentSection.value);
+      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      _initData();
+    } else {
+      // 删除失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   _initData() {
     update(["collection_service_setting"]);
   }
@@ -126,6 +186,7 @@ class CollectionServiceSettingController extends GetxController {
   void onReady() {
     super.onReady();
     query();
+    getSectionList();
     _initData();
   }
 

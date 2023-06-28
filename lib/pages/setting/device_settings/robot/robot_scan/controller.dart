@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 10:46:29
+ * @LastEditTime: 2023-06-28 10:27:59
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,7 +12,6 @@ import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
 import '../../../../../common/utils/http.dart';
 import '../../../../../common/utils/popup_message.dart';
-import 'widgets/scan_device_form.dart';
 
 class RobotScanController extends GetxController {
   RobotScanController();
@@ -30,7 +29,7 @@ class RobotScanController extends GetxController {
         renderType: RenderType.numberInput),
   ];
   List<String> changedList = [];
-  List deviceList = ['扫码1', '扫码2', '扫码3'];
+  List deviceList = [];
   String currentDeviceId = "";
   GlobalKey scanDeviceKey = GlobalKey();
 

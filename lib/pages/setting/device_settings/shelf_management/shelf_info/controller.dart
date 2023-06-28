@@ -8,8 +8,8 @@ import '../../../../../common/utils/popup_message.dart';
 
 class ShelfInfoController extends GetxController {
   ShelfInfoController();
-  List shelfList = ['1', '2', '3'];
-  var currentShelf = "1".obs;
+  List shelfList = [];
+  var currentShelf = "".obs;
   GlobalKey shelfInfoSettingKey = GlobalKey();
   ShelfInfo shelfInfo = ShelfInfo();
   List<RenderFieldInfo> menuList = [
@@ -96,7 +96,7 @@ class ShelfInfoController extends GetxController {
 
   void getSectionList() async {
     ResponseApiBody res = await CommonApi.getSectionList({
-      "params": ['ScanDevice'],
+      "params": ['Shelf'],
     });
     if (res.success == true) {
       // 查询成功
@@ -106,6 +106,49 @@ class ShelfInfoController extends GetxController {
       _initData();
     } else {
       // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 新增
+  void add() async {
+    var res = await CommonApi.addSection({
+      "params": [
+        {
+          "list_node": "Shelf",
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 新增成功
+      // getSectionList();
+      shelfList.add((res.data as List).first as String);
+      _initData();
+    } else {
+      // 新增失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 删除
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentShelf.value,
+          "parent_node": null,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      shelfList.remove(currentShelf.value);
+      currentShelf.value = shelfList.isNotEmpty ? shelfList.first : "";
+      _initData();
+    } else {
+      // 删除失败
       PopupMessage.showFailInfoBar(res.message as String);
     }
   }

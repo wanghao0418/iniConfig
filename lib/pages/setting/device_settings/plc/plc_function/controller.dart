@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../../common/api/common.dart';
+import '../../../../../common/api/plc.dart';
 import '../../../../../common/components/field_change.dart';
 import '../../../../../common/utils/http.dart';
 import '../../../../../common/utils/popup_message.dart';
@@ -56,7 +56,7 @@ class PlcFunctionController extends GetxController {
   }
 
   query() async {
-    ResponseApiBody res = await CommonApi.fieldQuery({
+    ResponseApiBody res = await PlcApi.fieldQuery({
       "params": plcFunction.toJson().keys.toList(),
     });
     if (res.success == true) {
@@ -82,7 +82,7 @@ class PlcFunctionController extends GetxController {
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);
-    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    ResponseApiBody res = await PlcApi.fieldUpdate({"params": params});
     if (res.success == true) {
       // 保存成功
       changedList.clear();

@@ -75,7 +75,6 @@ class HttpUtil {
         handler.next(e);
       }));
     }
-
     return instance;
   }
 

@@ -46,12 +46,23 @@ class ConfigStore extends GetxController {
     final String environment = env; // 默认为生产环境
     switch (environment) {
       case 'local':
+        if (HttpUtil.instance != null) {
+          HttpUtil.instance!.options.baseUrl =
+              ConfigStore.instance.localBaseUrl!;
+        }
         HttpUtil.setBaseUrl(ConfigStore.instance.localBaseUrl!);
         break;
       case 'dev':
+        if (HttpUtil.instance != null) {
+          HttpUtil.instance!.options.baseUrl = ConfigStore.instance.devBaseUrl!;
+        }
         HttpUtil.setBaseUrl(ConfigStore.instance.devBaseUrl!);
         break;
       case 'product':
+        if (HttpUtil.instance != null) {
+          HttpUtil.instance!.options.baseUrl =
+              ConfigStore.instance.productBaseUrl!;
+        }
         HttpUtil.setBaseUrl(ConfigStore.instance.productBaseUrl!);
         break;
       default:

@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 13:24:23
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 17:08:00
+ * @LastEditTime: 2023-06-28 10:44:19
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/local_store_path/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -53,12 +53,12 @@ class _LocalStorePathViewGetX extends GetView<LocalStorePathController> {
             child: CommandBar(primaryItems: [
               CommandBarButton(
                   label: Text('新增'),
-                  onPressed: () {},
+                  onPressed: controller.add,
                   icon: Icon(FluentIcons.add)),
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: () {},
+                  onPressed: controller.delete,
                   icon: Icon(FluentIcons.delete)),
               // CommandBarSeparator(),
               // CommandBarButton(

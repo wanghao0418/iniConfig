@@ -56,7 +56,10 @@ class FunctionSettingController extends GetxController {
           options: {
             "隐藏自动化机床界面": "1",
             "隐藏刀具管理界面": "2",
-            "其他设备连接界面": "6",
+            "隐藏出入库记录界面": "3",
+            "隐藏设备刀库界面": "4",
+            "隐藏寿命监控界面": "5",
+            "隐藏其他设备界面": "6",
             "全部显示": "0"
           }),
       RenderFieldInfo(

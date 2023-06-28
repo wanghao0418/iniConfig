@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 10:04:59
+ * @LastEditTime: 2023-06-28 10:50:08
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -157,8 +157,8 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
   ];
   late Shelf shelf;
   List<String> changedList = [];
-  List deviceList = ["0", "1", "2", "3"];
-  var currentDeviceId = '0';
+  List deviceList = [];
+  var currentDeviceId = '';
   ValueNotifier<String> currentShelfSensorTypeNotifier =
       ValueNotifier<String>('');
 
@@ -259,6 +259,51 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     }
   }
 
+  // 新增扫描设备
+  void add() async {
+    var res = await CommonApi.addSection({
+      "params": [
+        {
+          "list_node": "ScanDevice",
+          "parent_node": widget.section,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 新增成功
+      // getSectionList();
+      setState(() {
+        deviceList.add((res.data as List).first as String);
+      });
+    } else {
+      // 新增失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  // 删除扫描设备
+  void delete() async {
+    var res = await CommonApi.deleteSection({
+      "params": [
+        {
+          "list_node": currentDeviceId,
+          "parent_node": widget.section,
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 删除成功
+      // getSectionList();
+      setState(() {
+        deviceList.remove(currentDeviceId);
+        currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
+      });
+    } else {
+      // 删除失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   onDeviceChange(String deviceId) {
     currentDeviceId = deviceId;
     setState(() {});
@@ -347,12 +392,12 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
                                 child: CommandBar(primaryItems: [
                               CommandBarButton(
                                   label: Text('新增'),
-                                  onPressed: () {},
+                                  onPressed: add,
                                   icon: Icon(FluentIcons.add)),
                               CommandBarSeparator(),
                               CommandBarButton(
                                   label: Text('删除'),
-                                  onPressed: () {},
+                                  onPressed: delete,
                                   icon: Icon(FluentIcons.delete)),
                             ])),
                             5.verticalSpacingRadius,
