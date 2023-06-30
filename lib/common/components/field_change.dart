@@ -105,55 +105,53 @@ class _FieldChangeState extends State<FieldChange> {
                     borderRadius: BorderRadius.circular(5.r),
                   )),
               20.horizontalSpaceRadius,
+              IconButton(
+                  icon: Icon(
+                    FluentIcons.info_solid,
+                    color: Colors.blue,
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return ContentDialog(
+                            title: Text('${renderFieldInfo.name}'),
+                            content: SizedBox(
+                              height: 300.r,
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试',
+                                  softWrap: true,
+                                  maxLines: null,
+                                ).fontSize(22.sp),
+                              ),
+                            ),
+                            actions: [
+                              FilledButton(
+                                  child: Text('确认'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  })
+                            ],
+                          );
+                        });
+                  }),
+              5.horizontalSpaceRadius,
               GestureDetector(
                   onTap: () {},
                   child: MouseRegion(
                     // cursor: SystemMouseCursors.click,
                     child: SizedBox(
                         width: 300.r,
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            IconButton(
-                                icon: Icon(
-                                  FluentIcons.info_solid,
-                                  color: Colors.blue,
-                                  size: 18,
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ContentDialog(
-                                          title:
-                                              Text('${renderFieldInfo.name}'),
-                                          content: SizedBox(
-                                            height: 300.r,
-                                            child: SingleChildScrollView(
-                                              child: Text(
-                                                '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试',
-                                                softWrap: true,
-                                                maxLines: null,
-                                              ).fontSize(22.sp),
-                                            ),
-                                          ),
-                                          actions: [
-                                            FilledButton(
-                                                child: Text('确认'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                })
-                                          ],
-                                        );
-                                      });
-                                }),
-                            5.horizontalSpaceRadius,
-                            Text(
-                              renderFieldInfo.name ?? '',
-                              softWrap: true,
-                              maxLines: null,
-                            ).fontSize(14).fontWeight(FontWeight.bold),
-                          ],
+                        child: Tooltip(
+                          message: renderFieldInfo.name ?? '',
+                          child: Text(
+                            renderFieldInfo.name ?? '',
+                            softWrap: true,
+                            maxLines: null,
+                            // overflow: TextOverflow.ellipsis,
+                          ).fontSize(14).fontWeight(FontWeight.bold),
                         )),
                   )),
               30.horizontalSpaceRadius,
