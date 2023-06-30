@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:50:08
+ * @LastEditTime: 2023-06-30 10:51:29
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -201,11 +201,16 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      shelf = Shelf.fromSectionJson(res.data, widget.section);
+      shelf = Shelf.fromSectionJson((res.data as List).first, widget.section);
       currentShelfSensorTypeNotifier =
           ValueNotifier<String>(currentShelfSensorType ?? '');
+      if (currentShelfSensorType == '2') {
+        getSectionList();
+      }
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -215,14 +220,19 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
   String? get currentShelfSensorType =>
       getFieldValue('${widget.section}/ShelfSensorType');
 
-  save() {
+  save() async {
     if (changedList.isEmpty) {
       return;
     }
     var dataList = _makeParams();
-    changedList = [];
-    setState(() {});
-    return dataList;
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      setState(() {});
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
   }
 
   test() {
@@ -250,7 +260,8 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      deviceList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      deviceList = result.isEmpty ? [] : result.split('-');
       currentDeviceId = deviceList.isNotEmpty ? deviceList.first : [];
       setState(() {});
     } else {
@@ -286,8 +297,9 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentDeviceId,
+          "list_node": 'ScanDevice',
           "parent_node": widget.section,
+          "node_name": currentDeviceId,
         }
       ],
     });

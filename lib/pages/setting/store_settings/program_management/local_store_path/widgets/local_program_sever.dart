@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 13:28:52
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 18:09:43
+ * @LastEditTime: 2023-06-30 09:13:05
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/local_store_path/widgets/local_program_sever.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -103,9 +103,12 @@ class _LocalProgramSeverState extends State<LocalProgramSever> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      prgLocalInfo = PrgLocalInfo.fromSectionJson(res.data, widget.section);
+      prgLocalInfo = PrgLocalInfo.fromSectionJson(
+          (res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -117,7 +120,7 @@ class _LocalProgramSeverState extends State<LocalProgramSever> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

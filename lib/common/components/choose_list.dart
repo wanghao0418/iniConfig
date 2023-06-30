@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-27 09:07:37
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 09:43:50
+ * @LastEditTime: 2023-06-30 10:49:52
  * @FilePath: /eatm_ini_config/lib/common/components/choose_list.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -32,12 +32,12 @@ class ChooseListState extends State<ChooseList> {
     if (widget.chooseType == ChooseType.macProgramSource) {
       params = {
         "list_node": "PrgServerInfo",
-        "parent_node": null,
+        "parent_node": "NULL",
       };
     } else if (widget.chooseType == ChooseType.localStorePath) {
       params = {
         "list_node": "PrgLocalInfo",
-        "parent_node": null,
+        "parent_node": "NULL",
       };
     }
 
@@ -47,9 +47,9 @@ class ChooseListState extends State<ChooseList> {
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      setState(() {
-        _optionList = ((data as List).first as String).split('-');
-      });
+      var result = (data as List).first as String;
+      _optionList = result.isEmpty ? [] : result.split('-');
+      setState(() {});
     } else {
       // 查询失败
       PopupMessage.showFailInfoBar(res.message as String);

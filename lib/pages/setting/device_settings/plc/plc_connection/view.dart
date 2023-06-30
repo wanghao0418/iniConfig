@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 15:30:08
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:27:31
+ * @LastEditTime: 2023-06-30 11:39:06
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_connection/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,16 +62,28 @@ class _PlcConnectionViewGetX extends GetView<PlcConnectionController> {
                   "plc连接设置",
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
-                commandBar: CommandBar(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.save),
-                      label: const Text('保存'),
-                      onPressed: controller.save,
-                    ),
-                  ],
-                )),
+                commandBar: FilledButton(
+                  child: Wrap(
+                    spacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.save),
+                      Text("保存"),
+                    ],
+                  ),
+                  onPressed: controller.save,
+                )
+                // commandBar: CommandBar(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   primaryItems: [
+                //     CommandBarButton(
+                //       icon: const Icon(FluentIcons.save),
+                //       label: const Text('保存'),
+                //       onPressed: controller.save,
+                //     ),
+                //   ],
+                // )
+                ),
             const Divider(),
             15.verticalSpacingRadius,
             _buildView()

@@ -78,12 +78,12 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: 'OpenDoor',
-        name: '货架电磁门开门',
+        name: '货架电磁门开门（用于1-16号货架门）',
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: 'OpenDoor2',
-        name: '货架电磁门开门',
+        name: '货架电磁门开门（用于17-64号货架门）',
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
@@ -234,12 +234,12 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfDoor",
-        name: "货架门",
+        name: "货架门（用于1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfDoor2",
-        name: "货架门",
+        name: "货架门（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
@@ -269,32 +269,32 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MachineFinish",
-        name: "PLC控制启动的机床",
+        name: "PLC控制启动的机床（用于1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MachineFinish2",
-        name: "PLC控制启动的机床",
+        name: "PLC控制启动的机床（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfOnlineAsk",
-        name: "货架上线请求",
+        name: "货架上线请求（用于1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfOnlineAsk2",
-        name: "货架上线请求",
+        name: "货架上线请求（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfOfflineAsk",
-        name: "货架下线请求",
+        name: "货架下线请求（用于1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfOfflineAsk2",
-        name: "货架下线请求",
+        name: "货架下线请求（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
@@ -304,12 +304,12 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfEmergencyStop",
-        name: "货架急停",
+        name: "货架急停用于（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ShelfEmergencyStop2",
-        name: "货架急停",
+        name: "货架急停（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
@@ -324,22 +324,22 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ChuckAirtightness",
-        name: "机床卡盘气密性状态",
+        name: "机床卡盘气密性状态（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ChuckAirtightness2",
-        name: "机床卡盘气密性状态",
+        name: "机床卡盘气密性状态（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ChuckOpenCloseStatus",
-        name: "卡盘锁紧/松开功能异常",
+        name: "卡盘锁紧/松开功能异常（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "ChuckOpenCloseStatus2",
-        name: "卡盘锁紧/松开功能异常",
+        name: "卡盘锁紧/松开功能异常（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
@@ -349,82 +349,82 @@ class PlcCommunicationProtocolController extends GetxController {
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacAutoDoorStatus",
-        name: "机床自动门异常",
+        name: "机床自动门异常（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacAutoDoorStatus2",
-        name: "机床自动门异常",
+        name: "机床自动门异常（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOriginPosCheck",
-        name: "机床原点检测",
+        name: "机床原点检测（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOriginPosCheck2",
-        name: "机床原点检测",
+        name: "机床原点检测（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOnlineAsk",
-        name: "机床上线请求",
+        name: "机床上线请求（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOnlineAsk2",
-        name: "机床上线请求",
+        name: "机床上线请求（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOfflineAsk",
-        name: "机床下线请求",
+        name: "机床下线请求（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacOfflineAsk2",
-        name: "机床下线请求",
+        name: "机床下线请求（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MachineError",
-        name: "机床报警",
+        name: "机床报警（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MachineError2",
-        name: "机床报警",
+        name: "机床报警（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "RotatShelfScanFinish",
-        name: "旋转货架扫描完成",
+        name: "旋转货架扫描完成（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "RotatShelfScanFinish2",
-        name: "旋转货架扫描完成",
+        name: "旋转货架扫描完成（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacObstructionCheck",
-        name: "机床上料阻碍标识检测",
+        name: "机床上料阻碍标识检测（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacObstructionCheck2",
-        name: "机床上料阻碍标识检测",
+        name: "机床上料阻碍标识检测（用于17-64号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacWasteMonitor",
-        name: "机床废料监控",
+        name: "机床废料监控（1-16号货架门）",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: 'Plc_M_Block',
         field: "MacWasteMonitor2",
-        name: "机床废料监控",
+        name: "机床废料监控（用于17-64号货架门）",
         renderType: RenderType.input),
   ];
   // 货位区
@@ -552,6 +552,7 @@ class PlcCommunicationProtocolController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

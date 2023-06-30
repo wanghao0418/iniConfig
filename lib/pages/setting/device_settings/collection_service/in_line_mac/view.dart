@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 15:58:21
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 17:29:26
+ * @LastEditTime: 2023-06-30 14:29:43
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/in_line_mac/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -39,20 +39,31 @@ class _InLineMacViewGetX extends GetView<InLineMacController> {
     return Column(
       children: [
         PageHeader(
-          title: Text(
-            "线体机床采集",
-            style: FluentTheme.of(context).typography.subtitle,
-          ),
-          commandBar: CommandBar(
-            mainAxisAlignment: MainAxisAlignment.end,
-            primaryItems: [
-              CommandBarButton(
-                  label: Text('保存'),
-                  onPressed: () {},
-                  icon: Icon(FluentIcons.save)),
-            ],
-          ),
-        ),
+            title: Text(
+              "线体机床采集",
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )
+            // commandBar: CommandBar(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   primaryItems: [
+            //     CommandBarButton(
+            //         label: Text('保存'),
+            //         onPressed: controller.save,
+            //         icon: Icon(FluentIcons.save)),
+            //   ],
+            // ),
+            ),
         const Divider(),
         15.verticalSpacingRadius,
         Expanded(
@@ -63,22 +74,33 @@ class _InLineMacViewGetX extends GetView<InLineMacController> {
             child: ListView.builder(
                 itemCount: controller.sectionList.length,
                 itemBuilder: (context, index) {
-                  final contact = controller.sectionList[index];
+                  final MacData contact = controller.sectionList[index];
                   return ListTile.selectable(
-                    title: Column(
+                    title: Text(contact.section!),
+                    subtitle: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
                       children: [
-                        Text('机床名称：$contact'),
-                        Text('机床类型：$contact'),
-                        Text('机床系统：$contact'),
+                        Text(
+                            '机床号：${contact.data!['${contact.section}/MachineNum']}'),
+                        Text(
+                            '机床名称：${contact.data!['${contact.section}/MachineName']}'),
+                        Text(
+                            '机床类型：${contact.data!['${contact.section}/MachineType']}'),
+                        Text(
+                            '机床系统：${contact.data!['${contact.section}/MacSystemType']}'),
                       ],
                     ),
-                    selected: controller.selectedSections.contains(contact),
+                    selected:
+                        controller.selectedSections.contains(contact.section),
                     selectionMode: ListTileSelectionMode.multiple,
                     onSelectionChange: (selected) {
                       if (selected) {
-                        controller.selectedSections.add(contact);
+                        controller.selectedSections.add(contact.section);
                       } else {
-                        controller.selectedSections.remove(contact);
+                        var index = controller.selectedSections
+                            .indexOf(contact.section);
+                        controller.selectedSections.removeAt(index);
                       }
                       controller.update(["in_line_mac"]);
                     },

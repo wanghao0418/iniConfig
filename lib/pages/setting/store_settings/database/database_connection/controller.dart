@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-13 11:34:05
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-15 17:31:30
+ * @LastEditTime: 2023-06-30 11:25:30
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/database/database_connection/controller.dart
  * @Description: 连接设置 控制器
  */
@@ -88,6 +88,9 @@ class DatabaseConnectionController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

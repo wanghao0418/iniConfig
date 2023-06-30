@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 15:30:08
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 14:19:50
+ * @LastEditTime: 2023-06-30 11:19:59
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_connection/controller.dart
  * @Description: plc连接设置
  */
@@ -76,6 +76,7 @@ class PlcConnectionController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

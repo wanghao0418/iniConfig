@@ -61,19 +61,34 @@ class ShelfManagementLightController extends GetxController {
     _initData();
   }
 
+  query() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": shelfManagementLight.toJson().keys.toList(),
+    });
+    if (res.success == true) {
+      // 查询成功
+      shelfManagementLight = ShelfManagementLight.fromJson(res.data);
+      _initData();
+    } else {
+      // 保存失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   void getSectionList() async {
     ResponseApiBody res = await CommonApi.getSectionList({
       "params": [
         {
           "list_node": "StorageLightDevice",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      sectionList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      sectionList = result.isEmpty ? [] : result.split('-');
       currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
       _initData();
     } else {
@@ -87,8 +102,8 @@ class ShelfManagementLightController extends GetxController {
     var res = await CommonApi.addSection({
       "params": [
         {
-          "list_node": "TcpScanDriverInfo",
-          "parent_node": null,
+          "list_node": "StorageLightDevice",
+          "parent_node": "NULL",
         }
       ],
     });
@@ -108,8 +123,9 @@ class ShelfManagementLightController extends GetxController {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentSection.value,
-          "parent_node": null,
+          "list_node": 'StorageLightDevice',
+          "parent_node": "NULL",
+          "node_name": currentSection.value,
         }
       ],
     });
@@ -129,7 +145,32 @@ class ShelfManagementLightController extends GetxController {
     update(["shelf_management_light"]);
   }
 
-  void save() {}
+  void save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
+    var dataList = _makeParams();
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
+    if (res.success == true) {
+      PopupMessage.showSuccessInfoBar('保存成功');
+      changedList = [];
+      _initData();
+    } else {
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  test() {
+    PopupMessage.showWarningInfoBar('暂未开放');
+  }
+
+  _makeParams() {
+    List<Map<String, dynamic>> params = [];
+    for (var element in changedList) {
+      params.add({"key": element, "value": getFieldValue(element)});
+    }
+    return params;
+  }
 
   // @override
   // void onInit() {
@@ -139,6 +180,7 @@ class ShelfManagementLightController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    query();
     getSectionList();
     _initData();
   }

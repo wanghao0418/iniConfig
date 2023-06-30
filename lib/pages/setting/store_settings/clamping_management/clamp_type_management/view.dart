@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 18:20:54
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:28:20
+ * @LastEditTime: 2023-06-30 11:40:34
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/clamping_management/clamp_type_management/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -71,16 +71,28 @@ class _ClampTypeManagementViewGetX
                   "夹具类型限制",
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
-                commandBar: CommandBar(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.save),
-                      label: const Text('保存'),
-                      onPressed: controller.save,
-                    ),
-                  ],
-                )),
+                commandBar: FilledButton(
+                  child: Wrap(
+                    spacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.save),
+                      Text("保存"),
+                    ],
+                  ),
+                  onPressed: controller.save,
+                )
+                // commandBar: CommandBar(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   primaryItems: [
+                //     CommandBarButton(
+                //       icon: const Icon(FluentIcons.save),
+                //       label: const Text('保存'),
+                //       onPressed: controller.save,
+                //     ),
+                //   ],
+                // )
+                ),
             const Divider(),
             15.verticalSpacingRadius,
             _buildView()

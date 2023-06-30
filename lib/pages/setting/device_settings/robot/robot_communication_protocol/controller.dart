@@ -2,11 +2,12 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:14:25
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 14:29:30
+ * @LastEditTime: 2023-06-30 13:25:28
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_communication_protocol/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:get/get.dart';
+import 'package:iniConfig/common/api/plc.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/components/field_change.dart';
@@ -152,7 +153,7 @@ class RobotCommunicationProtocolController extends GetxController {
   }
 
   query() async {
-    ResponseApiBody res = await CommonApi.fieldQuery({
+    ResponseApiBody res = await PlcApi.fieldQuery({
       "params": robotCommunicationProtocol.toJson().keys.toList(),
     });
     if (res.success == true) {
@@ -176,10 +177,11 @@ class RobotCommunicationProtocolController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);
-    ResponseApiBody res = await CommonApi.fieldUpdate({"params": params});
+    ResponseApiBody res = await PlcApi.fieldUpdate({"params": params});
     if (res.success == true) {
       // 保存成功
       changedList.clear();

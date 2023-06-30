@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 09:22:59
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 14:32:25
+ * @LastEditTime: 2023-06-30 11:25:18
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/clamping_management/tray_settings/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -88,6 +88,9 @@ class TraySettingsController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

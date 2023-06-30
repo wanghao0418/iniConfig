@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-16 17:13:14
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 11:08:04
+ * @LastEditTime: 2023-06-29 13:52:43
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/widgets/scan_device.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -127,7 +127,9 @@ class ScanDeviceStateForm extends State<ScanDeviceForm> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
       scanDevice = ScanDevice.fromSectionJson(res.data, widget.section);
       setState(() {});

@@ -90,9 +90,12 @@ class _StorageLightDeviceState extends State<StorageLightDevice> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      storageLight = StorageLight.fromSectionJson(res.data, widget.section);
+      storageLight = StorageLight.fromSectionJson(
+          (res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -104,7 +107,7 @@ class _StorageLightDeviceState extends State<StorageLightDevice> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

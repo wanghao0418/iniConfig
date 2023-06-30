@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:22:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 20:31:56
+ * @LastEditTime: 2023-06-30 09:06:59
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/widgets/romote_database_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -107,10 +107,12 @@ class _RomoteDatabaseSettingState extends State<RomoteDatabaseSetting> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
       romoteDataBaseInfo =
-          RomoteDataBaseInfo.fromJson(res.data, widget.section);
+          RomoteDataBaseInfo.fromJson((res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -122,7 +124,7 @@ class _RomoteDatabaseSettingState extends State<RomoteDatabaseSetting> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

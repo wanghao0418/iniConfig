@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:09:04
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:52:24
+ * @LastEditTime: 2023-06-30 11:20:55
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -89,6 +89,7 @@ class CollectionServiceSettingController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);
@@ -114,14 +115,15 @@ class CollectionServiceSettingController extends GetxController {
       "params": [
         {
           "list_node": "RomoteDataBaseInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      sectionList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      sectionList = result.isEmpty ? [] : result.split('-');
       currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
       _initData();
     } else {
@@ -136,7 +138,7 @@ class CollectionServiceSettingController extends GetxController {
       "params": [
         {
           "list_node": "RomoteDataBaseInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
@@ -156,8 +158,9 @@ class CollectionServiceSettingController extends GetxController {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentSection.value,
-          "parent_node": null,
+          "list_node": 'RomoteDataBaseInfo',
+          "parent_node": "NULL",
+          "node_name": currentSection.value,
         }
       ],
     });

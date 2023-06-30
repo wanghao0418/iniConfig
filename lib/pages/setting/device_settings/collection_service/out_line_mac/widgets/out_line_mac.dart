@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 17:30:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 18:05:25
+ * @LastEditTime: 2023-06-29 16:58:38
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/out_line_mac/widgets/out_line_mac.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -167,9 +167,12 @@ class _OutLineMacState extends State<OutLineMac> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      outLineMacInfo = OutLineMacInfo.fromSectionJson(res.data, widget.section);
+      outLineMacInfo = OutLineMacInfo.fromSectionJson(
+          (res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -181,7 +184,7 @@ class _OutLineMacState extends State<OutLineMac> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

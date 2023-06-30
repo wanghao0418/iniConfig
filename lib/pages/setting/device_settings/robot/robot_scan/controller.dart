@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:27:59
+ * @LastEditTime: 2023-06-30 10:51:08
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -68,14 +68,15 @@ class RobotScanController extends GetxController {
       "params": [
         {
           "list_node": "TcpScanDriverInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      deviceList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      deviceList = result.isEmpty ? [] : result.split('-');
       currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
       _initData();
     } else {
@@ -90,7 +91,7 @@ class RobotScanController extends GetxController {
       "params": [
         {
           "list_node": "TcpScanDriverInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
@@ -110,8 +111,9 @@ class RobotScanController extends GetxController {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentDeviceId,
-          "parent_node": null,
+          "list_node": 'TcpScanDriverInfo',
+          "parent_node": "NULL",
+          "node_name": currentDeviceId
         }
       ],
     });

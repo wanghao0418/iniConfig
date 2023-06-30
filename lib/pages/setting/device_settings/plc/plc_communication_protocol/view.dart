@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 09:26:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-21 14:27:16
+ * @LastEditTime: 2023-06-30 11:38:54
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_communication_protocol/view.dart
  * @Description: 通讯协议设置界面
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/components/field_change.dart';
 import 'index.dart';
@@ -42,7 +43,12 @@ class _PlcCommunicationProtocolViewGetX
   Widget _buildModbus() {
     return Expander(
         initiallyExpanded: true,
-        header: const Text('Modbus命令号功能码'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child:
+                Text('Modbus命令号功能码').fontWeight(FontWeight.bold).fontSize(16)),
+        // header: const Text('Modbus命令号功能码'),
         content: Column(
             children: controller.modbusAreaList.map((e) {
           return FieldChange(
@@ -57,7 +63,11 @@ class _PlcCommunicationProtocolViewGetX
   // 命令区
   Widget _buildCommand() {
     return Expander(
-        header: const Text('命令区'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('命令区').fontWeight(FontWeight.bold).fontSize(16)),
+        // header: const Text('命令区'),
         content: Column(
             children: controller.commandAreaList.map((e) {
           return FieldChange(
@@ -72,7 +82,11 @@ class _PlcCommunicationProtocolViewGetX
   // 扩展区
   Widget _buildExpandArea() {
     return Expander(
-        header: const Text('扩展区'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('扩展区').fontWeight(FontWeight.bold).fontSize(16)),
+        // header: const Text('扩展区'),
         content: Column(
             children: controller.expandAreaList.map((e) {
           return FieldChange(
@@ -87,7 +101,10 @@ class _PlcCommunicationProtocolViewGetX
   // 监控区
   Widget _buildMonitorArea() {
     return Expander(
-        header: const Text('监控区'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('监控区').fontWeight(FontWeight.bold).fontSize(16)),
         content: Column(
             children: controller.monitorAreaList.map((e) {
           return FieldChange(
@@ -102,7 +119,10 @@ class _PlcCommunicationProtocolViewGetX
   // 货位区
   Widget _buildLocationArea() {
     return Expander(
-        header: const Text('货位区'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('货位区').fontWeight(FontWeight.bold).fontSize(16)),
         content: Column(
             children: controller.locationAreaList.map((e) {
           return FieldChange(
@@ -117,7 +137,12 @@ class _PlcCommunicationProtocolViewGetX
   // 标识区
   Widget _buildIdentificationArea() {
     return Expander(
-        header: const Text('标识符 基础信息BaseInfo之下的按位区分标识'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('标识符 基础信息BaseInfo之下的按位区分标识')
+                .fontWeight(FontWeight.bold)
+                .fontSize(16)),
         content: Column(
             children: controller.identificationAreaList.map((e) {
           return FieldChange(
@@ -132,7 +157,10 @@ class _PlcCommunicationProtocolViewGetX
   // 对应区
   Widget _buildCorrespondingArea() {
     return Expander(
-        header: const Text('对应区'),
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('对应区').fontWeight(FontWeight.bold).fontSize(16)),
         content: Column(
             children: controller.correspondingAreaList.map((e) {
           return FieldChange(
@@ -179,16 +207,28 @@ class _PlcCommunicationProtocolViewGetX
                   'plc通讯协议设置',
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
-                commandBar: CommandBar(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.save),
-                      label: const Text('保存'),
-                      onPressed: controller.save,
-                    ),
-                  ],
-                )),
+                commandBar: FilledButton(
+                  child: Wrap(
+                    spacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.save),
+                      Text("保存"),
+                    ],
+                  ),
+                  onPressed: controller.save,
+                )
+                // commandBar: CommandBar(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   primaryItems: [
+                //     CommandBarButton(
+                //       icon: const Icon(FluentIcons.save),
+                //       label: const Text('保存'),
+                //       onPressed: controller.save,
+                //     ),
+                //   ],
+                // )
+                ),
             const Divider(),
             _buildView()
           ],

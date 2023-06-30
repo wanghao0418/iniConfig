@@ -31,17 +31,17 @@ class FunctionSettingController extends GetxController {
     ]),
     RenderFieldGroup(groupName: "界面设置", children: [
       RenderFieldInfo(
-        field: 'CheckStrorageExist',
-        section: 'AutoUiConfig',
-        renderType: RenderType.toggleSwitch,
-        name: "货位左上角勾选框存在表示",
-      ),
+          field: 'CheckStrorageExist',
+          section: 'AutoUiConfig',
+          renderType: RenderType.radio,
+          name: "货位左上角勾选框存在表示",
+          options: {"不显示": "0", "显示": "1"}),
       RenderFieldInfo(
-        field: 'ProgressBarMode',
-        section: 'AutoUiConfig',
-        renderType: RenderType.toggleSwitch,
-        name: "滚动条显示标志",
-      ),
+          field: 'ProgressBarMode',
+          section: 'AutoUiConfig',
+          renderType: RenderType.radio,
+          name: "滚动条显示标志",
+          options: {"不显示": "0", "显示": "1"}),
       RenderFieldInfo(
         field: 'WidgetPage',
         section: 'AutoUiConfig',
@@ -63,11 +63,11 @@ class FunctionSettingController extends GetxController {
             "全部显示": "0"
           }),
       RenderFieldInfo(
-        field: 'ShowTipInfoMark',
-        section: 'AutoUiConfig',
-        renderType: RenderType.toggleSwitch,
-        name: "货位悬浮框提示标志",
-      ),
+          field: 'ShowTipInfoMark',
+          section: 'AutoUiConfig',
+          renderType: RenderType.radio,
+          name: "货位悬浮框提示标志",
+          options: {"不显示": "0", "显示": "1"}),
       RenderFieldInfo(
         field: 'DeskTipShowTime',
         section: 'AutoUiConfig',
@@ -89,41 +89,50 @@ class FunctionSettingController extends GetxController {
       RenderFieldInfo(
           field: 'CtrlButtonStyle',
           section: 'AutoUiConfig',
-          renderType: RenderType.radio,
+          renderType: RenderType.select,
           name: "状态栏控制按钮配置",
-          options: {"显示全部": "3"}),
+          options: {
+            "显示开始，停止按钮": "1",
+            "显示开始，停止，继续，暂停按钮": "2",
+            "全部按钮显示": "3",
+            "显示继续按钮": "4",
+            "显示开始，停止，启动运行按钮": "6"
+          }),
       RenderFieldInfo(
-        field: 'AgvOperBtnShowMark',
-        section: 'AutoUiConfig',
-        renderType: RenderType.toggleSwitch,
-        name: "agv操作按钮显示标志",
-      ),
+          field: 'AgvOperBtnShowMark',
+          section: 'AutoUiConfig',
+          renderType: RenderType.radio,
+          name: "agv操作按钮显示标志",
+          options: {"不显示": "0", "显示": "1"}),
     ]),
     RenderFieldGroup(groupName: "安全设置", children: [
       RenderFieldInfo(
         field: 'AddSteelSetOff',
         section: 'SysInfo',
-        renderType: RenderType.toggleSwitch,
+        renderType: RenderType.radio,
         name: "钢件偏移量的标识",
+        options: {"不显示": "0", "显示": "1"},
       ),
       RenderFieldInfo(
         field: 'AddSteelClampFace',
         section: 'SysInfo',
-        renderType: RenderType.toggleSwitch,
+        renderType: RenderType.radio,
         name: "钢件程序选面标识（精英扫描时查询程序用到）",
+        options: {"不显示": "0", "显示": "1"},
       ),
       RenderFieldInfo(
         field: 'CheckFenceDoorMark',
         section: 'SysInfo',
         renderType: RenderType.radio,
         name: "检查围栏门标志",
-        options: {"不检查": "0", "检查": "1"},
+        options: {"检查": "0", "不检查（威迪亚）": "1"},
       ),
       RenderFieldInfo(
         field: 'PreReportCheck',
         section: 'SysInfo',
-        renderType: RenderType.toggleSwitch,
-        name: "前置报工校验，前置工艺没没扫成，设置异常",
+        renderType: RenderType.radio,
+        name: "前置报工校验，前置工艺没扫成，设置异常",
+        options: {"不检验": "0", "检验": "1"},
       ),
       RenderFieldInfo(
         field: 'ThreeDimensionalElectrodeMark',
@@ -153,8 +162,9 @@ class FunctionSettingController extends GetxController {
       RenderFieldInfo(
         field: 'ClampHightLowMark',
         section: 'SysInfo',
-        renderType: RenderType.numberInput,
+        renderType: RenderType.radio,
         name: "获取电极的装夹高度最低下限",
+        options: {"不获取": "0", "获取": "1"},
       ),
     ])
   ];
@@ -210,6 +220,7 @@ class FunctionSettingController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

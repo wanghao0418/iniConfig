@@ -70,6 +70,7 @@ class ShelfInfoController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);
@@ -96,12 +97,18 @@ class ShelfInfoController extends GetxController {
 
   void getSectionList() async {
     ResponseApiBody res = await CommonApi.getSectionList({
-      "params": ['Shelf'],
+      "params": [
+        {
+          "list_node": "Shelf",
+          "parent_node": "NULL",
+        }
+      ],
     });
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      shelfList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      shelfList = result.isEmpty ? [] : result.split('-');
       currentShelf.value = shelfList.isNotEmpty ? shelfList.first : "";
       _initData();
     } else {
@@ -116,7 +123,7 @@ class ShelfInfoController extends GetxController {
       "params": [
         {
           "list_node": "Shelf",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
@@ -136,8 +143,9 @@ class ShelfInfoController extends GetxController {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentShelf.value,
-          "parent_node": null,
+          "list_node": 'Shelf',
+          "parent_node": "NULL",
+          "node_name": currentShelf.value,
         }
       ],
     });

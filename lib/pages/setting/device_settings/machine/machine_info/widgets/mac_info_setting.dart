@@ -1660,9 +1660,12 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      macInfo = MacInfo.fromSectionJson(res.data, widget.section);
+      macInfo =
+          MacInfo.fromSectionJson((res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -1674,7 +1677,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

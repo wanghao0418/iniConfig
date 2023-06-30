@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 17:52:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 19:16:27
+ * @LastEditTime: 2023-06-30 11:20:18
  * @FilePath: /eatm_ini_config/lib/pages/setting/system_settings/behavior_setting/behavior_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,8 +28,8 @@ class BehaviorSettingController extends GetxController {
           field: "ScanClean",
           section: "MachineScanTask",
           name: "扫描清洗模式",
-          renderType: RenderType.select,
-          options: {"默认扫描方式，只要不下线，就只扫描一次": "0", "只要初始上料 就扫描": "1", "不扫描": "2"}),
+          renderType: RenderType.radio,
+          options: {"扫描清洗烘干": "0", "不扫描清洗烘干": "1"}),
     ]),
     RenderFieldGroup(groupName: "全局设置", children: [
       RenderFieldInfo(
@@ -84,7 +84,7 @@ class BehaviorSettingController extends GetxController {
           field: "CycleRun",
           section: "SysInfo",
           name: "是否循环运行",
-          renderType: RenderType.radio,
+          renderType: RenderType.select,
           options: {"不循环": "0", "循环运行(不记录数据-展会模式)": "1", "循环运行(记录数据)": "2"}),
       RenderFieldInfo(
           field: "PrgDownMode",
@@ -146,16 +146,16 @@ class BehaviorSettingController extends GetxController {
           name: "是否需要调用修改象限角的exe",
           renderType: RenderType.radio,
           options: {"不调用": "0", "调用": "1"}),
-      RenderFieldInfo(
-          field: "RobotCarryWorkpieceTaskType",
-          section: "SysInfo",
-          name: "机器人把工件从装载站/接驳站搬运到货架的方式",
-          renderType: RenderType.radio,
-          options: {
-            "默认普通的任务8": "0",
-            "任务9，搬运任务自带扫描芯片属性": "1",
-            "8+1(搬运任务+扫描任务)": "3"
-          }),
+      // RenderFieldInfo(
+      //     field: "RobotCarryWorkpieceTaskType",
+      //     section: "SysInfo",
+      //     name: "机器人把工件从装载站/接驳站搬运到货架的方式",
+      //     renderType: RenderType.select,
+      //     options: {
+      //       "默认普通的任务8": "0",
+      //       "任务9，搬运任务自带扫描芯片属性": "1",
+      //       "8+1(搬运任务+扫描任务)": "3"
+      //     }),
     ]),
     RenderFieldGroup(groupName: "导入外部表设置", children: [
       RenderFieldInfo(
@@ -168,7 +168,7 @@ class BehaviorSettingController extends GetxController {
           field: "ImportTable",
           section: "SysInfo",
           name: "导入外部表",
-          renderType: RenderType.radio,
+          renderType: RenderType.select,
           options: {
             "工艺表-车床表": "2",
             "工艺表-加工(CNC)表": "3",
@@ -201,7 +201,7 @@ class BehaviorSettingController extends GetxController {
           field: "GetServerPrgWorkOrderMark",
           section: "SysInfo",
           name: "获取服务器获上程序工单信息",
-          renderType: RenderType.radio,
+          renderType: RenderType.select,
           options: {"不去查找": "0", "ftp": "1", "共享": "2"}),
       RenderFieldInfo(
         field: "WorkOrderProgramName",
@@ -292,7 +292,7 @@ class BehaviorSettingController extends GetxController {
         field: "ReportSwitch",
         section: "ThirdGloelConfig",
         name: "报工",
-        renderType: RenderType.radio,
+        renderType: RenderType.select,
         options: {"不报工": "0", "eman": "1", "eact": "2"},
       ),
       RenderFieldInfo(
@@ -384,6 +384,7 @@ class BehaviorSettingController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);
@@ -443,7 +444,7 @@ class BehaviorSetting {
   String? sysInfoShelfOfflineMode;
   String? sysInfoCheckProcessStepSwitch;
   String? sysInfoIsProcessQuadrantAngle;
-  String? sysInfoRobotCarryWorkpieceTaskType;
+  // String? sysInfoRobotCarryWorkpieceTaskType;
   String? sysInfoNType;
   String? sysInfoImportTable;
   String? sysInfoTOTALFENCECOUNT;
@@ -492,7 +493,7 @@ class BehaviorSetting {
       this.sysInfoShelfOfflineMode,
       this.sysInfoCheckProcessStepSwitch,
       this.sysInfoIsProcessQuadrantAngle,
-      this.sysInfoRobotCarryWorkpieceTaskType,
+      // this.sysInfoRobotCarryWorkpieceTaskType,
       this.sysInfoNType,
       this.sysInfoImportTable,
       this.sysInfoTOTALFENCECOUNT,
@@ -541,8 +542,8 @@ class BehaviorSetting {
     sysInfoShelfOfflineMode = json['SysInfo/ShelfOfflineMode'];
     sysInfoCheckProcessStepSwitch = json['SysInfo/CheckProcessStepSwitch'];
     sysInfoIsProcessQuadrantAngle = json['SysInfo/IsProcessQuadrantAngle'];
-    sysInfoRobotCarryWorkpieceTaskType =
-        json['SysInfo/RobotCarryWorkpieceTaskType'];
+    // sysInfoRobotCarryWorkpieceTaskType =
+    //     json['SysInfo/RobotCarryWorkpieceTaskType'];
     sysInfoNType = json['SysInfo/nType'];
     sysInfoImportTable = json['SysInfo/ImportTable'];
     sysInfoTOTALFENCECOUNT = json['SysInfo/TOTAL_FENCE_COUNT'];
@@ -596,8 +597,8 @@ class BehaviorSetting {
     data['SysInfo/ShelfOfflineMode'] = this.sysInfoShelfOfflineMode;
     data['SysInfo/CheckProcessStepSwitch'] = this.sysInfoCheckProcessStepSwitch;
     data['SysInfo/IsProcessQuadrantAngle'] = this.sysInfoIsProcessQuadrantAngle;
-    data['SysInfo/RobotCarryWorkpieceTaskType'] =
-        this.sysInfoRobotCarryWorkpieceTaskType;
+    // data['SysInfo/RobotCarryWorkpieceTaskType'] =
+    //     this.sysInfoRobotCarryWorkpieceTaskType;
     data['SysInfo/nType'] = this.sysInfoNType;
     data['SysInfo/ImportTable'] = this.sysInfoImportTable;
     data['SysInfo/TOTAL_FENCE_COUNT'] = this.sysInfoTOTALFENCECOUNT;

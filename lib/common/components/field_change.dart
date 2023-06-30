@@ -106,42 +106,55 @@ class _FieldChangeState extends State<FieldChange> {
                   )),
               20.horizontalSpaceRadius,
               GestureDetector(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ContentDialog(
-                            title: Text('${renderFieldInfo.name}'),
-                            content: SizedBox(
-                              height: 300.r,
-                              child: SingleChildScrollView(
-                                child: Text(
-                                  '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试',
-                                  softWrap: true,
-                                  maxLines: null,
-                                ).fontSize(22.sp),
-                              ),
-                            ),
-                            actions: [
-                              FilledButton(
-                                  child: Text('确认'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  })
-                            ],
-                          );
-                        });
-                  },
+                  onTap: () {},
                   child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
+                    // cursor: SystemMouseCursors.click,
                     child: SizedBox(
-                      width: 300.r,
-                      child: Text(
-                        renderFieldInfo.name ?? '',
-                        softWrap: true,
-                        maxLines: null,
-                      ).fontSize(14).fontWeight(FontWeight.bold),
-                    ),
+                        width: 300.r,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            IconButton(
+                                icon: Icon(
+                                  FluentIcons.info_solid,
+                                  color: Colors.blue,
+                                  size: 18,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ContentDialog(
+                                          title:
+                                              Text('${renderFieldInfo.name}'),
+                                          content: SizedBox(
+                                            height: 300.r,
+                                            child: SingleChildScrollView(
+                                              child: Text(
+                                                '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试',
+                                                softWrap: true,
+                                                maxLines: null,
+                                              ).fontSize(22.sp),
+                                            ),
+                                          ),
+                                          actions: [
+                                            FilledButton(
+                                                child: Text('确认'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        );
+                                      });
+                                }),
+                            5.horizontalSpaceRadius,
+                            Text(
+                              renderFieldInfo.name ?? '',
+                              softWrap: true,
+                              maxLines: null,
+                            ).fontSize(14).fontWeight(FontWeight.bold),
+                          ],
+                        )),
                   )),
               30.horizontalSpaceRadius,
               (renderType == RenderType.input ||
@@ -242,15 +255,21 @@ class _FieldChangeState extends State<FieldChange> {
   // 渲染下拉组件
   Widget renderSelect(BuildContext context, RenderFieldInfo fieldInfo) {
     return SizedBox(
-      width: 400.r,
+      width: 200.r,
       child: ComboBox<String>(
         isExpanded: true,
         value: widget.showValue,
+        placeholder: Text('请选择'),
         items: fieldInfo.options!.entries.map((e) {
           return ComboBoxItem(
-            value: e.value,
-            child: Text(e.key),
-          );
+              value: e.value,
+              child: Tooltip(
+                message: e.key,
+                child: Text(
+                  e.key,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ));
         }).toList(),
         onChanged: (val) {
           widget.onChanged!(

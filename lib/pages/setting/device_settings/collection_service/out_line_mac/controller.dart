@@ -19,14 +19,15 @@ class OutLineMacController extends GetxController {
       "params": [
         {
           "list_node": "TestCMMInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
     if (res.success == true) {
       // 查询成功
       var data = res.data;
-      sectionList = ((data as List).first as String).split('-');
+      var result = (data as List).first as String;
+      sectionList = result.isEmpty ? [] : result.split('-');
       currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
       _initData();
     } else {
@@ -41,7 +42,7 @@ class OutLineMacController extends GetxController {
       "params": [
         {
           "list_node": "TestCMMInfo",
-          "parent_node": null,
+          "parent_node": "NULL",
         }
       ],
     });
@@ -61,8 +62,9 @@ class OutLineMacController extends GetxController {
     var res = await CommonApi.deleteSection({
       "params": [
         {
-          "list_node": currentSection.value,
-          "parent_node": null,
+          "list_node": 'TestCMMInfo',
+          "parent_node": "NULL",
+          "node_name": currentSection.value,
         }
       ],
     });

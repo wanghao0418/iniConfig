@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:57:37
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:36:44
+ * @LastEditTime: 2023-06-30 11:40:20
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_management_light/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -45,16 +45,28 @@ class _ShelfManagementLightViewGetX
       PageHeader(
           title:
               Text("七色灯", style: FluentTheme.of(context).typography.subtitle),
-          commandBar: CommandBar(
-            mainAxisAlignment: MainAxisAlignment.end,
-            primaryItems: [
-              CommandBarButton(
-                icon: const Icon(FluentIcons.save),
-                label: const Text('保存'),
-                onPressed: controller.save,
-              ),
-            ],
-          )),
+          commandBar: FilledButton(
+            child: Wrap(
+              spacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Icon(FluentIcons.save),
+                Text("保存"),
+              ],
+            ),
+            onPressed: controller.save,
+          )
+          // commandBar: CommandBar(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   primaryItems: [
+          //     CommandBarButton(
+          //       icon: const Icon(FluentIcons.save),
+          //       label: const Text('保存'),
+          //       onPressed: controller.save,
+          //     ),
+          //   ],
+          // )
+          ),
       const Divider(),
       15.verticalSpacingRadius,
       ...controller.menuList

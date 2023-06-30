@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 10:09:31
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 10:29:53
+ * @LastEditTime: 2023-06-30 09:11:43
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -335,9 +335,12 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
   }
 
   getSectionDetail() async {
-    ResponseApiBody res = await CommonApi.getSectionDetail(widget.section);
+    ResponseApiBody res = await CommonApi.getSectionDetail({
+      "params": [widget.section]
+    });
     if (res.success == true) {
-      prgServerInfo = PrgServerInfo.fromSectionJson(res.data, widget.section);
+      prgServerInfo = PrgServerInfo.fromSectionJson(
+          (res.data as List).first, widget.section);
       setState(() {});
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
@@ -349,7 +352,7 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
       return;
     }
     var dataList = _makeParams();
-    ResponseApiBody res = await CommonApi.fieldUpdate(dataList);
+    ResponseApiBody res = await CommonApi.fieldUpdate({"params": dataList});
     if (res.success == true) {
       PopupMessage.showSuccessInfoBar('保存成功');
       changedList = [];

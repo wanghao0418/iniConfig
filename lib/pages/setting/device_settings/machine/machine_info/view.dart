@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 09:32:49
+ * @LastEditTime: 2023-06-30 11:38:39
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -74,16 +74,28 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
               "全局配置",
               style: FluentTheme.of(context).typography.subtitle,
             ),
-            commandBar: CommandBar(
-              mainAxisAlignment: MainAxisAlignment.end,
-              primaryItems: [
-                CommandBarButton(
-                  icon: const Icon(FluentIcons.save),
-                  label: const Text('保存'),
-                  onPressed: controller.save,
-                ),
-              ],
-            )),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )
+            // commandBar: CommandBar(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   primaryItems: [
+            //     CommandBarButton(
+            //       icon: const Icon(FluentIcons.save),
+            //       label: const Text('保存'),
+            //       onPressed: controller.save,
+            //     ),
+            //   ],
+            // )
+            ),
         const Divider(),
         15.verticalSpacingRadius,
         Padding(
@@ -123,7 +135,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: () {},
+                  onPressed: controller.delete,
                   icon: Icon(FluentIcons.delete)),
               // CommandBarSeparator(),
               // CommandBarButton(

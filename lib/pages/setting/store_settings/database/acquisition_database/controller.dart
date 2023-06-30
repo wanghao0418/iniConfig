@@ -109,6 +109,9 @@ class AcquisitionDatabaseController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) {
+      return;
+    }
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

@@ -125,11 +125,11 @@ class EmanSettingController extends GetxController {
       renderType: RenderType.input,
     ),
     RenderFieldInfo(
-      field: "Dimensionalwork",
-      section: "EManServer",
-      name: "获取立体工电极标识 从eman获取电极的尺寸",
-      renderType: RenderType.numberInput,
-    ),
+        field: "Dimensionalwork",
+        section: "EManServer",
+        name: "获取立体工电极标识 从eman获取电极的尺寸",
+        renderType: RenderType.select,
+        options: {"不从eman获取": "0", "从eman获取电极的尺寸": "1"}),
   ];
 
   List<String> changedList = [];
@@ -183,6 +183,7 @@ class EmanSettingController extends GetxController {
 
   // 保存
   save() async {
+    if (changedList.isEmpty) return;
     // 组装传参
     List<Map<String, dynamic>> params = _makeParams();
     print(params);

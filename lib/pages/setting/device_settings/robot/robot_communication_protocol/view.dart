@@ -57,16 +57,28 @@ class _RobotCommunicationProtocolViewGetX
                   "机器人连接设置",
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
-                commandBar: CommandBar(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.save),
-                      label: const Text('保存'),
-                      onPressed: controller.save,
-                    ),
-                  ],
-                )),
+                commandBar: FilledButton(
+                  child: Wrap(
+                    spacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.save),
+                      Text("保存"),
+                    ],
+                  ),
+                  onPressed: controller.save,
+                )
+                // commandBar: CommandBar(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   primaryItems: [
+                //     CommandBarButton(
+                //       icon: const Icon(FluentIcons.save),
+                //       label: const Text('保存'),
+                //       onPressed: controller.save,
+                //     ),
+                //   ],
+                // )
+                ),
             const Divider(),
             15.verticalSpacingRadius,
             _buildView()
