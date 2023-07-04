@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart' hide Tab;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -26,6 +27,7 @@ import '../../setting/system_settings/behavior_setting/behavior_setting/view.dar
 import '../../setting/system_settings/function_setting/function_setting/view.dart';
 import '../../setting/third_party_settings/mes_settings/EACT_setting/view.dart';
 import '../../setting/third_party_settings/mes_settings/EMAN_setting/view.dart';
+import '../../setting/third_party_settings/mes_settings/external_interface/view.dart';
 import 'widgets/fluent_tab.dart';
 
 class HomeController extends GetxController {
@@ -40,7 +42,7 @@ class HomeController extends GetxController {
   late PageController pageController;
 
   // var tabs = [].obs;
-  Key? currentMenuKey = const Key('1-1');
+  Key? currentMenuKey = const Key('');
   final List<NavigationPaneItem> menuItems = [];
   final List<NavigationPaneItem> footerItems = [
     PaneItemSeparator(),
@@ -59,16 +61,22 @@ class HomeController extends GetxController {
 
   final List<PrimaryMenu> menuList = [
     PrimaryMenu(id: '1', title: '设备设置', iconData: FluentIcons.list, children: [
-      SecondaryMenu(id: '1-1', title: 'plc', children: [
-        TertiaryMenu(
-            id: '1-1-1', title: '连接设置', bodyPage: const PlcConnectionPage()),
-        TertiaryMenu(
-            id: '1-1-2', title: '功能设置', bodyPage: const PlcFunctionPage()),
-        TertiaryMenu(
-            id: '1-1-3',
-            title: '通讯协议设置',
-            bodyPage: const PlcCommunicationProtocolPage()),
-      ]),
+      SecondaryMenu(
+          id: '1-1',
+          title: 'plc',
+          iconData: FluentIcons.plug_connected,
+          children: [
+            TertiaryMenu(
+                id: '1-1-1',
+                title: '连接设置',
+                bodyPage: const PlcConnectionPage()),
+            TertiaryMenu(
+                id: '1-1-2', title: '功能设置', bodyPage: const PlcFunctionPage()),
+            TertiaryMenu(
+                id: '1-1-3',
+                title: '通讯协议设置',
+                bodyPage: const PlcCommunicationProtocolPage()),
+          ]),
       SecondaryMenu(
           id: '1-2',
           title: '机器人',
@@ -159,50 +167,69 @@ class HomeController extends GetxController {
             TertiaryMenu(
                 id: '2-2-2', title: '本地存储路径', bodyPage: LocalStorePathPage()),
           ]),
-      SecondaryMenu(id: '2-3', title: '装夹管理', children: [
-        TertiaryMenu(
-            id: '2-3-1', title: '夹具类型管理', bodyPage: ClampTypeManagementPage()),
-        TertiaryMenu(id: '2-3-2', title: '托盘管理', bodyPage: TraySettingsPage()),
-      ]),
+      SecondaryMenu(
+          id: '2-3',
+          title: '装夹管理',
+          iconData: FluentIcons.product_release,
+          children: [
+            TertiaryMenu(
+                id: '2-3-1',
+                title: '夹具类型管理',
+                bodyPage: ClampTypeManagementPage()),
+            TertiaryMenu(
+                id: '2-3-2', title: '托盘管理', bodyPage: TraySettingsPage()),
+          ]),
     ]),
     PrimaryMenu(id: '3', title: '系统设置', iconData: FluentIcons.list, children: [
-      SecondaryMenu(id: '3-1', title: '功能设置', children: [
-        TertiaryMenu(
-            id: '3-1-1', title: '功能设置', bodyPage: FunctionSettingPage()),
-      ]),
-      SecondaryMenu(id: '3-2', title: '行为设置', children: [
-        TertiaryMenu(
-            id: '3-2-1', title: '行为设置', bodyPage: BehaviorSettingPage()),
-      ]),
+      SecondaryMenu(
+          id: '3-1',
+          title: '功能设置',
+          iconData: FluentIcons.functional_manager_dashboard,
+          children: [
+            TertiaryMenu(
+                id: '3-1-1', title: '功能设置', bodyPage: FunctionSettingPage()),
+          ]),
+      SecondaryMenu(
+          id: '3-2',
+          title: '行为设置',
+          iconData: FluentIcons.auto_deploy_settings,
+          children: [
+            TertiaryMenu(
+                id: '3-2-1', title: '行为设置', bodyPage: BehaviorSettingPage()),
+          ]),
     ]),
     PrimaryMenu(id: '4', title: '第三方设置', iconData: FluentIcons.list, children: [
       SecondaryMenu(id: '4-1', title: 'mes设置', children: [
         TertiaryMenu(id: '4-1-1', title: 'EACT', bodyPage: EactSettingPage()),
         TertiaryMenu(id: '4-1-2', title: 'EMAN', bodyPage: EmanSettingPage()),
+        TertiaryMenu(
+            id: '4-1-3', title: '对外接口', bodyPage: ExternalInterfacePage()),
       ]),
     ]),
   ];
 
-  SecondaryMenu get currentSecondaryMenu {
+  SecondaryMenu? get currentSecondaryMenu {
     List<SecondaryMenu> secondaryMenus = [];
     for (var element in menuList) {
       secondaryMenus.addAll(element.children);
     }
-    return secondaryMenus.firstWhere(
+    return secondaryMenus.firstWhereOrNull(
       (element) => Key(element.id) == currentMenuKey,
     );
   }
 
   // 获取三级菜单tab列表
   List<Tab> get currentTabs {
-    return currentSecondaryMenu.children
-        .map((e) => Tab(
-              id: e.id,
-              key: Key(e.id),
-              text: Text(e.title),
-              body: e.bodyPage,
-            ))
-        .toList();
+    return currentSecondaryMenu != null
+        ? currentSecondaryMenu!.children
+            .map((e) => Tab(
+                  id: e.id,
+                  key: Key(e.id),
+                  text: Text(e.title),
+                  body: e.bodyPage,
+                ))
+            .toList()
+        : [];
   }
 
   // 初始化菜单
@@ -290,6 +317,13 @@ class HomeController extends GetxController {
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    });
+    SmartDialog.showLoading();
+    Future.delayed(Duration(seconds: 1), () {
+      currentMenuKey = Key('1-1');
+      currentTabIndex.value = 0;
+      SmartDialog.dismiss();
+      _initData();
     });
   }
 

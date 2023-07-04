@@ -2,10 +2,11 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 15:30:08
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:19:59
+ * @LastEditTime: 2023-07-03 18:51:58
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_connection/controller.dart
  * @Description: plc连接设置
  */
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/api/common.dart';
 

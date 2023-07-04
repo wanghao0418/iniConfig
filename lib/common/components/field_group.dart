@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 11:08:32
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 09:31:36
+ * @LastEditTime: 2023-07-04 14:32:53
  * @FilePath: /eatm_ini_config/lib/common/components/field_group.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -80,4 +80,9 @@ class _FieldGroupState extends State<FieldGroup> {
           )
         : Container();
   }
+}
+
+class RenderCustomByTag implements RenderField {
+  String tag;
+  RenderCustomByTag({required this.tag});
 }

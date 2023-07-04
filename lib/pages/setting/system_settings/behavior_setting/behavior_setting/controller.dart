@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 17:52:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:20:18
+ * @LastEditTime: 2023-07-03 13:21:42
  * @FilePath: /eatm_ini_config/lib/pages/setting/system_settings/behavior_setting/behavior_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -302,21 +302,21 @@ class BehaviorSettingController extends GetxController {
         renderType: RenderType.toggleSwitch,
       ),
     ]),
-    RenderFieldGroup(groupName: "本地服务", children: [
-      RenderFieldInfo(
-        field: "StartServerMark",
-        section: "LocalServerConfig",
-        name: "开启服务标识，大于0，开启服务端，IP为软件所在电脑IP",
-        renderType: RenderType.select,
-        options: {"不启用": "0", "武汉工程": "1", "精英放电": "2", "一汽线体": "3"},
-      ),
-      RenderFieldInfo(
-        field: "ServerPort",
-        section: "LocalServerConfig",
-        name: "AGV和半自动一键上传启动",
-        renderType: RenderType.input,
-      ),
-    ]),
+    // RenderFieldGroup(groupName: "本地服务", children: [
+    //   RenderFieldInfo(
+    //     field: "StartServerMark",
+    //     section: "LocalServerConfig",
+    //     name: "开启服务标识，大于0，开启服务端，IP为软件所在电脑IP",
+    //     renderType: RenderType.select,
+    //     options: {"不启用": "0", "武汉工程": "1", "精英放电": "2", "一汽线体": "3"},
+    //   ),
+    //   RenderFieldInfo(
+    //     field: "ServerPort",
+    //     section: "LocalServerConfig",
+    //     name: "AGV和半自动一键上传启动",
+    //     renderType: RenderType.input,
+    //   ),
+    // ]),
     RenderFieldGroup(groupName: "新界面配置", children: [
       RenderFieldInfo(
         field: "UseLocalPort",

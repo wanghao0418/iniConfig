@@ -20,7 +20,7 @@ class ConfigStore extends GetxController {
   @override
   void onInit() async {
     // TODO: implement onInit
-    loadApplication();
+    await loadApplication();
     super.onInit();
   }
 

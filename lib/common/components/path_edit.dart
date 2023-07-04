@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-25 10:51:47
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-26 09:10:28
+ * @LastEditTime: 2023-07-04 14:49:24
  * @FilePath: /eatm_ini_config/lib/common/components/path_edit.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -83,9 +83,7 @@ class PathEditState extends State<PathEdit> {
               child: TextBox(
                 controller: TextEditingController(text: _inputValue),
                 onChanged: (value) {
-                  setState(() {
-                    _inputValue = value.trim();
-                  });
+                  _inputValue = value.trim();
                 },
               ),
             ),

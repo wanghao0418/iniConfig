@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-12 13:34:49
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 09:01:37
+ * @LastEditTime: 2023-07-03 18:58:27
  * @FilePath: /eatm_ini_config/lib/pages/system/home/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,17 +62,19 @@ class _HomeViewGetX extends GetView<HomeController> {
     return Container(
       child: Column(children: [
         // _buildCustomTab(context),
-        FluentTab(
-          key: controller.tabViewKey,
-          currentIndex: controller.currentTabIndex.value,
-          tabs: List<Tab>.from(controller.currentTabs),
-          onChanged: (value) {
-            if (value == controller.currentTabIndex) return;
-            controller.currentTabIndex.value = value;
-            controller.update(['home']);
-          },
-          closeButtonVisibility: CloseButtonVisibilityMode.never,
-        ),
+        controller.currentTabs.isNotEmpty
+            ? FluentTab(
+                key: controller.tabViewKey,
+                currentIndex: controller.currentTabIndex.value,
+                tabs: List<Tab>.from(controller.currentTabs),
+                onChanged: (value) {
+                  if (value == controller.currentTabIndex) return;
+                  controller.currentTabIndex.value = value;
+                  controller.update(['home']);
+                },
+                closeButtonVisibility: CloseButtonVisibilityMode.never,
+              )
+            : Container(),
         Expanded(child: _buildTabContent()),
       ]),
     );

@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 15:18:00
+ * @LastEditTime: 2023-07-04 17:09:17
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import './pages/configAutomation/configAutomation_main.dart';
@@ -16,12 +17,16 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/routers/index.dart';
+// import 'package:window_manager/window_manager.dart';
 
 import 'common/routers/pages.dart';
 import 'common/store/config.dart';
+// import 'global.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Global.init();
+  await init();
   doWhenWindowReady(() {
     final win = appWindow;
     final initialSize = Size(1360, 768);
@@ -32,6 +37,10 @@ void main() {
     win.show();
     Future.delayed(Duration.zero).then((value) => win.maximize());
   });
+  runApp(const MyApp());
+}
+
+init() async {
   Get.put<ConfigStore>(ConfigStore());
 }
 

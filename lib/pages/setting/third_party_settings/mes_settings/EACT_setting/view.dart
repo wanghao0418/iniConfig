@@ -2,13 +2,15 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:20:36
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:41:39
+ * @LastEditTime: 2023-07-04 16:43:10
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/EACT_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/components/index.dart';
 import 'index.dart';
@@ -35,6 +37,63 @@ class _EactSettingPageState extends State<EactSettingPage>
 class _EactSettingViewGetX extends GetView<EactSettingController> {
   const _EactSettingViewGetX({Key? key}) : super(key: key);
 
+  Widget _buildTable() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 5.r),
+      child: Expander(
+        initiallyExpanded: true,
+        headerHeight: 70,
+        header: Padding(
+            padding: EdgeInsets.only(left: 40.r),
+            child: Text('对应关系').fontWeight(FontWeight.bold).fontSize(16)),
+        content: SizedBox(
+            height: 300,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                var width = constraints.maxWidth;
+                return PlutoGrid(
+                    noRowsWidget: Center(child: Text('暂无数据')),
+                    columns: [
+                      PlutoColumn(
+                          title: '线内机床',
+                          field: 'macSection',
+                          type: PlutoColumnType.text(),
+                          readOnly: true,
+                          sort: PlutoColumnSort.none,
+                          enableContextMenu: false,
+                          width: width / 2),
+                      PlutoColumn(
+                          title: '对应Eact的CMMBarCode或者CNCBarCode',
+                          field: 'correspondMacMarkCode',
+                          type: PlutoColumnType.text(),
+                          sort: PlutoColumnSort.none,
+                          enableContextMenu: false,
+                          width: width / 2),
+                      // PlutoColumn(
+                      //     title: '对应监控ID',
+                      //     field: 'correspondMacMonitorId',
+                      //     type: PlutoColumnType.text(),
+                      //     sort: PlutoColumnSort.none,
+                      //     enableContextMenu: false,
+                      //     width: width / 3),
+                    ],
+                    rows: controller.rows,
+                    // columnGroups: columnGroups,
+                    onLoaded: (PlutoGridOnLoadedEvent event) {
+                      controller.stateManager = event.stateManager;
+                    },
+                    onChanged: controller.onTableCellChanged,
+                    configuration: const PlutoGridConfiguration(
+                      style: PlutoGridStyleConfig(
+                          gridBorderRadius:
+                              BorderRadius.all(Radius.circular(10))),
+                    ));
+              },
+            )),
+      ),
+    );
+  }
+
   _buildRenderField(RenderField info) {
     if (info is RenderFieldGroup) {
       return Container(
@@ -50,7 +109,7 @@ class _EactSettingViewGetX extends GetView<EactSettingController> {
           },
         ),
       );
-    } else {
+    } else if (info is RenderFieldInfo) {
       return FieldChange(
         renderFieldInfo: info as RenderFieldInfo,
         showValue: controller.getFieldValue(info.fieldKey),
@@ -59,6 +118,10 @@ class _EactSettingViewGetX extends GetView<EactSettingController> {
           controller.onFieldChange(field, value);
         },
       );
+    } else if (info is RenderCustomByTag) {
+      if (info.tag == 'table') {
+        return _buildTable();
+      }
     }
   }
 

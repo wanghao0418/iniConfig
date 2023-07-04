@@ -116,12 +116,13 @@ class _FieldChangeState extends State<FieldChange> {
                         context: context,
                         builder: (context) {
                           return ContentDialog(
+                            constraints: BoxConstraints(maxWidth: 600),
                             title: Text('${renderFieldInfo.name}'),
                             content: SizedBox(
                               height: 300.r,
                               child: SingleChildScrollView(
                                 child: Text(
-                                  '测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试',
+                                  '敬请期待',
                                   softWrap: true,
                                   maxLines: null,
                                 ).fontSize(22.sp),
@@ -327,9 +328,11 @@ class _FieldChangeState extends State<FieldChange> {
               context: context,
               builder: (context) {
                 return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 600),
                   title: Text('${fieldInfo.name}').fontSize(24.sp),
                   content: SizedBox(
-                    height: 240,
+                    width: 600,
+                    height: 250,
                     child: PathEdit(
                       showValue: widget.showValue ?? '',
                       key: pathKey,

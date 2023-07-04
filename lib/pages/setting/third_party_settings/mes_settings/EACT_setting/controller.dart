@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/components/index.dart';
@@ -34,13 +35,14 @@ class EactSettingController extends GetxController {
           name: "程式是否由Eact合并",
           renderType: RenderType.radio,
           options: {"不合并": "0", "Eact合并": "1"}),
-      RenderFieldInfo(
-        field: "MachineMarkCode",
-        section: "EActServer",
-        name: "机床标识码，供半自动化合并程式使用机床标识码，对应eact 的CMMBarCode或者 CNCBarCode",
-        renderType: RenderType.input,
-      ),
+      // RenderFieldInfo(
+      //   field: "MachineMarkCode",
+      //   section: "EActServer",
+      //   name: "机床标识码，供半自动化合并程式使用机床标识码，对应eact 的CMMBarCode或者 CNCBarCode",
+      //   renderType: RenderType.input,
+      // ),
     ]),
+    RenderCustomByTag(tag: "table"),
     RenderFieldGroup(groupName: "检测相关", children: [
       RenderFieldInfo(
         field: "CmmSPsync",
@@ -62,7 +64,7 @@ class EactSettingController extends GetxController {
           options: {"自动模式": "0", "手动模式": "1"}),
     ])
   ];
-
+  late final PlutoGridStateManager stateManager;
   List<String> changedList = [];
 
   bool isChanged(String field) {
@@ -98,6 +100,7 @@ class EactSettingController extends GetxController {
       // 查询成功
       eactSetting = EACTSetting.fromJson(res.data);
       _initData();
+      getSectionList();
     } else {
       // 保存失败
       PopupMessage.showFailInfoBar(res.message as String);
@@ -128,6 +131,142 @@ class EactSettingController extends GetxController {
       // 保存失败
       PopupMessage.showFailInfoBar(res.message as String);
     }
+  }
+
+  get currentMachineMarkCode =>
+      getFieldValue('EActServer/MachineMarkCode') ?? '';
+  // get currentMacMonitorId => getFieldValue('EManServer/MacMonitorId') ?? '';
+
+  List<MacCorrespond> macCorrespondList = [];
+
+  final List<PlutoRow> rows = [];
+
+  // 获取线内机床列表
+  void getSectionList() async {
+    ResponseApiBody res = await CommonApi.getSectionList({
+      "params": [
+        {
+          "list_node": "MachineInfo",
+          "parent_node": "NULL",
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 查询成功
+      var data = res.data;
+      var result = (data as List).first as String;
+      macCorrespondList = result.isEmpty
+          ? []
+          : result.split('-').map((e) => MacCorrespond(macSection: e)).toList();
+      // 获取已有值并赋值
+      initMacCorrespondList();
+    } else {
+      // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
+  initMacCorrespondList() {
+    Map markCodeMap = {};
+    if (currentMachineMarkCode.isNotEmpty) {
+      var markCodeList = currentMachineMarkCode.split('#');
+      print(markCodeList);
+      for (var element in markCodeList) {
+        var temp = element.split('&');
+        print(temp);
+        markCodeMap[temp[0]] = temp[1];
+
+        for (var e in macCorrespondList) {
+          if (e.macSection == temp[0]) {
+            e.correspondMacMarkCode = temp[1];
+          }
+        }
+      }
+    }
+
+    // Map idMap = {};
+    // if (currentMacMonitorId.isNotEmpty) {
+    //   var idList = currentMacMonitorId.split('#');
+    //   print(idList);
+    //   for (var element in idList) {
+    //     var temp = element.split('&');
+    //     print(temp);
+    //     idMap[temp[0]] = temp[1];
+
+    //     for (var e in macCorrespondList) {
+    //       if (e.macSection == temp[0]) {
+    //         e.correspondMacMonitorId = temp[1];
+    //       }
+    //     }
+    //   }
+    // }
+    print(markCodeMap);
+    // print(idMap);
+    initTableRow();
+  }
+
+  initTableRow() {
+    for (var element in macCorrespondList) {
+      stateManager.appendRows([
+        PlutoRow(
+          cells: {
+            'macSection': PlutoCell(value: element.macSection!),
+            'correspondMacMarkCode':
+                PlutoCell(value: element.correspondMacMarkCode ?? ''),
+            // 'correspondMacMonitorId':
+            //     PlutoCell(value: element.correspondMacMonitorId ?? ''),
+          },
+        )
+      ]);
+    }
+    _initData();
+  }
+
+  onTableCellChanged(PlutoGridOnChangedEvent event) {
+    print(event);
+    var currentRow = stateManager.rows.elementAt(event.rowIdx);
+    var macSection = currentRow.cells.entries
+        .where((element) => element.key == 'macSection')
+        .first
+        .value
+        .value;
+    var changedKey = currentRow.cells.entries.elementAt(event.columnIdx).key;
+    print(macSection);
+    print(changedKey);
+    MacCorrespond macCorrespond = macCorrespondList
+        .firstWhere((element) => element.macSection == macSection);
+    if (changedKey == 'correspondMacMarkCode') {
+      macCorrespond.correspondMacMarkCode = event.value;
+    }
+
+    // else if (changedKey == 'correspondMacMonitorId') {
+    //   macCorrespond.correspondMacMonitorId = event.value;
+    // }
+    updateMacCorrespondFields();
+  }
+
+  updateMacCorrespondFields() {
+    var macMarkCode = '';
+    for (var element in macCorrespondList) {
+      if (element.correspondMacMarkCode != null &&
+          element.correspondMacMarkCode != '') {
+        macMarkCode +=
+            '${element.macSection}&${element.correspondMacMarkCode}#';
+      }
+    }
+    macMarkCode = macMarkCode.isNotEmpty
+        ? macMarkCode.substring(0, macMarkCode.length - 1)
+        : "";
+
+    if (macMarkCode != currentMachineMarkCode) {
+      setFieldValue('EActServer/MachineMarkCode', macMarkCode);
+      changedList.add('EActServer/MachineMarkCode');
+    }
+    // if (macMonitorId != currentMacMonitorId) {
+    //   setFieldValue('EManServer/MacMonitorId', macMonitorId);
+    //   changedList.add('EManServer/MacMonitorId');
+    // }
+    _initData();
   }
 
   _initData() {
@@ -193,6 +332,25 @@ class EACTSetting {
     data['EActServer/CmmSPsync'] = this.eActServerCmmSPsync;
     data['EActServer/WorkReport'] = this.eActServerWorkReport;
     data['EActServer/EDMReportHandleMark'] = this.eActServerEDMReportHandleMark;
+    return data;
+  }
+}
+
+class MacCorrespond {
+  String? macSection;
+  String? correspondMacMarkCode;
+
+  MacCorrespond({this.macSection, this.correspondMacMarkCode});
+
+  MacCorrespond.fromJson(Map<String, dynamic> json) {
+    macSection = json['MacSection'];
+    correspondMacMarkCode = json['CorrespondMacMarkCode'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['MacSection'] = this.macSection;
+    data['CorrespondMacMarkCode'] = this.correspondMacMarkCode;
     return data;
   }
 }

@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 17:30:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-29 16:58:38
+ * @LastEditTime: 2023-07-03 09:36:53
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/out_line_mac/widgets/out_line_mac.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -231,7 +231,7 @@ class _OutLineMacState extends State<OutLineMac> {
             CommandBarSeparator(),
             CommandBarButton(
                 label: Text('测试'),
-                onPressed: save,
+                onPressed: test,
                 icon: Icon(FluentIcons.test_plan)),
           ])),
           5.verticalSpacingRadius,
