@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 11:08:32
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-04 14:32:53
+ * @LastEditTime: 2023-07-14 15:25:02
  * @FilePath: /eatm_ini_config/lib/common/components/field_group.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -37,7 +37,8 @@ class FieldGroup extends StatefulWidget {
       required this.getValue,
       required this.isChanged,
       this.visible = true,
-      this.isExpanded = false})
+      this.isExpanded = false,
+      this.groupHeight})
       : super(key: key);
   final String groupName;
   final List children;
@@ -46,6 +47,7 @@ class FieldGroup extends StatefulWidget {
   final Function(String) isChanged;
   final bool? visible;
   final bool? isExpanded;
+  final double? groupHeight;
 
   @override
   _FieldGroupState createState() => _FieldGroupState();
@@ -63,20 +65,51 @@ class _FieldGroupState extends State<FieldGroup> {
                 child: Text(widget.groupName)
                     .fontWeight(FontWeight.bold)
                     .fontSize(16)),
-            content: Column(
-                children: widget.children.map((e) {
-              if (e is RenderFieldInfo) {
-                return FieldChange(
-                  renderFieldInfo: e,
-                  showValue: widget.getValue(e.fieldKey),
-                  isChanged: widget.isChanged(e.fieldKey),
-                  onChanged: widget.onChanged,
-                );
-              } else if (e is RenderFieldSubTitle) {
-                return FieldSubTitle(title: e.title);
-              }
-              return Container();
-            }).toList()),
+            content: widget.groupHeight == null
+                ? Column(
+                    children: widget.children.map((e) {
+                    if (e is RenderFieldInfo) {
+                      return FieldChange(
+                          renderFieldInfo: e,
+                          showValue: widget.getValue(e.fieldKey),
+                          isChanged: widget.isChanged(e.fieldKey),
+                          onChanged: widget.onChanged,
+                          readOnly: e.readOnly,
+                          builder: e.builder,
+                          visible: (e.associatedField != null &&
+                                  e.associatedValue != null)
+                              ? widget.getValue(e.associatedField!) ==
+                                  e.associatedValue
+                              : true);
+                    } else if (e is RenderFieldSubTitle) {
+                      return FieldSubTitle(title: e.title);
+                    }
+                    return Container();
+                  }).toList())
+                : SizedBox(
+                    height: widget.groupHeight,
+                    child: SingleChildScrollView(
+                        child: Column(
+                            children: widget.children.map((e) {
+                      if (e is RenderFieldInfo) {
+                        return FieldChange(
+                            renderFieldInfo: e,
+                            showValue: widget.getValue(e.fieldKey),
+                            isChanged: widget.isChanged(e.fieldKey),
+                            onChanged: widget.onChanged,
+                            readOnly: e.readOnly,
+                            builder: e.builder,
+                            visible: (e.associatedField != null &&
+                                    e.associatedValue != null)
+                                ? widget.getValue(e.associatedField!) ==
+                                    e.associatedValue
+                                : true);
+                      } else if (e is RenderFieldSubTitle) {
+                        return FieldSubTitle(title: e.title);
+                      }
+                      return Container();
+                    }).toList())),
+                  ),
           )
         : Container();
   }

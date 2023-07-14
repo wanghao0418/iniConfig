@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 09:26:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:38:54
+ * @LastEditTime: 2023-07-13 18:02:54
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_communication_protocol/view.dart
  * @Description: 通讯协议设置界面
  */
@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/components/field_change.dart';
+import '../../../../../common/index.dart';
 import 'index.dart';
 
 class PlcCommunicationProtocolPage extends StatefulWidget {
@@ -107,12 +108,20 @@ class _PlcCommunicationProtocolViewGetX
             child: Text('监控区').fontWeight(FontWeight.bold).fontSize(16)),
         content: Column(
             children: controller.monitorAreaList.map((e) {
-          return FieldChange(
-            isChanged: controller.isChanged(e.fieldKey),
-            renderFieldInfo: e,
-            showValue: controller.getFieldValue(e.fieldKey),
-            onChanged: controller.onFieldChange,
-          );
+          if (e is RenderCustomByTag) {
+            return Container(
+              margin: EdgeInsets.only(bottom: 5.r),
+              child: _buildIdentificationArea(),
+            );
+          } else if (e is RenderFieldInfo) {
+            return FieldChange(
+              isChanged: controller.isChanged(e.fieldKey),
+              renderFieldInfo: e,
+              showValue: controller.getFieldValue(e.fieldKey),
+              onChanged: controller.onFieldChange,
+            );
+          }
+          return Container();
         }).toList()));
   }
 
@@ -160,7 +169,7 @@ class _PlcCommunicationProtocolViewGetX
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('对应区').fontWeight(FontWeight.bold).fontSize(16)),
+            child: Text('DB存储区').fontWeight(FontWeight.bold).fontSize(16)),
         content: Column(
             children: controller.correspondingAreaList.map((e) {
           return FieldChange(
@@ -173,23 +182,48 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 主视图
-  Widget _buildView() {
+  Widget _buildView(context) {
     return Column(
       children: [
+        PageHeader(
+            title: Text(
+              'plc通讯协议设置',
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )),
+        const Divider(),
         15.verticalSpacingRadius,
-        _buildModbus(),
-        15.verticalSpacingRadius,
-        _buildCommand(),
-        15.verticalSpacingRadius,
-        _buildExpandArea(),
-        15.verticalSpacingRadius,
-        _buildMonitorArea(),
-        15.verticalSpacingRadius,
-        _buildLocationArea(),
-        15.verticalSpacingRadius,
-        _buildIdentificationArea(),
-        15.verticalSpacingRadius,
-        _buildCorrespondingArea()
+        Expanded(
+            child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.r),
+            child: Column(children: [
+              _buildModbus(),
+              15.verticalSpacingRadius,
+              _buildCommand(),
+              15.verticalSpacingRadius,
+              _buildExpandArea(),
+              15.verticalSpacingRadius,
+              _buildMonitorArea(),
+              15.verticalSpacingRadius,
+              _buildLocationArea(),
+              // 15.verticalSpacingRadius,
+              // _buildIdentificationArea(),
+              15.verticalSpacingRadius,
+              _buildCorrespondingArea()
+            ]),
+          ),
+        )),
       ],
     );
   }
@@ -200,38 +234,11 @@ class _PlcCommunicationProtocolViewGetX
       init: PlcCommunicationProtocolController(),
       id: "plc_communication_protocol",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-                title: Text(
-                  'plc通讯协议设置',
-                  style: FluentTheme.of(context).typography.subtitle,
-                ),
-                commandBar: FilledButton(
-                  child: Wrap(
-                    spacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.save),
-                      Text("保存"),
-                    ],
-                  ),
-                  onPressed: controller.save,
-                )
-                // commandBar: CommandBar(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   primaryItems: [
-                //     CommandBarButton(
-                //       icon: const Icon(FluentIcons.save),
-                //       label: const Text('保存'),
-                //       onPressed: controller.save,
-                //     ),
-                //   ],
-                // )
-                ),
-            const Divider(),
-            _buildView()
-          ],
+        return ScaffoldPage(
+          content: Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildView(context),
+          ),
         );
       },
     );

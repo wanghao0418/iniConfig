@@ -8,7 +8,7 @@ import '../../../../../common/utils/popup_message.dart';
 
 class ShelfInfoController extends GetxController {
   ShelfInfoController();
-  List shelfList = [];
+  List<String> shelfList = [];
   var currentShelf = "".obs;
   GlobalKey shelfInfoSettingKey = GlobalKey();
   ShelfInfo shelfInfo = ShelfInfo();
@@ -17,7 +17,7 @@ class ShelfInfoController extends GetxController {
         section: "ShelfInfo",
         field: "rightBtnPutShelf",
         name: "右键下料指定的货架号",
-        renderType: RenderType.numberInput),
+        renderType: RenderType.custom),
   ];
   List<String> changedList = [];
 
@@ -140,6 +140,10 @@ class ShelfInfoController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentShelf.value.isEmpty) {
+      PopupMessage.showWarningInfoBar('请选择删除的节点');
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {

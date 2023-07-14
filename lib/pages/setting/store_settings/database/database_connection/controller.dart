@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-13 11:34:05
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:25:30
+ * @LastEditTime: 2023-07-14 09:56:54
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/database/database_connection/controller.dart
  * @Description: 连接设置 控制器
  */
@@ -25,7 +25,7 @@ class DatabaseConnectionController extends GetxController {
       options: {
         "SQLSERVER": "SQLSERVER",
         "MYSQL": "MYSQL",
-        "QSQLITE": "QSQLITE",
+        "SQLITE": "SQLITE",
       },
     ),
     RenderFieldInfo(
@@ -58,13 +58,13 @@ class DatabaseConnectionController extends GetxController {
       name: '数据库端口',
       renderType: RenderType.input,
     ),
-    RenderFieldInfo(
-      field: 'UseDbXml',
-      section: 'DataBaseInfo',
-      name: '标志查询 xml',
-      renderType: RenderType.radio,
-      options: {"查询数据库表": "0", "查询xml文件": "1"},
-    ),
+    // RenderFieldInfo(
+    //   field: 'UseDbXml',
+    //   section: 'DataBaseInfo',
+    //   name: '标志查询 xml',
+    //   renderType: RenderType.radio,
+    //   options: {"查询数据库表": "0", "查询xml文件": "1"},
+    // ),
   ];
   List<String> changedList = [];
 

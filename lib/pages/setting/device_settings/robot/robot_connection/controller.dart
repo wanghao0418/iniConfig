@@ -2,10 +2,11 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 11:17:42
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:22:06
+ * @LastEditTime: 2023-07-13 16:13:55
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_connection/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/api/common.dart';
 
@@ -41,6 +42,7 @@ class RobotConnectionController extends GetxController {
         renderType: RenderType.input),
   ];
   List<String> changedList = [];
+  var currentRobotType = ''.obs;
 
   bool isChanged(String field) {
     return changedList.contains(field);
@@ -49,6 +51,9 @@ class RobotConnectionController extends GetxController {
   void setFieldValue(String field, String val) {
     var temp = robotConnection.toJson();
     temp[field] = val;
+    if (field == 'RobotInfo/RobotType') {
+      currentRobotType.value = val;
+    }
     robotConnection = RobotConnection.fromJson(temp);
   }
 
@@ -74,6 +79,13 @@ class RobotConnectionController extends GetxController {
     if (res.success == true) {
       // 查询成功
       robotConnection = RobotConnection.fromJson(res.data);
+      currentRobotType.value = robotConnection.robotInfoRobotType ?? '';
+      currentRobotType.listen((event) {
+        if (currentRobotType.value == '1') {
+          // 获取plc ip
+          getIp();
+        }
+      });
       _initData();
     } else {
       // 保存失败
@@ -110,6 +122,18 @@ class RobotConnectionController extends GetxController {
   _initData() {
     update(["robot_connection"]);
   }
+
+  getIp() async {
+    ResponseApiBody res = await CommonApi.fieldQuery({
+      "params": ['SensorInfo/ServiceAddr'],
+    });
+    if (res.success == true) {
+      onFieldChange(
+          'RobotInfo/ServiceAddr', res.data['SensorInfo/ServiceAddr']);
+    }
+  }
+
+  // get currentRobotType => getFieldValue('RobotInfo/RobotType').obs;
 
   // @override
   // void onInit() {

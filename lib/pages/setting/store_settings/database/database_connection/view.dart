@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-13 11:34:05
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:41:04
+ * @LastEditTime: 2023-07-05 14:07:52
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/database/database_connection/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -40,18 +40,38 @@ class _DatabaseConnectionViewGetX
   Widget _buildView(context) {
     return Column(
       children: [
-        SizedBox(
-            child: Column(
-                children: controller.renderList
-                    .map((e) => FieldChange(
-                          isChanged:
-                              controller.isChanged("${e.section}/${e.field}"),
-                          renderFieldInfo: e,
-                          showValue: controller
-                              .getFieldValue("${e.section}/${e.field}"),
-                          onChanged: controller.onFieldChange,
-                        ))
-                    .toList())),
+        PageHeader(
+            title: Text(
+              "自动化数据库连接设置",
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )),
+        const Divider(),
+        15.verticalSpacingRadius,
+        Expanded(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.r),
+                child: Column(
+                    children: controller.renderList
+                        .map((e) => FieldChange(
+                              isChanged: controller
+                                  .isChanged("${e.section}/${e.field}"),
+                              renderFieldInfo: e,
+                              showValue: controller
+                                  .getFieldValue("${e.section}/${e.field}"),
+                              onChanged: controller.onFieldChange,
+                            ))
+                        .toList()))),
         // 15.verticalSpacingRadius,
       ],
     );
@@ -63,39 +83,11 @@ class _DatabaseConnectionViewGetX
       init: DatabaseConnectionController(),
       id: "database_connection",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-                title: Text(
-                  "自动化数据库连接设置",
-                  style: FluentTheme.of(context).typography.subtitle,
-                ),
-                commandBar: FilledButton(
-                  child: Wrap(
-                    spacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.save),
-                      Text("保存"),
-                    ],
-                  ),
-                  onPressed: controller.save,
-                )
-                // commandBar: CommandBar(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   primaryItems: [
-                //     CommandBarButton(
-                //       icon: const Icon(FluentIcons.save),
-                //       label: const Text('保存'),
-                //       onPressed: controller.save,
-                //     ),
-                //   ],
-                // )
-                ),
-            const Divider(),
-            15.verticalSpacingRadius,
-            _buildView(context)
-          ],
+        return ScaffoldPage(
+          content: Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildView(context),
+          ),
         );
       },
     );

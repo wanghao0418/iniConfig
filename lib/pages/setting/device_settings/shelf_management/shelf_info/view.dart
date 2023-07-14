@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:20:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:40:04
+ * @LastEditTime: 2023-07-13 17:36:08
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,10 +10,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/components/field_change.dart';
 import 'index.dart';
+import 'widgets/select_shelf_component.dart';
 import 'widgets/shelf_info_setting.dart';
 
 class ShelfInfoPage extends StatefulWidget {
@@ -38,6 +40,48 @@ class _ShelfInfoPageState extends State<ShelfInfoPage>
 class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
   const _ShelfInfoViewGetX({Key? key}) : super(key: key);
 
+  // 选择货架按钮弹窗
+  Widget _buildSelectShelf(BuildContext context, RenderFieldInfo fieldInfo) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var shelfSelectKey = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${fieldInfo.name}').fontSize(24.sp),
+                  content: SizedBox(
+                      height: 500,
+                      child: SelectShelfComponent(
+                        key: shelfSelectKey,
+                        showValue:
+                            controller.getFieldValue(fieldInfo.fieldKey) ?? '',
+                        shelfSectionList: controller.shelfList,
+                      )),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var selectedShelf = (shelfSelectKey.currentState!
+                                  as SelectShelfComponentState)
+                              .selectedSections;
+                          controller.onFieldChange(fieldInfo.fieldKey,
+                              selectedShelf.map((e) => e.number).join('-'));
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
   // 主视图
   Widget _buildView(BuildContext context) {
     return Column(
@@ -57,31 +101,32 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                 ],
               ),
               onPressed: controller.save,
-            )
-            // commandBar: CommandBar(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   primaryItems: [
-            //     CommandBarButton(
-            //       icon: const Icon(FluentIcons.save),
-            //       label: const Text('保存'),
-            //       onPressed: controller.save,
-            //     ),
-            //   ],
-            // )
-            ),
+            )),
         const Divider(),
         15.verticalSpacingRadius,
         Container(
             padding: EdgeInsets.symmetric(horizontal: 10.r),
             child: Column(
-                children: controller.menuList
-                    .map((e) => FieldChange(
-                          isChanged: controller.isChanged(e.fieldKey),
-                          renderFieldInfo: e,
-                          showValue: controller.getFieldValue(e.fieldKey),
-                          onChanged: controller.onFieldChange,
-                        ))
-                    .toList())),
+                children: controller.menuList.map((e) {
+              if (e.field == 'rightBtnPutShelf') {
+                return FieldChange(
+                  isChanged: controller.isChanged(e.fieldKey),
+                  renderFieldInfo: e,
+                  showValue: controller.getFieldValue(e.fieldKey),
+                  onChanged: controller.onFieldChange,
+                  builder: (context) {
+                    return _buildSelectShelf(context, e);
+                  },
+                );
+              }
+
+              return FieldChange(
+                isChanged: controller.isChanged(e.fieldKey),
+                renderFieldInfo: e,
+                showValue: controller.getFieldValue(e.fieldKey),
+                onChanged: controller.onFieldChange,
+              );
+            }).toList())),
         15.verticalSpacingRadius,
         PageHeader(
           title: Text(
@@ -101,18 +146,27 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('保存'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.save)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('测试'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.test_plan)),
             ])),
         5.verticalSpacingRadius,
         Expanded(
@@ -129,7 +183,7 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                       itemBuilder: (context, index) {
                         final contact = controller.shelfList[index];
                         return ListTile.selectable(
-                          title: Text(contact),
+                          title: Text(TransUtils.getTransField(contact, '货架')),
                           selected: controller.currentShelf.value == contact,
                           onSelectionChange: (v) =>
                               controller.onShelfChange(contact),
@@ -165,7 +219,7 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
       builder: (_) {
         return ScaffoldPage(
             content: Padding(
-                padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: _buildView(context)));
       },
     );

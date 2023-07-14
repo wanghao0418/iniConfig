@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:09:04
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:37:08
+ * @LastEditTime: 2023-07-13 17:40:30
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 
 import '../../../../../common/components/field_change.dart';
 import '../../../../../common/index.dart';
@@ -86,18 +87,7 @@ class _CollectionServiceSettingViewGetX
                 ],
               ),
               onPressed: controller.save,
-            )
-            // commandBar: CommandBar(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   primaryItems: [
-            //     CommandBarButton(
-            //       icon: const Icon(FluentIcons.save),
-            //       label: const Text('保存'),
-            //       onPressed: controller.save,
-            //     ),
-            //   ],
-            // )
-            ),
+            )),
         const Divider(),
         15.verticalSpacingRadius,
         Container(
@@ -126,18 +116,27 @@ class _CollectionServiceSettingViewGetX
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('保存'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.save)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('测试'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.test_plan)),
             ])),
         5.verticalSpacingRadius,
         Expanded(
@@ -154,7 +153,8 @@ class _CollectionServiceSettingViewGetX
                       itemBuilder: (context, index) {
                         final contact = controller.sectionList[index];
                         return ListTile.selectable(
-                          title: Text(contact),
+                          title:
+                              Text(TransUtils.getTransField(contact, '采集数据库')),
                           selected: controller.currentSection.value == contact,
                           onSelectionChange: (v) =>
                               controller.onSectionChange(contact),
@@ -190,7 +190,7 @@ class _CollectionServiceSettingViewGetX
       builder: (_) {
         return ScaffoldPage(
             content: Padding(
-                padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: _buildView(context)));
       },
     );

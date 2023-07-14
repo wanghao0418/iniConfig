@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-07 13:51:29
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-07 15:56:43
+ * @LastEditTime: 2023-07-05 17:34:16
  * @FilePath: /eatm_manager/lib/pages/system/main/widgets/cached_page_view.dart
  * @Description: 缓存PageView组件
  */
@@ -15,10 +15,12 @@ class CachedPageView extends StatefulWidget {
   final ValueChanged<PageController> onPageControllerCreated;
 
   CachedPageView(
-      {required this.children,
+      {Key? key,
+      required this.children,
       required this.onPageChanged,
       this.initialPageIndex = 0,
-      required this.onPageControllerCreated});
+      required this.onPageControllerCreated})
+      : super(key: key);
 
   @override
   _CachedPageViewState createState() => _CachedPageViewState();

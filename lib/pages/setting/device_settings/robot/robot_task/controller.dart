@@ -29,7 +29,7 @@ class RobotTaskController extends GetxController {
     RenderFieldInfo(
         section: "RobotTaskConfig",
         field: "OnJumpRobotTask",
-        name: "需要跳过的机器人任务任务码-任务码-任务码-任务码",
+        name: "需要跳过的机器人任务",
         renderType: RenderType.input),
     RenderFieldInfo(
         section: "RobotTaskConfig",
@@ -51,7 +51,8 @@ class RobotTaskController extends GetxController {
         section: "RobotTaskConfig",
         field: "TaskType",
         name: "机器人可执行任务配置",
-        renderType: RenderType.input),
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
     RenderFieldInfo(
         section: "RobotTaskConfig",
         field: "TrackLubricationTaskExecTime",

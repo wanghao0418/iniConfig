@@ -92,12 +92,12 @@ class BehaviorSettingController extends GetxController {
           name: "程式下载类型",
           renderType: RenderType.radio,
           options: {"自动": "0", "手选": "1"}),
-      RenderFieldInfo(
-        field: "MachineOnlineSync",
-        section: "SysInfo",
-        name: "机床关联设置",
-        renderType: RenderType.input,
-      ),
+      // RenderFieldInfo(
+      //   field: "MachineOnlineSync",
+      //   section: "SysInfo",
+      //   name: "机床关联设置",
+      //   renderType: RenderType.input,
+      // ),
       RenderFieldInfo(
           field: "CheckElecCncToolMark",
           section: "SysInfo",

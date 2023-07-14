@@ -27,6 +27,7 @@ class AddMacFormState extends State<AddMacForm> {
                 label: '机床类型',
                 child: ComboboxFormField(
                   isExpanded: true,
+                  placeholder: Text('请选择'),
                   value: addMacForm.type,
                   items: MachineType.values
                       .map((e) => ComboBoxItem(

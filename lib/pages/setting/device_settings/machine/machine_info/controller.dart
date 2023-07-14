@@ -2,18 +2,21 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 10:42:44
+ * @LastEditTime: 2023-07-14 14:32:21
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/components/index.dart';
 import '../../../../../common/utils/http.dart';
 import '../../../../../common/utils/popup_message.dart';
 import 'widgets/add_mac_form.dart';
+import 'widgets/machine_association_setting.dart';
 
 class MachineInfoController extends GetxController {
   MachineInfoController();
@@ -30,11 +33,21 @@ class MachineInfoController extends GetxController {
           renderType: RenderType.radio,
           options: {"默认下线": "0", "只提示不下线": "1"}),
       RenderFieldInfo(
-        field: 'MacToolManage',
-        section: 'MachineGlobelConfig',
-        name: "标记机床是否有刀具管理",
-        renderType: RenderType.input,
-      ),
+          field: 'MacToolManage',
+          section: 'MachineGlobelConfig',
+          name: "标记机床是否有刀具管理",
+          renderType: RenderType.customMultipleChoice,
+          splitKey: '-'),
+      RenderFieldInfo(
+          field: "MachineOnlineSync",
+          section: "SysInfo",
+          name: "机床关联设置",
+          renderType: RenderType.custom,
+          documentationList: [
+            DocumentationData(
+                type: DocumentationType.text,
+                value: '1和2关联， 3和4号机床关联，效果是上下线默认是同步的，操作一台，另一台也等同操作了。')
+          ]),
     ])
   ];
 
@@ -140,7 +153,7 @@ class MachineInfoController extends GetxController {
         context: context,
         builder: (context) {
           return ContentDialog(
-            title: Text('新增机床'),
+            title: Text('新增机床').fontSize(20.sp),
             content: AddMacForm(
               key: addFormKey,
             ),
@@ -186,6 +199,10 @@ class MachineInfoController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentSection.value.isEmpty) {
+      PopupMessage.showWarningInfoBar('请选择要删除的机床');
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {
@@ -212,9 +229,62 @@ class MachineInfoController extends GetxController {
   //   super.onInit();
   // }
 
+  initMenu() {
+    for (var element in menuList) {
+      if (element is RenderFieldGroup) {
+        for (var item in element.children) {
+          if (item is RenderFieldInfo) {
+            if (item.fieldKey == 'SysInfo/MachineOnlineSync') {
+              item.builder = (BuildContext context) {
+                return FilledButton(
+                    child: const Text('编辑'),
+                    onPressed: () {
+                      var _key = GlobalKey();
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ContentDialog(
+                              constraints: const BoxConstraints(maxWidth: 1000),
+                              title: Text('${item.name}').fontSize(20.sp),
+                              content: SizedBox(
+                                height: 300,
+                                child: MachineAssociationSetting(
+                                  key: _key,
+                                  showValue: getFieldValue(item.fieldKey) ?? '',
+                                  macSectionList: sectionList,
+                                ),
+                              ),
+                              actions: [
+                                Button(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('取消')),
+                                FilledButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      var state = _key.currentState!
+                                          as MachineAssociationSettingState;
+                                      var value = state.currentValue;
+                                      onFieldChange(item.fieldKey, value);
+                                    },
+                                    child: const Text('确定'))
+                              ],
+                            );
+                          });
+                    });
+              };
+            }
+          }
+        }
+      }
+    }
+  }
+
   @override
   void onReady() {
     super.onReady();
+    initMenu();
     query();
     getSectionList();
     _initData();
@@ -229,16 +299,19 @@ class MachineInfoController extends GetxController {
 class MachineGlobelConfig {
   String? machineGlobelConfigAbnormalairIsOffLineMac;
   String? machineGlobelConfigMacToolManage;
+  String? sysInfoMachineOnlineSync;
 
   MachineGlobelConfig(
       {this.machineGlobelConfigAbnormalairIsOffLineMac,
-      this.machineGlobelConfigMacToolManage});
+      this.machineGlobelConfigMacToolManage,
+      this.sysInfoMachineOnlineSync});
 
   MachineGlobelConfig.fromJson(Map<String, dynamic> json) {
     machineGlobelConfigAbnormalairIsOffLineMac =
         json['MachineGlobelConfig/AbnormalairIsOffLineMac'];
     machineGlobelConfigMacToolManage =
         json['MachineGlobelConfig/MacToolManage'];
+    sysInfoMachineOnlineSync = json['SysInfo/MachineOnlineSync'];
   }
 
   Map<String, dynamic> toJson() {
@@ -247,6 +320,7 @@ class MachineGlobelConfig {
         this.machineGlobelConfigAbnormalairIsOffLineMac;
     data['MachineGlobelConfig/MacToolManage'] =
         this.machineGlobelConfigMacToolManage;
+    data['SysInfo/MachineOnlineSync'] = this.sysInfoMachineOnlineSync;
     return data;
   }
 }

@@ -59,6 +59,10 @@ class OutLineMacController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentSection.value.isEmpty) {
+      PopupMessage.showWarningInfoBar("请选择要删除的节点");
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {

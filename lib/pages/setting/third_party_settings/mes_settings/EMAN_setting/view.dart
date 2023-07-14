@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:31:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-04 16:27:39
+ * @LastEditTime: 2023-07-13 17:51:14
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -46,37 +46,38 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('对应关系').fontWeight(FontWeight.bold).fontSize(16)),
+            child: Text('机床对应关系').fontWeight(FontWeight.bold).fontSize(16)),
         content: SizedBox(
             height: 300,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                var width = constraints.maxWidth;
                 return PlutoGrid(
                     noRowsWidget: Center(child: Text('暂无数据')),
                     columns: [
                       PlutoColumn(
-                          title: '线内机床',
-                          field: 'macSection',
-                          type: PlutoColumnType.text(),
-                          readOnly: true,
-                          sort: PlutoColumnSort.none,
-                          enableContextMenu: false,
-                          width: width / 3),
+                        title: '自动化机床名称',
+                        field: 'macSection',
+                        type: PlutoColumnType.text(),
+                        readOnly: true,
+                        enableContextMenu: false,
+                        enableSorting: false,
+                      ),
+                      // PlutoColumn(
+                      //   title: '对应机床名称',
+                      //   field: 'correspondMacName',
+                      //   type: PlutoColumnType.text(),
+                      //   sort: PlutoColumnSort.none,
+                      //   enableContextMenu: false,
+                      //   enableSorting: false,
+                      // ),
                       PlutoColumn(
-                          title: '对应机床名称',
-                          field: 'correspondMacName',
-                          type: PlutoColumnType.text(),
-                          sort: PlutoColumnSort.none,
-                          enableContextMenu: false,
-                          width: width / 3),
-                      PlutoColumn(
-                          title: '对应监控ID',
-                          field: 'correspondMacMonitorId',
-                          type: PlutoColumnType.text(),
-                          sort: PlutoColumnSort.none,
-                          enableContextMenu: false,
-                          width: width / 3),
+                        title: 'eman对应的资源ID',
+                        field: 'correspondMacMonitorId',
+                        type: PlutoColumnType.text(),
+                        sort: PlutoColumnSort.none,
+                        enableContextMenu: false,
+                        enableSorting: false,
+                      ),
                     ],
                     rows: controller.rows,
                     // columnGroups: columnGroups,
@@ -85,9 +86,13 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
                     },
                     onChanged: controller.onTableCellChanged,
                     configuration: const PlutoGridConfiguration(
-                      style: PlutoGridStyleConfig(
-                          gridBorderRadius:
-                              BorderRadius.all(Radius.circular(10))),
+                      columnSize: PlutoGridColumnSizeConfig(
+                          autoSizeMode: PlutoAutoSizeMode.scale),
+                      // style: PlutoGridStyleConfig(
+                      //   gridBorderRadius: BorderRadius.all(
+                      //     Radius.circular(10),
+                      //   ),
+                      // ),
                     ));
               },
             )),
@@ -127,14 +132,41 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
   }
 
   // 主视图
-  Widget _buildView() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.r),
-        child: Column(
-          children: [
-            ...controller.menuList.map((e) => _buildRenderField(e)).toList(),
-          ],
-        ));
+  Widget _buildView(context) {
+    return Column(
+      children: [
+        PageHeader(
+            title: Text(
+              "EMan设置",
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )),
+        const Divider(),
+        15.verticalSpacingRadius,
+        Expanded(
+            child: SingleChildScrollView(
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  ...controller.menuList
+                      .map((e) => _buildRenderField(e))
+                      .toList(),
+                ],
+              )),
+        ))
+      ],
+    );
   }
 
   @override
@@ -143,39 +175,11 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
       init: EmanSettingController(),
       id: "eman_setting",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-                title: Text(
-                  "EMan设置",
-                  style: FluentTheme.of(context).typography.subtitle,
-                ),
-                commandBar: FilledButton(
-                  child: Wrap(
-                    spacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.save),
-                      Text("保存"),
-                    ],
-                  ),
-                  onPressed: controller.save,
-                )
-                // commandBar: CommandBar(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   primaryItems: [
-                //     CommandBarButton(
-                //       icon: const Icon(FluentIcons.save),
-                //       label: const Text('保存'),
-                //       onPressed: controller.save,
-                //     ),
-                //   ],
-                // )
-                ),
-            const Divider(),
-            15.verticalSpacingRadius,
-            _buildView()
-          ],
+        return ScaffoldPage(
+          content: Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildView(context),
+          ),
         );
       },
     );

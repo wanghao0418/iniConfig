@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:38:39
+ * @LastEditTime: 2023-07-13 17:38:33
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:iniConfig/pages/setting/device_settings/machine/machine_info/widgets/mac_info_setting.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -42,6 +43,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
       return Container(
         margin: EdgeInsets.only(bottom: 5.r),
         child: FieldGroup(
+          groupHeight: 200,
           isExpanded: info.isExpanded ?? false,
           visible: info.visible ?? true,
           groupName: info.groupName,
@@ -84,18 +86,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
                 ],
               ),
               onPressed: controller.save,
-            )
-            // commandBar: CommandBar(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   primaryItems: [
-            //     CommandBarButton(
-            //       icon: const Icon(FluentIcons.save),
-            //       label: const Text('保存'),
-            //       onPressed: controller.save,
-            //     ),
-            //   ],
-            // )
-            ),
+            )),
         const Divider(),
         15.verticalSpacingRadius,
         Padding(
@@ -106,16 +97,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
                     .map((e) => _buildRenderField(e))
                     .toList(),
               ],
-            )
-            // Expander(
-            //     headerHeight: 70,
-            //     header: Padding(
-            //         padding: EdgeInsets.only(left: 40.r),
-            //         child: Text('全局配置').fontWeight(FontWeight.bold).fontSize(16)),
-            //     content: SizedBox(
-            //       height: 200,
-            //     )),
-            ),
+            )),
         15.verticalSpacingRadius,
         PageHeader(
           title: Text(
@@ -135,18 +117,27 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('保存'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.save)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('测试'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.test_plan)),
             ])),
         5.verticalSpacingRadius,
         Expanded(
@@ -163,7 +154,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
                       itemBuilder: (context, index) {
                         final contact = controller.sectionList[index];
                         return ListTile.selectable(
-                          title: Text(contact),
+                          title: Text(TransUtils.getTransField(contact, '机床')),
                           selected: controller.currentSection.value == contact,
                           onSelectionChange: (v) =>
                               controller.onSectionChange(contact),
@@ -200,7 +191,7 @@ class _MachineInfoViewGetX extends GetView<MachineInfoController> {
       builder: (_) {
         return ScaffoldPage(
           content: Padding(
-              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: _buildView(context)),
         );
       },

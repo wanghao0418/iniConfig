@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-04 17:09:17
+ * @LastEditTime: 2023-07-05 18:28:29
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,7 +25,6 @@ import 'common/store/config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Global.init();
   await init();
   doWhenWindowReady(() {
     final win = appWindow;
@@ -68,11 +67,10 @@ class MyApp extends StatelessWidget {
           return FluentApp(
             debugShowCheckedModeBanner: false,
             theme: FluentThemeData(
-              // accentColor: Colors.green,
+              accentColor: Colors.blue,
               fontFamily: 'MyFont',
               visualDensity: VisualDensity.standard,
               // resources: ResourceDictionary.raw(
-
               // )
               focusTheme: FocusThemeData(
                 glowFactor: is10footScreen(context) ? 2.0 : 0.0,

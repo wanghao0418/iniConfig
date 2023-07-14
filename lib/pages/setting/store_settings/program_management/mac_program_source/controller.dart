@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 09:57:41
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 10:51:58
+ * @LastEditTime: 2023-07-13 16:35:07
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,6 +16,7 @@ class MacProgramSourceController extends GetxController {
   MacProgramSourceController();
   List sectionList = [];
   var currentSection = ''.obs;
+  List<String> macSectionList = [];
 
   onSectionChange(String value) {
     currentSection.value = value;
@@ -71,6 +72,10 @@ class MacProgramSourceController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentSection.value.isEmpty) {
+      PopupMessage.showWarningInfoBar('请选择要删除的节点');
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {
@@ -92,6 +97,29 @@ class MacProgramSourceController extends GetxController {
     }
   }
 
+  // 获取机床节点列表数据 供子组件使用
+  void getMacSectionList() async {
+    ResponseApiBody res = await CommonApi.getSectionList({
+      "params": [
+        {
+          "list_node": "MachineInfo",
+          "parent_node": "NULL",
+        }
+      ],
+    });
+    if (res.success == true) {
+      // 查询成功
+      var data = res.data;
+      var result = (data as List).first as String;
+      macSectionList = result.isEmpty ? [] : result.split('-');
+      print(macSectionList);
+      _initData();
+    } else {
+      // 查询失败
+      PopupMessage.showFailInfoBar(res.message as String);
+    }
+  }
+
   // @override
   // void onInit() {
   //   super.onInit();
@@ -101,6 +129,7 @@ class MacProgramSourceController extends GetxController {
   void onReady() {
     super.onReady();
     getSectionList();
+    getMacSectionList();
     _initData();
   }
 

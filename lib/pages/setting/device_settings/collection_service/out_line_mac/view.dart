@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 15:58:11
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:39:38
+ * @LastEditTime: 2023-07-13 17:39:08
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/out_line_mac/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 
 import '../../machine/machine_info/widgets/mac_info_setting.dart';
 import 'index.dart';
@@ -58,7 +59,26 @@ class _OutLineMacViewGetX extends GetView<OutLineMacController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
               // CommandBarSeparator(),
               // CommandBarButton(
@@ -86,7 +106,8 @@ class _OutLineMacViewGetX extends GetView<OutLineMacController> {
                       itemBuilder: (context, index) {
                         final contact = controller.sectionList[index];
                         return ListTile.selectable(
-                          title: Text(contact),
+                          title:
+                              Text(TransUtils.getTransField(contact, '线外机床')),
                           selected: controller.currentSection.value == contact,
                           onSelectionChange: (v) =>
                               controller.onSectionChange(contact),
@@ -122,7 +143,7 @@ class _OutLineMacViewGetX extends GetView<OutLineMacController> {
       builder: (_) {
         return ScaffoldPage(
           content: Padding(
-              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: _buildView(context)),
         );
       },

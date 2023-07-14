@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 09:57:41
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-28 10:43:26
+ * @LastEditTime: 2023-07-13 17:41:45
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:iniConfig/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -58,18 +59,27 @@ class _MacProgramSourceViewGetX extends GetView<MacProgramSourceController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('保存'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.save)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('测试'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.test_plan)),
             ])),
         5.verticalSpacingRadius,
         Expanded(
@@ -86,7 +96,8 @@ class _MacProgramSourceViewGetX extends GetView<MacProgramSourceController> {
                       itemBuilder: (context, index) {
                         final contact = controller.sectionList[index];
                         return ListTile.selectable(
-                          title: Text(contact),
+                          title:
+                              Text(TransUtils.getTransField(contact, '机床程序')),
                           selected: controller.currentSection.value == contact,
                           onSelectionChange: (v) =>
                               controller.onSectionChange(contact),
@@ -105,6 +116,7 @@ class _MacProgramSourceViewGetX extends GetView<MacProgramSourceController> {
                             : MacProgramSetting(
                                 key: Key(controller.currentSection.value),
                                 section: controller.currentSection.value,
+                                macSectionList: controller.macSectionList,
                               )))
               ],
             ),
@@ -122,7 +134,7 @@ class _MacProgramSourceViewGetX extends GetView<MacProgramSourceController> {
       builder: (_) {
         return ScaffoldPage(
           content: Padding(
-              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: _buildView(context)),
         );
       },

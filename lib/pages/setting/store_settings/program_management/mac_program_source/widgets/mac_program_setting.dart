@@ -2,13 +2,15 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 10:09:31
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-03 09:38:05
+ * @LastEditTime: 2023-07-13 16:56:50
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/components/field_subTitle.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_change.dart';
@@ -17,8 +19,11 @@ import '../../../../../../common/utils/http.dart';
 import '../../../../../../common/utils/popup_message.dart';
 
 class MacProgramSetting extends StatefulWidget {
-  const MacProgramSetting({Key? key, required this.section}) : super(key: key);
+  const MacProgramSetting(
+      {Key? key, required this.section, required this.macSectionList})
+      : super(key: key);
   final String section;
+  final List<String> macSectionList;
 
   @override
   _MacProgramSettingState createState() => _MacProgramSettingState();
@@ -40,18 +45,20 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
       name: "ftp或共享文件夹的IP",
       renderType: RenderType.input,
     ),
-    RenderFieldInfo(
-      field: 'SrcPrgExtern',
-      section: 'PrgServerInfo',
-      name: "各系统类型对应的服务器上的源程式后缀",
-      renderType: RenderType.input,
-    ),
-    RenderFieldInfo(
-      field: 'ExecPrgExtern',
-      section: 'PrgServerInfo',
-      name: "各系统类型对应的服务器上的执行程式后缀",
-      renderType: RenderType.input,
-    ),
+    RenderCustomByTag(tag: 'SrcPrgExternTable'),
+    RenderCustomByTag(tag: 'ExecPrgExternTable'),
+    // RenderFieldInfo(
+    //   field: 'SrcPrgExtern',
+    //   section: 'PrgServerInfo',
+    //   name: "各系统类型对应的服务器上的源程式后缀",
+    //   renderType: RenderType.input,
+    // ),
+    // RenderFieldInfo(
+    //   field: 'ExecPrgExtern',
+    //   section: 'PrgServerInfo',
+    //   name: "各系统类型对应的服务器上的执行程式后缀",
+    //   renderType: RenderType.input,
+    // ),
     RenderFieldGroup(groupName: "FTP登陆设置", children: [
       RenderFieldInfo(
         field: 'Port',
@@ -345,6 +352,8 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
     }
+    initRows();
+    initRows2();
   }
 
   save() async {
@@ -374,6 +383,260 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     return params;
   }
 
+  String? get currentSrcPrgExtern =>
+      getFieldValue('${widget.section}/SrcPrgExtern');
+
+  Map getSrcPrgExternList() {
+    if (currentSrcPrgExtern != null) {
+      var list = currentSrcPrgExtern!.split('#');
+      // print(list);
+      var list2 = list
+          .map((e) => e.split('-'))
+          .toList()
+          .where((element) => element.length == 2);
+      // print(list2);
+      var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
+      // print(map);
+      return map;
+    } else {
+      return {};
+    }
+  }
+
+  String? get currentExecPrgExtern =>
+      getFieldValue('${widget.section}/ExecPrgExtern');
+
+  Map getExecPrgExternList() {
+    if (currentExecPrgExtern != null) {
+      var list = currentExecPrgExtern!.split('#');
+      // print(list);
+      var list2 = list
+          .map((e) => e.split('-'))
+          .toList()
+          .where((element) => element.length == 2);
+      // print(list2);
+      var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
+      // print(map);
+      return map;
+    } else {
+      return {};
+    }
+  }
+
+  final List allSystemList = [
+    'FANUC',
+    'HDH',
+    'HASS',
+    'JD',
+    'SLCNC',
+    'KND',
+    'GSK',
+    'OKUMA',
+    'TEST',
+    'HEXAGON',
+    'VISUALRATE',
+    'ZEISS',
+    'MAKINO',
+    'SODICK',
+    'CLEAN',
+    'DRY'
+  ];
+
+  final List systemList = [];
+
+  late final PlutoGridStateManager stateManager;
+  late final PlutoGridStateManager stateManager2;
+  List<PlutoRow> rows = [];
+  List<PlutoRow> rows2 = [];
+
+  initSystemList() {
+    RegExp reg = RegExp(r'[a-zA-Z]+');
+    print(widget.macSectionList);
+    var macSystemList =
+        widget.macSectionList.map((e) => reg.firstMatch(e)!.group(0)).toList();
+    print(macSystemList);
+    var list = allSystemList
+        .where((element) => macSystemList.contains(element))
+        .toList();
+    print(list);
+
+    setState(() {
+      systemList.clear();
+      systemList.addAll(list);
+    });
+  }
+
+  initRows() {
+    stateManager.removeAllRows();
+    stateManager.appendRows(systemList
+        .map((e) => PlutoRow(
+              cells: {
+                'systemType': PlutoCell(value: e),
+                'srcPrgExtern': PlutoCell(
+                    value: getSrcPrgExternList().containsKey(e)
+                        ? getSrcPrgExternList()[e]
+                        : ''),
+              },
+            ))
+        .toList());
+    setState(() {});
+  }
+
+  onTableCellChanged(PlutoGridOnChangedEvent event) {
+    var srcPrgExtern = '';
+    stateManager.rows.forEach((element) {
+      var index = stateManager.rows.indexOf(element);
+      var system = element.cells.values.elementAt(0).value;
+      var val = element.cells.values.elementAt(1).value;
+      if (val == null || val == '') {
+        return;
+      }
+      srcPrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
+    });
+    print(srcPrgExtern);
+    if (srcPrgExtern == currentSrcPrgExtern) {
+      return;
+    }
+    setFieldValue('${widget.section}/SrcPrgExtern', srcPrgExtern);
+    if (!changedList.contains('${widget.section}/SrcPrgExtern')) {
+      changedList.add('${widget.section}/SrcPrgExtern');
+    }
+    // onFieldChange('${widget.section}/SrcPrgExtern', srcPrgExtern);
+  }
+
+  // 各系统类型源程式后缀表格
+  Widget _buildSrcPrgExternTable() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 5.r),
+      height: 250,
+      child: Card(
+          child: PlutoGrid(
+        createHeader: (stateManager) {
+          return Container(
+            padding: EdgeInsetsDirectional.all(5),
+            child: Text('源程式后缀').fontSize(16),
+          );
+        },
+        columns: [
+          PlutoColumn(
+              title: '系统类型',
+              field: 'systemType',
+              type: PlutoColumnType.text(),
+              enableContextMenu: false,
+              enableSorting: false,
+              readOnly: true),
+          PlutoColumn(
+            title: '机床程序在文件服务器上的拓展名',
+            field: 'srcPrgExtern',
+            type: PlutoColumnType.text(),
+            enableContextMenu: false,
+            enableSorting: false,
+          ),
+        ],
+        rows: rows,
+        onLoaded: (PlutoGridOnLoadedEvent event) {
+          stateManager = event.stateManager;
+          initRows();
+        },
+        onChanged: onTableCellChanged,
+        configuration: PlutoGridConfiguration(
+          localeText: const PlutoGridLocaleText.china(),
+          columnSize: const PlutoGridColumnSizeConfig(
+              autoSizeMode: PlutoAutoSizeMode.equal),
+        ),
+      )),
+    );
+  }
+
+  initRows2() {
+    stateManager2.removeAllRows();
+    stateManager2.appendRows(systemList
+        .map((e) => PlutoRow(
+              cells: {
+                'systemType': PlutoCell(value: e),
+                'execPrgExtern': PlutoCell(
+                    value: getExecPrgExternList().containsKey(e)
+                        ? getExecPrgExternList()[e]
+                        : ''),
+              },
+            ))
+        .toList());
+    setState(() {});
+  }
+
+  onTableCellChanged2(PlutoGridOnChangedEvent event) {
+    var exePrgExtern = '';
+    stateManager2.rows.forEach((element) {
+      var index = stateManager2.rows.indexOf(element);
+      var system = element.cells.values.elementAt(0).value;
+      var val = element.cells.values.elementAt(1).value;
+      if (val == null || val == '') {
+        return;
+      }
+      exePrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
+    });
+    print(exePrgExtern);
+    if (exePrgExtern == currentExecPrgExtern) {
+      return;
+    }
+    setFieldValue('${widget.section}/ExecPrgExtern', exePrgExtern);
+    if (!changedList.contains('${widget.section}/ExecPrgExtern')) {
+      changedList.add('${widget.section}/ExecPrgExtern');
+    }
+  }
+
+  // 各系统类型执行程式后缀
+  Widget _buildExePrgExtern() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 5.r),
+      height: 250,
+      child: Card(
+          child: PlutoGrid(
+        createHeader: (stateManager) {
+          return Container(
+            padding: EdgeInsetsDirectional.all(5),
+            child: Text('执行程式后缀').fontSize(16),
+          );
+        },
+        columns: [
+          PlutoColumn(
+              title: '系统类型',
+              field: 'systemType',
+              type: PlutoColumnType.text(),
+              enableContextMenu: false,
+              enableSorting: false,
+              readOnly: true),
+          PlutoColumn(
+            title: '机床程序在文件服务器上的拓展名',
+            field: 'execPrgExtern',
+            type: PlutoColumnType.text(),
+            enableContextMenu: false,
+            enableSorting: false,
+          ),
+        ],
+        rows: rows2,
+        onLoaded: (PlutoGridOnLoadedEvent event) {
+          stateManager2 = event.stateManager;
+          initRows2();
+        },
+        onChanged: onTableCellChanged2,
+        configuration: PlutoGridConfiguration(
+          localeText: const PlutoGridLocaleText.china(),
+          columnSize: const PlutoGridColumnSizeConfig(
+              autoSizeMode: PlutoAutoSizeMode.equal),
+        ),
+      )),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant MacProgramSetting oldWidget) {
+    print('参数变化');
+    initSystemList();
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -381,6 +644,7 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     prgServerInfo = PrgServerInfo(section: widget.section);
     initMenu();
     getSectionDetail();
+    initSystemList();
   }
 
   @override
@@ -428,6 +692,14 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
                       title: e.title,
                     ),
                   );
+                } else if (e is RenderCustomByTag) {
+                  if (e.tag == 'SrcPrgExternTable') {
+                    return _buildSrcPrgExternTable();
+                  } else if (e.tag == 'ExecPrgExternTable') {
+                    return _buildExePrgExtern();
+                  } else {
+                    return Container();
+                  }
                 } else {
                   return FieldChange(
                     renderFieldInfo: e as RenderFieldInfo,

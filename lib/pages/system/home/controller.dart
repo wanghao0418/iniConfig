@@ -247,9 +247,9 @@ class HomeController extends GetxController {
                     body: const SizedBox.shrink(),
                     onTap: () {
                       if (currentMenuKey == Key(e.id)) return;
-                      currentMenuKey = Key(e.id);
                       currentTabIndex.value = 0;
-                      update(['home']);
+                      currentMenuKey = Key(e.id);
+                      _initData();
                     },
                   ))
               .toList(),
@@ -306,17 +306,16 @@ class HomeController extends GetxController {
     update(["home"]);
   }
 
-  void onTap() {}
-
   @override
   void onInit() {
     super.onInit();
     currentTabIndex.listen((value) {
-      pageController.animateToPage(
-        value,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      pageController.jumpToPage(value);
+      // pageController.animateToPage(
+      //   value,
+      //   duration: Duration(milliseconds: 300),
+      //   curve: Curves.easeInOut,
+      // );
     });
     SmartDialog.showLoading();
     Future.delayed(Duration(seconds: 1), () {

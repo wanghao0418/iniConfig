@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 17:04:53
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:41:31
+ * @LastEditTime: 2023-07-05 14:03:58
  * @FilePath: /eatm_ini_config/lib/pages/setting/system_settings/function_setting/function_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -63,14 +63,39 @@ class _FunctionSettingViewGetX extends GetView<FunctionSettingController> {
   }
 
   // 主视图
-  Widget _buildView() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.r),
-        child: Column(
-          children: [
-            ...controller.menuList.map((e) => _buildRenderField(e)).toList(),
-          ],
-        ));
+  Widget _buildView(context) {
+    return Column(children: [
+      PageHeader(
+          title: Text(
+            "功能设置",
+            style: FluentTheme.of(context).typography.subtitle,
+          ),
+          commandBar: FilledButton(
+            child: Wrap(
+              spacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Icon(FluentIcons.save),
+                Text("保存"),
+              ],
+            ),
+            onPressed: controller.save,
+          )),
+      const Divider(),
+      15.verticalSpacingRadius,
+      Expanded(
+          child: SingleChildScrollView(
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.r),
+            child: Column(
+              children: [
+                ...controller.menuList
+                    .map((e) => _buildRenderField(e))
+                    .toList(),
+              ],
+            )),
+      ))
+    ]);
   }
 
   @override
@@ -79,39 +104,11 @@ class _FunctionSettingViewGetX extends GetView<FunctionSettingController> {
       init: FunctionSettingController(),
       id: "function_setting",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-                title: Text(
-                  "功能设置",
-                  style: FluentTheme.of(context).typography.subtitle,
-                ),
-                commandBar: FilledButton(
-                  child: Wrap(
-                    spacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.save),
-                      Text("保存"),
-                    ],
-                  ),
-                  onPressed: controller.save,
-                )
-                // commandBar: CommandBar(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   primaryItems: [
-                //     CommandBarButton(
-                //       icon: const Icon(FluentIcons.save),
-                //       label: const Text('保存'),
-                //       onPressed: controller.save,
-                //     ),
-                //   ],
-                // )
-                ),
-            const Divider(),
-            15.verticalSpacingRadius,
-            _buildView()
-          ],
+        return ScaffoldPage(
+          content: Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildView(context),
+          ),
         );
       },
     );

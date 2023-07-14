@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 10:46:54
+ * @LastEditTime: 2023-07-13 17:34:57
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 import 'index.dart';
 import 'widgets/scan_device_form.dart';
 import 'widgets/tcp_scan_driver.dart';
@@ -64,18 +65,27 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
               CommandBarSeparator(),
               CommandBarButton(
                   label: Text('删除'),
-                  onPressed: controller.delete,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ContentDialog(
+                              title: Text("删除"),
+                              content: Text("确认删除吗?"),
+                              actions: [
+                                Button(
+                                    child: Text("取消"),
+                                    onPressed: () => Navigator.pop(context)),
+                                FilledButton(
+                                    child: Text("确认"),
+                                    onPressed: () {
+                                      controller.delete();
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
+                  },
                   icon: Icon(FluentIcons.delete)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('保存'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.save)),
-              // CommandBarSeparator(),
-              // CommandBarButton(
-              //     label: Text('测试'),
-              //     onPressed: controller.save,
-              //     icon: Icon(FluentIcons.test_plan)),
             ])),
         5.verticalSpacingRadius,
         Expanded(
@@ -91,7 +101,7 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
                     itemBuilder: (context, index) {
                       final contact = controller.deviceList[index];
                       return ListTile.selectable(
-                        title: Text(contact),
+                        title: Text(TransUtils.getTransField(contact, '扫码设备')),
                         selected: controller.currentDeviceId == contact,
                         onSelectionChange: (v) =>
                             controller.onDeviceChange(contact),
@@ -127,7 +137,7 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
       builder: (_) {
         return ScaffoldPage(
           content: Padding(
-              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: _buildView(context)),
         );
       },

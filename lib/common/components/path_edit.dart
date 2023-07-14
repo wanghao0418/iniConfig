@@ -2,12 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-25 10:51:47
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-04 14:49:24
+ * @LastEditTime: 2023-07-14 17:36:54
  * @FilePath: /eatm_ini_config/lib/common/components/path_edit.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'field_change.dart';
 
 class PathEdit extends StatefulWidget {
   const PathEdit({Key? key, required this.showValue}) : super(key: key);
@@ -25,6 +27,8 @@ class PathEditState extends State<PathEdit> {
 
   String get currentValue => _subValueList.join('');
 
+  String get currentTransValue => replaceEscape(_subValueList.join(''));
+
   // 解析value
   _initSubValueList() {
     var splitList = widget.showValue.split('/');
@@ -39,6 +43,14 @@ class PathEditState extends State<PathEdit> {
     setState(() {
       _subValueList = list.where((element) => element.isNotEmpty).toList();
     });
+  }
+
+  // 获取转义
+  String _getTransformValue(String value) {
+    if (escapeMap.containsKey(value)) {
+      return escapeMap[value]!;
+    }
+    return value;
   }
 
   @override
@@ -70,8 +82,12 @@ class PathEditState extends State<PathEdit> {
         SizedBox(
           height: 60,
           child: TextBox(
+            decoration: BoxDecoration(
+              color: Colors.grey[60],
+            ),
+            highlightColor: Colors.grey[60],
             maxLines: null,
-            controller: TextEditingController(text: currentValue),
+            controller: TextEditingController(text: currentTransValue),
             readOnly: true,
           ),
         ),
@@ -106,10 +122,10 @@ class PathEditState extends State<PathEdit> {
             Expanded(
               child: ComboBox(
                 value: _selectValue,
-                items: escapeList
+                items: escapeMap.entries
                     .map((e) => ComboBoxItem(
-                          child: Text(e),
-                          value: e,
+                          child: Text(e.value),
+                          value: e.key,
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -157,13 +173,14 @@ class PathEditState extends State<PathEdit> {
 }
 
 // 转义字符列表
-const List<String> escapeList = [
-  '\$\$MachineType\$',
-  '\$\$MachineName\$',
-  '\$\$PARTFILENAME&',
-  '\$\$MOULDSN&',
-  '\$\$PARTSN&',
-  '\$\$RMF&',
-  '\$\$SN&',
-  '\$\$CLAMP&'
-];
+const Map<String, dynamic> escapeMap = {
+  '\$\$MachineType\$': '机床类型',
+  '\$\$MachineName\$': '机床名称',
+  '\$\$PARTFILENAME&': '图档名称',
+  '\$\$MOULDSN&': '模号',
+  '\$\$PARTSN&': '件号',
+  '\$\$RMF&': '精度',
+  '\$\$SN&': '唯一编号',
+  '\$\$CLAMP&': '夹具类型',
+  '\$\$MachineType&': '机床系统类型'
+};

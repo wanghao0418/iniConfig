@@ -2,18 +2,20 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 10:51:29
+ * @LastEditTime: 2023-07-14 11:27:40
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/utils/popup_message.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/index.dart';
 import '../../../../../../common/utils/http.dart';
+import 'craft_select_form.dart';
 import 'scan_device_form.dart';
 
 class ShelfInfoSetting extends StatefulWidget {
@@ -31,6 +33,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         section: 'Shelf',
         field: 'ShelfNum',
         name: '货架号',
+        readOnly: true,
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
@@ -71,7 +74,8 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           section: 'Shelf',
           field: 'CraftLimit',
           name: '货架限制工艺',
-          renderType: RenderType.numberInput),
+          renderType: RenderType.custom,
+          builder: (context) {}),
       RenderFieldInfo(
           section: 'Shelf',
           field: 'isNoScan',
@@ -79,6 +83,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           renderType: RenderType.radio,
           options: {"扫描": "0", "不扫描": "1"}),
     ]),
+    RenderCustomByTag(tag: 'layered'),
     RenderFieldGroup(groupName: "货架接驳信息", children: [
       RenderFieldInfo(
           section: 'Shelf',
@@ -193,7 +198,14 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         element.section = widget.section;
       } else if (element is RenderFieldGroup) {
         for (var element in element.children) {
-          if (element is RenderFieldInfo) element.section = widget.section;
+          if (element is RenderFieldInfo) {
+            element.section = widget.section;
+            if (element.field == 'CraftLimit') {
+              element.builder = (context) {
+                return _buildCraftLimitContent(context, element);
+              };
+            }
+          }
         }
       }
     }
@@ -336,6 +348,121 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     getSectionDetail();
   }
 
+  // 分层条码枪设置
+  Widget _buildLayered() {
+    return currentShelfSensorType == '2'
+        ? Container(
+            margin: EdgeInsets.only(bottom: 5.r),
+            child: Expander(
+              headerHeight: 70,
+              header: Padding(
+                padding: EdgeInsets.only(left: 40.r),
+                child: Text('分层条码枪设置').fontWeight(FontWeight.bold).fontSize(16),
+              ),
+              content: SizedBox(
+                  height: 500,
+                  child: Column(
+                    children: [
+                      CommandBarCard(
+                          backgroundColor: Colors.successSecondaryColor,
+                          child: CommandBar(primaryItems: [
+                            CommandBarButton(
+                                label: Text('新增'),
+                                onPressed: add,
+                                icon: Icon(
+                                  FluentIcons.add,
+                                )),
+                            CommandBarSeparator(),
+                            CommandBarButton(
+                                label: Text('删除'),
+                                onPressed: delete,
+                                icon: Icon(
+                                  FluentIcons.delete,
+                                )),
+                          ])),
+                      5.verticalSpacingRadius,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 200,
+                              color: Colors.successSecondaryColor,
+                              child: ListView.builder(
+                                  itemCount: deviceList.length,
+                                  itemBuilder: (context, index) {
+                                    final contact = deviceList[index];
+                                    return ListTile.selectable(
+                                      title: Text(TransUtils.getTransField(
+                                          contact, '扫码枪')),
+                                      selected: currentDeviceId == contact,
+                                      onSelectionChange: (v) =>
+                                          onDeviceChange(contact),
+                                    );
+                                  }),
+                            ),
+                            10.horizontalSpaceRadius,
+                            Expanded(
+                                child: Container(
+                                    color: Colors.successSecondaryColor,
+                                    padding: EdgeInsets.all(10.0),
+                                    child: currentDeviceId.isEmpty
+                                        ? Container(
+                                            color: FluentTheme.of(context)
+                                                .menuColor,
+                                          )
+                                        : ScanDeviceForm(
+                                            key: ValueKey(currentDeviceId),
+                                            section: currentDeviceId,
+                                          ))),
+                          ],
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+          )
+        : Container();
+  }
+
+  Widget _buildCraftLimitContent(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: CraftSelectForm(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as CraftSelectFormState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
   _buildRenderField(RenderField info) {
     if (info is RenderFieldGroup) {
       return Container(
@@ -352,11 +479,15 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           },
         ),
       );
+    }
+    if (info is RenderCustomByTag) {
+      return _buildLayered();
     } else {
       return FieldChange(
         renderFieldInfo: info as RenderFieldInfo,
         showValue: getFieldValue(info.fieldKey),
         isChanged: isChanged(info.fieldKey),
+        readOnly: info.readOnly ?? false,
         onChanged: (field, value) {
           onFieldChange(field, value);
         },
@@ -385,76 +516,6 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           child: Column(
             children: [
               ...menuList.map((e) => _buildRenderField(e)),
-              if (currentShelfSensorType == '2')
-                Container(
-                  margin: EdgeInsets.only(bottom: 5.r),
-                  child: Expander(
-                    headerHeight: 70,
-                    header: Padding(
-                      padding: EdgeInsets.only(left: 40.r),
-                      child: Text('分层条码枪设置')
-                          .fontWeight(FontWeight.bold)
-                          .fontSize(16),
-                    ),
-                    content: SizedBox(
-                        height: 500,
-                        child: Column(
-                          children: [
-                            CommandBarCard(
-                                child: CommandBar(primaryItems: [
-                              CommandBarButton(
-                                  label: Text('新增'),
-                                  onPressed: add,
-                                  icon: Icon(FluentIcons.add)),
-                              CommandBarSeparator(),
-                              CommandBarButton(
-                                  label: Text('删除'),
-                                  onPressed: delete,
-                                  icon: Icon(FluentIcons.delete)),
-                            ])),
-                            5.verticalSpacingRadius,
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 200,
-                                    color: FluentTheme.of(context).cardColor,
-                                    child: ListView.builder(
-                                        itemCount: deviceList.length,
-                                        itemBuilder: (context, index) {
-                                          final contact = deviceList[index];
-                                          return ListTile.selectable(
-                                            title: Text(contact),
-                                            selected:
-                                                currentDeviceId == contact,
-                                            onSelectionChange: (v) =>
-                                                onDeviceChange(contact),
-                                          );
-                                        }),
-                                  ),
-                                  10.horizontalSpaceRadius,
-                                  Expanded(
-                                      child: Container(
-                                          color:
-                                              FluentTheme.of(context).menuColor,
-                                          padding: EdgeInsets.all(10.0),
-                                          child: currentDeviceId.isEmpty
-                                              ? Container(
-                                                  color: FluentTheme.of(context)
-                                                      .menuColor,
-                                                )
-                                              : ScanDeviceForm(
-                                                  key:
-                                                      ValueKey(currentDeviceId),
-                                                  section: currentDeviceId,
-                                                ))),
-                                ],
-                              ),
-                            )
-                          ],
-                        )),
-                  ),
-                )
             ],
           ),
         ))

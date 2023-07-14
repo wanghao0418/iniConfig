@@ -17,17 +17,17 @@ class FunctionSettingController extends GetxController {
         name: "固定质量",
       ),
       RenderFieldInfo(
-        field: '8.89',
-        section: 'WorkpriceInfo',
-        renderType: RenderType.input,
-        name: "8.89",
-      ),
+          field: '8.89',
+          section: 'WorkpriceInfo',
+          renderType: RenderType.customMultipleChoice,
+          name: "密度8.89对应的工件材料",
+          splitKey: '-'),
       RenderFieldInfo(
-        field: '1.85',
-        section: 'WorkpriceInfo',
-        renderType: RenderType.input,
-        name: "1.85",
-      ),
+          field: '1.85',
+          section: 'WorkpriceInfo',
+          renderType: RenderType.customMultipleChoice,
+          name: "密度1.85对应的工件材料",
+          splitKey: '-'),
     ]),
     RenderFieldGroup(groupName: "界面设置", children: [
       RenderFieldInfo(
@@ -150,8 +150,9 @@ class FunctionSettingController extends GetxController {
       RenderFieldInfo(
         field: 'SkipCraftReprocessCheck',
         section: 'SysInfo',
-        renderType: RenderType.input,
+        renderType: RenderType.customMultipleChoice,
         name: "跳过工序校验结果表，配置在此的不需要校验结果表",
+        splitKey: '#',
       ),
       RenderFieldInfo(
         field: 'OvertimeAlarmDuration',

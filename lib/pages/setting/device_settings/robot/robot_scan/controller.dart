@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 10:51:08
+ * @LastEditTime: 2023-07-12 16:03:53
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -108,6 +108,10 @@ class RobotScanController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentDeviceId.isEmpty) {
+      PopupMessage.showWarningInfoBar('请选择删除的节点');
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {

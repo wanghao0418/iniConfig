@@ -24,17 +24,20 @@ class EactSettingController extends GetxController {
     ]),
     RenderFieldGroup(groupName: "加工相关", children: [
       RenderFieldInfo(
+          field: "EactUnitePrg",
+          section: "EActServer",
+          name: "是否由Eact合并程式",
+          renderType: RenderType.toggleSwitch,
+          options: {"不合并": "0", "Eact合并": "1"}),
+      RenderFieldInfo(
           field: "FancMode",
           section: "EActServer",
           name: "FAUC模式",
           renderType: RenderType.radio,
-          options: {"合并NC加工程式": "1"}),
-      RenderFieldInfo(
-          field: "EactUnitePrg",
-          section: "EActServer",
-          name: "程式是否由Eact合并",
-          renderType: RenderType.radio,
-          options: {"不合并": "0", "Eact合并": "1"}),
+          options: {"合并NC加工程式": "1"},
+          associatedField: "EActServer/EactUnitePrg",
+          associatedValue: "1"),
+
       // RenderFieldInfo(
       //   field: "MachineMarkCode",
       //   section: "EActServer",
@@ -48,7 +51,8 @@ class EactSettingController extends GetxController {
         field: "CmmSPsync",
         section: "EActServer",
         name: "是否开放SP， 同步检测结果",
-        renderType: RenderType.toggleSwitch,
+        renderType: RenderType.radio,
+        options: {"不开放": "0", "开放": "1"},
       ),
       RenderFieldInfo(
           field: "WorkReport",
@@ -59,9 +63,11 @@ class EactSettingController extends GetxController {
       RenderFieldInfo(
           field: "EDMReportHandleMark",
           section: "EActServer",
-          name: "WorkReport 为2时，放电是否手动报工",
+          name: "报工为加工检测报工时，放电是否手动报工",
           renderType: RenderType.radio,
-          options: {"自动模式": "0", "手动模式": "1"}),
+          options: {"自动模式": "0", "手动模式": "1"},
+          associatedField: 'EActServer/WorkReport',
+          associatedValue: "2"),
     ])
   ];
   late final PlutoGridStateManager stateManager;
@@ -260,7 +266,9 @@ class EactSettingController extends GetxController {
 
     if (macMarkCode != currentMachineMarkCode) {
       setFieldValue('EActServer/MachineMarkCode', macMarkCode);
-      changedList.add('EActServer/MachineMarkCode');
+      if (!changedList.contains('EActServer/MachineMarkCode')) {
+        changedList.add('EActServer/MachineMarkCode');
+      }
     }
     // if (macMonitorId != currentMacMonitorId) {
     //   setFieldValue('EManServer/MacMonitorId', macMonitorId);

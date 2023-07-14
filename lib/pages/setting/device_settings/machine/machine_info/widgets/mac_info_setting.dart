@@ -74,6 +74,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'MacSystemType',
         section: 'MachineInfo',
         name: "机床系统类型",
+        readOnly: true,
         renderType: RenderType.select,
         options: {
           "发那科": "FANUC",
@@ -103,6 +104,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'MacBrand',
         section: 'MachineInfo',
         name: "机床品牌",
+        readOnly: true,
         renderType: RenderType.select,
         options: {
           "发那科": "FANUC",
@@ -1737,6 +1739,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         renderFieldInfo: info as RenderFieldInfo,
         showValue: getFieldValue(info.fieldKey),
         isChanged: isChanged(info.fieldKey),
+        readOnly: info.readOnly ?? false,
         onChanged: (field, value) {
           onFieldChange(field, value);
         },

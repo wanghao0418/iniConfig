@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 15:58:21
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 14:29:43
+ * @LastEditTime: 2023-07-13 17:39:55
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/in_line_mac/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/utils/trans_field.dart';
 
 import 'index.dart';
 
@@ -53,17 +54,7 @@ class _InLineMacViewGetX extends GetView<InLineMacController> {
                 ],
               ),
               onPressed: controller.save,
-            )
-            // commandBar: CommandBar(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   primaryItems: [
-            //     CommandBarButton(
-            //         label: Text('保存'),
-            //         onPressed: controller.save,
-            //         icon: Icon(FluentIcons.save)),
-            //   ],
-            // ),
-            ),
+            )),
         const Divider(),
         15.verticalSpacingRadius,
         Expanded(
@@ -71,41 +62,50 @@ class _InLineMacViewGetX extends GetView<InLineMacController> {
           padding: EdgeInsets.symmetric(horizontal: 10.r),
           child: Card(
               child: SizedBox(
-            child: ListView.builder(
-                itemCount: controller.sectionList.length,
-                itemBuilder: (context, index) {
-                  final MacData contact = controller.sectionList[index];
-                  return ListTile.selectable(
-                    title: Text(contact.section!),
-                    subtitle: Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        Text(
-                            '机床号：${contact.data!['${contact.section}/MachineNum']}'),
-                        Text(
-                            '机床名称：${contact.data!['${contact.section}/MachineName']}'),
-                        Text(
-                            '机床类型：${contact.data!['${contact.section}/MachineType']}'),
-                        Text(
-                            '机床系统：${contact.data!['${contact.section}/MacSystemType']}'),
-                      ],
+            child: controller.isSearching
+                ? Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: ProgressRing(),
                     ),
-                    selected:
-                        controller.selectedSections.contains(contact.section),
-                    selectionMode: ListTileSelectionMode.multiple,
-                    onSelectionChange: (selected) {
-                      if (selected) {
-                        controller.selectedSections.add(contact.section);
-                      } else {
-                        var index = controller.selectedSections
-                            .indexOf(contact.section);
-                        controller.selectedSections.removeAt(index);
-                      }
-                      controller.update(["in_line_mac"]);
-                    },
-                  );
-                }),
+                  )
+                : ListView.builder(
+                    itemCount: controller.sectionList.length,
+                    itemBuilder: (context, index) {
+                      final MacData contact = controller.sectionList[index];
+                      return ListTile.selectable(
+                        title: Text(
+                            TransUtils.getTransField(contact.section!, '机床')),
+                        subtitle: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            Text(
+                                '机床号：${contact.data!['${contact.section}/MachineNum']}'),
+                            Text(
+                                '机床名称：${contact.data!['${contact.section}/MachineName']}'),
+                            Text(
+                                '机床类型：${contact.data!['${contact.section}/MachineType']}'),
+                            Text(
+                                '机床系统：${contact.data!['${contact.section}/MacSystemType']}'),
+                          ],
+                        ),
+                        selected: controller.selectedSections
+                            .contains(contact.section),
+                        selectionMode: ListTileSelectionMode.multiple,
+                        onSelectionChange: (selected) {
+                          if (selected) {
+                            controller.selectedSections.add(contact.section);
+                          } else {
+                            var index = controller.selectedSections
+                                .indexOf(contact.section);
+                            controller.selectedSections.removeAt(index);
+                          }
+                          controller.update(["in_line_mac"]);
+                        },
+                      );
+                    }),
           )),
         ))
       ],
@@ -120,7 +120,7 @@ class _InLineMacViewGetX extends GetView<InLineMacController> {
       builder: (_) {
         return ScaffoldPage(
           content: Padding(
-              padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 20.r),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: _buildView(context)),
         );
       },

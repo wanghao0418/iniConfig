@@ -2,10 +2,11 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 15:58:21
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 14:52:41
+ * @LastEditTime: 2023-07-05 17:45:35
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/in_line_mac/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 
 import '../../../../../common/api/common.dart';
@@ -16,12 +17,15 @@ class InLineMacController extends GetxController {
   InLineMacController();
   List sectionList = [];
   final List selectedSections = [];
+  bool isSearching = false;
 
   _initData() {
     update(["in_line_mac"]);
   }
 
   void getSectionList() async {
+    isSearching = true;
+    _initData();
     ResponseApiBody res = await CommonApi.getSectionList({
       "params": [
         {
@@ -50,11 +54,15 @@ class InLineMacController extends GetxController {
               }).toList();
       } else {
         // 查询失败
+        isSearching = false;
+        _initData();
         PopupMessage.showFailInfoBar(res2.message as String);
       }
       _initData();
     } else {
       // 查询失败
+      isSearching = false;
+      _initData();
       PopupMessage.showFailInfoBar(res.message as String);
     }
     query();
@@ -65,6 +73,8 @@ class InLineMacController extends GetxController {
       "params": ['CollectServer/EAtmMacDataCollectRange'],
     });
     if (res.success == true) {
+      isSearching = false;
+      _initData();
       // 查询成功
       selectedSections.clear();
       // 过滤掉现有机床中不存在的机床
@@ -75,7 +85,9 @@ class InLineMacController extends GetxController {
       }));
       _initData();
     } else {
-      // 保存失败
+      isSearching = false;
+      _initData();
+      // 查询失败
       PopupMessage.showFailInfoBar(res.message as String);
     }
   }

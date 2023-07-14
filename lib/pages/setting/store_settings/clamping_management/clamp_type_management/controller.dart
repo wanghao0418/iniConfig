@@ -9,17 +9,17 @@ class ClampTypeManagementController extends GetxController {
   ClampTypeManagementController();
   List<RenderFieldInfo> menuList = [
     RenderFieldInfo(
-      field: 'STEEL',
-      section: 'FixtureTypeInfo',
-      name: '钢件夹具类型',
-      renderType: RenderType.input,
-    ),
+        field: 'STEEL',
+        section: 'FixtureTypeInfo',
+        name: '钢件夹具类型',
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
     RenderFieldInfo(
-      field: 'ELEC',
-      section: 'FixtureTypeInfo',
-      name: '电极夹具类型',
-      renderType: RenderType.input,
-    ),
+        field: 'ELEC',
+        section: 'FixtureTypeInfo',
+        name: '电极夹具类型',
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
   ];
   List<String> changedList = [];
   ClampTypeManagement clampTypeManagement = ClampTypeManagement();

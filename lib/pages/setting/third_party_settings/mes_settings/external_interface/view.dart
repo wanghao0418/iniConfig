@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-07-03 11:31:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-03 13:23:26
+ * @LastEditTime: 2023-07-05 14:02:34
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/external_interface/view.dart
  * @Description: 对外接口
  */
@@ -63,14 +63,39 @@ class _ExternalInterfaceViewGetX extends GetView<ExternalInterfaceController> {
   }
 
   // 主视图
-  Widget _buildView() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.r),
-        child: Column(
-          children: [
-            ...controller.menuList.map((e) => _buildRenderField(e)).toList(),
-          ],
-        ));
+  Widget _buildView(context) {
+    return Column(
+      children: [
+        PageHeader(
+            title: Text(
+              "自动化对外接口",
+              style: FluentTheme.of(context).typography.subtitle,
+            ),
+            commandBar: FilledButton(
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(FluentIcons.save),
+                  Text("保存"),
+                ],
+              ),
+              onPressed: controller.save,
+            )),
+        const Divider(),
+        15.verticalSpacingRadius,
+        Expanded(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.r),
+                child: Column(
+                  children: [
+                    ...controller.menuList
+                        .map((e) => _buildRenderField(e))
+                        .toList(),
+                  ],
+                )))
+      ],
+    );
   }
 
   @override
@@ -79,28 +104,11 @@ class _ExternalInterfaceViewGetX extends GetView<ExternalInterfaceController> {
       init: ExternalInterfaceController(),
       id: "external_interface",
       builder: (_) {
-        return ScaffoldPage.scrollable(
-          children: [
-            PageHeader(
-                title: Text(
-                  "自动化对外接口",
-                  style: FluentTheme.of(context).typography.subtitle,
-                ),
-                commandBar: FilledButton(
-                  child: Wrap(
-                    spacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.save),
-                      Text("保存"),
-                    ],
-                  ),
-                  onPressed: controller.save,
-                )),
-            const Divider(),
-            15.verticalSpacingRadius,
-            _buildView()
-          ],
+        return ScaffoldPage(
+          content: Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildView(context),
+          ),
         );
       },
     );

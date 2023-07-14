@@ -50,7 +50,8 @@ class EmanSettingController extends GetxController {
         field: "CheckBomTotalMark",
         section: "EManServer",
         name: "检查bom总数",
-        renderType: RenderType.toggleSwitch),
+        renderType: RenderType.radio,
+        options: {"检查": "1", "不检查": "0"}),
     RenderFieldInfo(
         field: "EmanReportMode",
         section: "EManServer",
@@ -120,12 +121,12 @@ class EmanSettingController extends GetxController {
         name: "prg下载源",
         renderType: RenderType.select,
         options: {"默认从eman下载": "0", "从别的途径": "1"}),
-    RenderFieldInfo(
-      field: "ProduceReGroupName",
-      section: "EManServer",
-      name: "生产资源组名称",
-      renderType: RenderType.input,
-    ),
+    // RenderFieldInfo(
+    //   field: "ProduceReGroupName",
+    //   section: "EManServer",
+    //   name: "生产资源组名称",
+    //   renderType: RenderType.input,
+    // ),
     RenderFieldInfo(
         field: "Dimensionalwork",
         section: "EManServer",
@@ -361,11 +362,15 @@ class EmanSettingController extends GetxController {
 
     if (macEscapeChineName != currentMacEscapeChineName) {
       setFieldValue('EManServer/MacEscapeChineName', macEscapeChineName);
-      changedList.add('EManServer/MacEscapeChineName');
+      if (!changedList.contains('EManServer/MacEscapeChineName')) {
+        changedList.add('EManServer/MacEscapeChineName');
+      }
     }
     if (macMonitorId != currentMacMonitorId) {
       setFieldValue('EManServer/MacMonitorId', macMonitorId);
-      changedList.add('EManServer/MacMonitorId');
+      if (!changedList.contains('EManServer/MacMonitorId')) {
+        changedList.add('EManServer/MacMonitorId');
+      }
     }
     _initData();
   }

@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:09:04
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-30 11:20:55
+ * @LastEditTime: 2023-07-12 16:02:58
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -155,6 +155,10 @@ class CollectionServiceSettingController extends GetxController {
 
   // 删除
   void delete() async {
+    if (currentSection.value.isEmpty) {
+      PopupMessage.showWarningInfoBar('请选择要删除的节点');
+      return;
+    }
     var res = await CommonApi.deleteSection({
       "params": [
         {
