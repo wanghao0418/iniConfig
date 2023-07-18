@@ -104,7 +104,8 @@ class _FieldChangeState extends State<FieldChange> {
         currentComponent = renderChooseList(context, renderFieldInfo);
         break;
       case RenderType.custom:
-        currentComponent = widget.builder!(context);
+        currentComponent =
+            widget.builder != null ? widget.builder!(context) : Container();
         break;
       case RenderType.customMultipleChoice:
         currentComponent = renderCustomMultipleChoice(context, renderFieldInfo);
@@ -299,7 +300,7 @@ class _FieldChangeState extends State<FieldChange> {
   Widget renderSelect(BuildContext context, RenderFieldInfo fieldInfo) {
     return fieldInfo.readOnly == true
         ? Container(
-            width: 250.r,
+            width: 400.r,
             padding: EdgeInsets.only(right: 10),
             child: Text(
               (widget.showValue != null && widget.showValue!.isNotEmpty)
@@ -313,7 +314,7 @@ class _FieldChangeState extends State<FieldChange> {
             ),
           )
         : SizedBox(
-            width: 200.r,
+            width: 400.r,
             child: ComboBox<String>(
               isExpanded: true,
               value: widget.showValue,

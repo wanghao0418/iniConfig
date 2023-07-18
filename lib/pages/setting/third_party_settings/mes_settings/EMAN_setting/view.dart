@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:31:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 17:51:14
+ * @LastEditTime: 2023-07-17 14:43:07
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/process_preparation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -116,6 +117,54 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
         ),
       );
     } else if (info is RenderFieldInfo) {
+      if (info.field == 'EmanReportType') {
+        return FieldChange(
+          renderFieldInfo: info as RenderFieldInfo,
+          showValue: controller.getFieldValue(info.fieldKey),
+          isChanged: controller.isChanged(info.fieldKey),
+          onChanged: (field, value) {
+            controller.onFieldChange(field, value);
+          },
+          builder: (context) {
+            var _key = GlobalKey();
+            return FilledButton(
+                child: const Text('编辑'),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ContentDialog(
+                          constraints:
+                              BoxConstraints(maxWidth: 800, maxHeight: 500),
+                          title: Text('${info.name}').fontSize(20.sp),
+                          content: ProcessPreparation(
+                            key: _key,
+                            showValue:
+                                controller.getFieldValue(info.fieldKey) ?? '',
+                          ),
+                          actions: [
+                            Button(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('取消')),
+                            FilledButton(
+                                onPressed: () {
+                                  var value = (_key.currentState
+                                          as ProcessPreparationState)
+                                      .currentValue;
+                                  controller.onFieldChange(
+                                      info.fieldKey, value);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('确定'))
+                          ],
+                        );
+                      });
+                });
+          },
+        );
+      }
       return FieldChange(
         renderFieldInfo: info as RenderFieldInfo,
         showValue: controller.getFieldValue(info.fieldKey),

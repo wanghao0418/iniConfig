@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-14 11:27:40
+ * @LastEditTime: 2023-07-17 18:20:13
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,6 +10,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/utils/popup_message.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/widgets/row_cell_form.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../../common/api/common.dart';
@@ -40,7 +41,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           section: 'Shelf',
           field: 'RowColl',
           name: '行列配置',
-          renderType: RenderType.input),
+          renderType: RenderType.custom),
     ]),
     RenderFieldGroup(groupName: "货架功能信息", children: [
       RenderFieldInfo(
@@ -119,11 +120,14 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         renderType: RenderType.input,
       ),
       RenderFieldInfo(
-        section: 'Shelf',
-        field: 'UpLineLightSync',
-        name: '上线按钮灯同步，入库时写9的灯，出库时写10的灯',
-        renderType: RenderType.input,
-      ),
+          section: 'Shelf',
+          field: 'UpLineLightSync',
+          name: '接驳上线按钮灯同步',
+          renderType: RenderType.input,
+          documentationList: [
+            DocumentationData(
+                type: DocumentationType.text, value: '入库时写9的灯，出库时写10的灯')
+          ]),
     ]),
     RenderFieldGroup(groupName: "货架扫描信息", children: [
       RenderFieldInfo(
@@ -203,6 +207,10 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
             if (element.field == 'CraftLimit') {
               element.builder = (context) {
                 return _buildCraftLimitContent(context, element);
+              };
+            } else if (element.field == 'RowColl') {
+              element.builder = (context) {
+                return _buildRowCellSetting(context, element);
               };
             }
           }
@@ -346,6 +354,45 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
       }
     });
     getSectionDetail();
+  }
+
+  // 行列配置
+  Widget _buildRowCellSetting(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: RowCellForm(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state = _key.currentState! as RowCellFormState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
   }
 
   // 分层条码枪设置

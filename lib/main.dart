@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-05 18:28:29
+ * @LastEditTime: 2023-07-17 14:56:24
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,7 +28,7 @@ void main() async {
   await init();
   doWhenWindowReady(() {
     final win = appWindow;
-    final initialSize = Size(1360, 768);
+    final initialSize = Size(1440, 800);
     win.minSize = initialSize;
     win.size = initialSize;
     win.alignment = Alignment.center;

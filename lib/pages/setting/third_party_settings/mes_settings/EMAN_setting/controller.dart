@@ -68,7 +68,7 @@ class EmanSettingController extends GetxController {
         field: "EmanReportType",
         section: "EManServer",
         name: "零件工艺配置",
-        renderType: RenderType.input),
+        renderType: RenderType.custom),
     RenderFieldInfo(
         field: "EmanProjectName",
         section: "EManServer",

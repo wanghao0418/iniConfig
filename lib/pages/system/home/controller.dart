@@ -172,10 +172,10 @@ class HomeController extends GetxController {
           title: '装夹管理',
           iconData: FluentIcons.product_release,
           children: [
-            TertiaryMenu(
-                id: '2-3-1',
-                title: '夹具类型管理',
-                bodyPage: ClampTypeManagementPage()),
+            // TertiaryMenu(
+            //     id: '2-3-1',
+            //     title: '夹具类型管理',
+            //     bodyPage: ClampTypeManagementPage()),
             TertiaryMenu(
                 id: '2-3-2', title: '托盘管理', bodyPage: TraySettingsPage()),
           ]),

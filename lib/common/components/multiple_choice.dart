@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-07-14 11:35:55
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-14 12:13:59
+ * @LastEditTime: 2023-07-17 18:00:47
  * @FilePath: /iniConfig/lib/common/components/multiple_choice.dart
  */
 import 'package:fluent_ui/fluent_ui.dart';
@@ -30,6 +30,7 @@ class MultipleChoiceState extends State<MultipleChoice> {
     var text = textController.text;
     if (text.isNotEmpty && !craftList.contains(text)) {
       craftList.add(textController.text);
+      selectedList.add(textController.text);
       setState(() {});
     }
   }
