@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 13:24:23
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 17:42:18
+ * @LastEditTime: 2023-07-20 13:56:04
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/local_store_path/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:iniConfig/pages/setting/store_settings/program_management/local_store_path/widgets/local_program_sever.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -55,11 +56,19 @@ class _LocalStorePathViewGetX extends GetView<LocalStorePathController> {
               CommandBarButton(
                   label: Text('新增'),
                   onPressed: controller.add,
-                  icon: Icon(FluentIcons.add)),
-              CommandBarSeparator(),
+                  icon: Icon(
+                    FluentIcons.add,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
+              CommandBarSeparator(
+                color: GlobalTheme.instance.buttonIconColor,
+              ),
               CommandBarButton(
                   label: Text('删除'),
                   onPressed: () {
+                    if (controller.sectionList.isEmpty) {
+                      return;
+                    }
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -79,7 +88,10 @@ class _LocalStorePathViewGetX extends GetView<LocalStorePathController> {
                               ]);
                         });
                   },
-                  icon: Icon(FluentIcons.delete)),
+                  icon: Icon(
+                    FluentIcons.delete,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
               // CommandBarSeparator(),
               // CommandBarButton(
               //     label: Text('保存'),

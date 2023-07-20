@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-17 14:56:24
+ * @LastEditTime: 2023-07-20 13:44:02
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,10 +17,14 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/routers/index.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 // import 'package:window_manager/window_manager.dart';
 
 import 'common/routers/pages.dart';
 import 'common/store/config.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'common/style/global_theme.dart';
 // import 'global.dart';
 
 void main() async {
@@ -41,6 +45,7 @@ void main() async {
 
 init() async {
   Get.put<ConfigStore>(ConfigStore());
+  Get.put<GlobalTheme>(GlobalTheme());
 }
 
 // 重写滚动行为
@@ -64,50 +69,55 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
+          final GlobalTheme globalTheme = Get.find<GlobalTheme>();
+
           return FluentApp(
             debugShowCheckedModeBanner: false,
+            themeMode: globalTheme.mode,
+            color: globalTheme.accentColor,
             theme: FluentThemeData(
-              accentColor: Colors.blue,
+              brightness: Brightness.light,
+              accentColor: globalTheme.accentColor,
               fontFamily: 'MyFont',
               visualDensity: VisualDensity.standard,
-              // resources: ResourceDictionary.raw(
-              // )
               focusTheme: FocusThemeData(
                 glowFactor: is10footScreen(context) ? 2.0 : 0.0,
+              ),
+              iconTheme: IconThemeData(
+                color: Colors.black,
               ),
             ),
             darkTheme: FluentThemeData(
               brightness: Brightness.dark,
-              // accentColor: appTheme.color,
+              accentColor: globalTheme.accentColor,
               fontFamily: 'MyFont',
               visualDensity: VisualDensity.standard,
               focusTheme: FocusThemeData(
                 glowFactor: is10footScreen(context) ? 2.0 : 0.0,
               ),
+              iconTheme: IconThemeData(
+                color: Colors.white,
+              ),
             ),
             home: GetMaterialApp(
               debugShowCheckedModeBanner: false,
-              // color: AppTheme.systemAccentColor,
-              themeMode: Get.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-              theme: material.ThemeData(
-                brightness: Brightness.light,
-                primarySwatch: material.Colors.blue,
-                visualDensity: VisualDensity.standard,
-                fontFamily: 'MyFont',
-                primaryColor: material.Colors.blue,
-              ),
+              initialBinding: BindingsBuilder(() {
+                // Get.lazyPut<ThemeController>(() => ThemeController());
+              }),
               darkTheme: material.ThemeData(
-                brightness: Brightness.dark,
-                primarySwatch: material.Colors.blue,
-                visualDensity: VisualDensity.standard,
-                fontFamily: 'MyFont',
-                primaryColor: material.Colors.black87,
-              ),
+                  textTheme: material.TextTheme(
+                bodyText1: material.TextStyle(color: Colors.white),
+              )),
               title: 'Eatm自动化ini文件配置工具',
               initialRoute: RouteNames.main,
+              locale: const Locale('zh', 'CN'),
               localizationsDelegates: [
                 FluentLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
               ],
+              supportedLocales: FluentLocalizations.supportedLocales,
               getPages: RoutePages.list,
               scrollBehavior: MyCustomScrollBehavior(),
               navigatorObservers: [FlutterSmartDialog.observer],

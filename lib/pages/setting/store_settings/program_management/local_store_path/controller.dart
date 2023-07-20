@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 13:24:23
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-12 15:58:25
+ * @LastEditTime: 2023-07-18 10:39:51
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/local_store_path/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -71,24 +71,23 @@ class LocalStorePathController extends GetxController {
 
   // 删除
   void delete() async {
-    if (currentSection.value.isEmpty) {
-      PopupMessage.showWarningInfoBar('请选择要删除的节点');
-      return;
-    }
-    var res = await CommonApi.deleteSection({
+    var lastSection = sectionList.last;
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'PrgLocalInfo',
           "parent_node": "NULL",
-          "node_name": currentSection.value,
+          "node_name": lastSection,
         }
       ],
     });
     if (res.success == true) {
       // 删除成功
       // getSectionList();
-      sectionList.remove(currentSection.value);
-      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      sectionList.remove(lastSection);
+      if (currentSection.value == lastSection) {
+        currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      }
       _initData();
     } else {
       // 删除失败

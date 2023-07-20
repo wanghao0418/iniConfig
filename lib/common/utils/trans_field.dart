@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-07-13 17:27:04
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 17:34:48
+ * @LastEditTime: 2023-07-18 11:04:50
  * @FilePath: /iniConfig/lib/common/utils/trans_field.dart
  */
 class TransUtils {

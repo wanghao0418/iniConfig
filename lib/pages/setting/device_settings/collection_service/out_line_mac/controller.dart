@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iniConfig/common/api/machine.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/utils/http.dart';
@@ -38,7 +39,7 @@ class OutLineMacController extends GetxController {
 
   // 新增
   void add() async {
-    var res = await CommonApi.addSection({
+    var res = await MachineApi.addMachine({
       "params": [
         {
           "list_node": "TestCMMInfo",
@@ -59,24 +60,23 @@ class OutLineMacController extends GetxController {
 
   // 删除
   void delete() async {
-    if (currentSection.value.isEmpty) {
-      PopupMessage.showWarningInfoBar("请选择要删除的节点");
-      return;
-    }
-    var res = await CommonApi.deleteSection({
+    var lastSection = sectionList.last;
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'TestCMMInfo',
           "parent_node": "NULL",
-          "node_name": currentSection.value,
+          "node_name": lastSection,
         }
       ],
     });
     if (res.success == true) {
       // 删除成功
       // getSectionList();
-      sectionList.remove(currentSection.value);
-      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      sectionList.remove(lastSection);
+      if (currentSection.value == lastSection) {
+        currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      }
       _initData();
     } else {
       // 删除失败

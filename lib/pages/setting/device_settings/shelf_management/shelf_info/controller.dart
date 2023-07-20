@@ -134,12 +134,9 @@ class ShelfInfoController extends GetxController {
 
   // 新增
   void add() async {
-    var res = await CommonApi.addSection({
+    var res = await CommonApi.addBindSection({
       "params": [
-        {
-          "list_node": "Shelf",
-          "parent_node": "NULL",
-        }
+        {"list_node": "Shelf", "parent_node": "NULL", "bind_field": "ShelfNum"}
       ],
     });
     if (res.success == true) {
@@ -155,24 +152,23 @@ class ShelfInfoController extends GetxController {
 
   // 删除
   void delete() async {
-    if (currentShelf.value.isEmpty) {
-      PopupMessage.showWarningInfoBar('请选择删除的节点');
-      return;
-    }
-    var res = await CommonApi.deleteSection({
+    var lastSection = shelfList.last;
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'Shelf',
           "parent_node": "NULL",
-          "node_name": currentShelf.value,
+          "node_name": lastSection,
         }
       ],
     });
     if (res.success == true) {
       // 删除成功
       // getSectionList();
-      shelfList.remove(currentShelf.value);
-      currentShelf.value = shelfList.isNotEmpty ? shelfList.first : "";
+      shelfList.remove(lastSection);
+      if (currentShelf.value == lastSection) {
+        currentShelf.value = shelfList.isNotEmpty ? shelfList.first : "";
+      }
       _initData();
     } else {
       // 删除失败

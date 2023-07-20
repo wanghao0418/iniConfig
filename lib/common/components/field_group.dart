@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 11:08:32
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-14 15:25:02
+ * @LastEditTime: 2023-07-20 13:57:35
  * @FilePath: /eatm_ini_config/lib/common/components/field_group.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -62,9 +62,10 @@ class _FieldGroupState extends State<FieldGroup> {
             headerHeight: 70,
             header: Padding(
                 padding: EdgeInsets.only(left: 40.r),
-                child: Text(widget.groupName)
-                    .fontWeight(FontWeight.bold)
-                    .fontSize(16)),
+                child: Text(
+                  widget.groupName,
+                  style: FluentTheme.of(context).typography.display,
+                ).fontWeight(FontWeight.bold).fontSize(16)),
             content: widget.groupHeight == null
                 ? Column(
                     children: widget.children.map((e) {

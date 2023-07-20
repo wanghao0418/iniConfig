@@ -208,7 +208,7 @@ class _FluentTabState extends State<FluentTab> {
         style: ButtonStyle(
           foregroundColor: ButtonState.resolveWith((states) {
             if (states.isDisabled || states.isNone) {
-              return FluentTheme.of(context).disabledColor;
+              return FluentTheme.of(context).inactiveColor;
             } else {
               return FluentTheme.of(context).inactiveColor;
             }

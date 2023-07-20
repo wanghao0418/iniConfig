@@ -1,67 +1,45 @@
+/*
+ * @Author: wanghao wanghao@oureman.com
+ * @Date: 2023-07-19 10:44:54
+ * @LastEditors: wanghao wanghao@oureman.com
+ * @LastEditTime: 2023-07-20 16:16:30
+ * @FilePath: /iniConfig/lib/pages/setting/device_settings/machine/machine_info/subComponents/origin_program_info.dart
+ * @Description: 原点程序信息设置
+ */
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
-import '../controller.dart';
-
-class RowCellForm extends StatefulWidget {
-  const RowCellForm({Key? key, required this.showValue}) : super(key: key);
+class OriginProgramInfo extends StatefulWidget {
+  const OriginProgramInfo({Key? key, required this.showValue})
+      : super(key: key);
   final String showValue;
-
   @override
-  RowCellFormState createState() => RowCellFormState();
+  OriginProgramInfoState createState() => OriginProgramInfoState();
 }
 
-class RowCellFormState extends State<RowCellForm> {
+class OriginProgramInfoState extends State<OriginProgramInfo> {
   final List<PlutoRow> rows = [];
   late final PlutoGridStateManager stateManager;
-  List<String> typeList = [];
 
   get currentValue => rows
       .where((element) =>
           element.cells['type']!.value != '' &&
-          element.cells['rowNum']!.value != '' &&
-          element.cells['cellNum']!.value != '')
-      .map((e) =>
-          '${e.cells['type']!.value}#${e.cells['rowNum']!.value}*${e.cells['cellNum']!.value}')
+          element.cells['name']!.value != '')
+      .map((e) => '${e.cells['type']!.value}#${e.cells['name']!.value}')
       .join('&');
-
-  // 获取所有夹具类型
-  initTypes() {
-    var shelfInfoController = Get.find<ShelfInfoController>();
-    var shelfInfo = shelfInfoController.shelfInfo;
-    // 电极夹具
-    var electrodeList = shelfInfo.fixtureTypeInfoELEC?.split('-') ?? [];
-    // 钢件夹具
-    var steelList = shelfInfo.fixtureTypeInfoSTEEL?.split('-') ?? [];
-    // 合并去重
-    // typeList.addAll(electrodeList);
-    // typeList.addAll(steelList);
-    // typeList = typeList.toSet().toList();
-    typeList = mergeAndDistinct(electrodeList, steelList);
-    print(typeList);
-    setState(() {});
-  }
-
-  List<T> mergeAndDistinct<T>(List<T> list1, List<T> list2) {
-    Set<T> set = Set<T>.from(list1)..addAll(list2);
-    return List<T>.from(set);
-  }
 
   initRows() {
     var list = widget.showValue.split('&');
     for (var element in list) {
       var type = element.split('#')[0];
-      var rowCell = element.split('#')[1];
-      var row = rowCell.split('*')[0];
-      var cell = rowCell.split('*')[1];
+      var name = element.split('#')[1];
+
       stateManager.appendRows([
         PlutoRow(cells: {
           'type': PlutoCell(value: type),
-          'rowNum': PlutoCell(value: row),
-          'cellNum': PlutoCell(value: cell),
+          'name': PlutoCell(value: name),
         })
       ]);
     }
@@ -76,8 +54,7 @@ class RowCellFormState extends State<RowCellForm> {
     stateManager.appendRows([
       PlutoRow(cells: {
         'type': PlutoCell(value: ''),
-        'rowNum': PlutoCell(value: '1'),
-        'cellNum': PlutoCell(value: '1'),
+        'name': PlutoCell(value: ''),
       })
     ]);
   }
@@ -92,7 +69,6 @@ class RowCellFormState extends State<RowCellForm> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initTypes();
   }
 
   @override
@@ -111,7 +87,7 @@ class RowCellFormState extends State<RowCellForm> {
                           children: [Icon(fluent.FluentIcons.add), Text('添加')]),
                       onPressed: add),
                   10.horizontalSpaceRadius,
-                  fluent.Button(
+                  fluent.FilledButton(
                       child: Wrap(
                           spacing: 5,
                           crossAxisAlignment: WrapCrossAlignment.center,
@@ -127,23 +103,16 @@ class RowCellFormState extends State<RowCellForm> {
           rows: rows,
           columns: [
             PlutoColumn(
-              title: '夹具类型',
+              title: '类型',
               field: 'type',
-              type: PlutoColumnType.select(typeList),
+              type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),
             PlutoColumn(
-              title: '行',
-              field: 'rowNum',
-              type: PlutoColumnType.number(),
-              enableContextMenu: false,
-              enableSorting: false,
-            ),
-            PlutoColumn(
-              title: '列',
-              field: 'cellNum',
-              type: PlutoColumnType.number(),
+              title: '程序名称',
+              field: 'name',
+              type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),
@@ -151,7 +120,6 @@ class RowCellFormState extends State<RowCellForm> {
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
             initRows();
-            // initTypes();
           },
           onChanged: onTableCellChanged,
           configuration: const PlutoGridConfiguration(

@@ -1,34 +1,36 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-07-14 14:03:38
+ * @Date: 2023-07-18 14:16:49
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-14 15:30:26
- * @FilePath: /iniConfig/lib/pages/setting/device_settings/machine/machine_info/widgets/machine_association_setting.dart
+ * @LastEditTime: 2023-07-20 14:53:00
+ * @FilePath: /iniConfig/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/button_lights_associate.dart
+ * @Description: 接驳按钮灯关联
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:iniConfig/common/api/common.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:iniConfig/common/utils/popup_message.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/controller.dart';
 
-import '../../../../../../common/api/common.dart';
+import '../widgets/shelf_info_setting.dart';
 
-class MachineAssociationSetting extends StatefulWidget {
-  const MachineAssociationSetting(
-      {Key? key, required this.showValue, required this.macSectionList})
+class ButtonLightsAssociate extends StatefulWidget {
+  const ButtonLightsAssociate({Key? key, required this.showValue})
       : super(key: key);
-  final String showValue;
-  final List macSectionList;
 
+  final String showValue;
   @override
-  MachineAssociationSettingState createState() =>
-      MachineAssociationSettingState();
+  ButtonLightsAssociateState createState() => ButtonLightsAssociateState();
 }
 
-class MachineAssociationSettingState extends State<MachineAssociationSetting> {
+class ButtonLightsAssociateState extends State<ButtonLightsAssociate> {
   List optionsList = [];
   List<String> selectedList = [];
   List<List> associateGroupList = [];
 
-  get currentValue => associateGroupList.map((e) => e.join('-')).join('&');
+  get currentValue => associateGroupList.map((e) => e.join('&')).join('-');
 
   // 关联
   associate() {
@@ -57,15 +59,21 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
 
   // 获取所有可选项
   initOptions() async {
-    var queryList = widget.macSectionList.map((e) => '$e/MachineName').toList();
-    var res = await CommonApi.fieldQuery({
-      "params": queryList,
+    var shelfInfoController = Get.find<ShelfInfoController>();
+    var shelfSectionList = shelfInfoController.shelfList;
+    // var queryList = shelfSectionList.map((e) => '$e/ShelfFuncType').toList();
+    var res = await CommonApi.getSectionDetail({
+      "params": shelfSectionList,
     });
     if (res.success == true) {
-      // 去除已关联的选项
-      optionsList = res.data.values
-          .toList()
-          .map((e) => e.toString())
+      List shelfDetailList = res.data.map((e) {
+        var index = res.data.indexOf(e);
+        return Shelf.fromSectionJson(e, shelfSectionList[index]);
+      }).toList();
+      // 去除已关联的选项 去除不是接驳类型的货架
+      optionsList = shelfDetailList
+          .where((element) => element.shelfFuncType == 'connection')
+          .map((e) => e.shelfNum)
           .toList()
           .where((element) {
         for (var group in associateGroupList) {
@@ -85,7 +93,7 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
   initValue() {
     if (widget.showValue.isNotEmpty) {
       associateGroupList =
-          widget.showValue.split('&').map((e) => e.split('-')).toList();
+          widget.showValue.split('-').map((e) => e.split('&')).toList();
       setState(() {});
     }
   }
@@ -100,7 +108,7 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
 
   Widget _buildGroupList() {
     return Card(
-      backgroundColor: Colors.grey[30],
+      backgroundColor: FluentTheme.of(context).cardColor,
       child: ListView.separated(
           separatorBuilder: (context, index) => Divider(
                 size: 2,
@@ -116,8 +124,9 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
                   children: group
                       .map((e) => Container(
                           decoration: BoxDecoration(
-                              color: Colors.errorSecondaryColor,
-                              border: Border.all(color: Colors.blue.lightest),
+                              color: FluentTheme.of(context).accentColor,
+                              border: Border.all(
+                                  color: GlobalTheme.instance.accentColor),
                               borderRadius: BorderRadius.circular(5.0)),
                           padding: EdgeInsets.symmetric(
                               vertical: 5.0, horizontal: 10.0),
@@ -127,7 +136,10 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
                               Text(e),
                               5.horizontalSpaceRadius,
                               IconButton(
-                                  icon: Icon(FluentIcons.delete),
+                                  icon: Icon(
+                                    FluentIcons.delete,
+                                    color: GlobalTheme.instance.buttonIconColor,
+                                  ),
                                   onPressed: () => cancelAssociate(e))
                             ],
                           )))
@@ -147,7 +159,7 @@ class MachineAssociationSettingState extends State<MachineAssociationSetting> {
             Expanded(
                 child: Card(
                     padding: EdgeInsets.all(5.0),
-                    backgroundColor: Colors.grey[30],
+                    backgroundColor: FluentTheme.of(context).cardColor,
                     child: SizedBox(
                       width: 200.0,
                       child: ListView.builder(

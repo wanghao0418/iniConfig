@@ -2,11 +2,16 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 17:52:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-03 13:21:42
+ * @LastEditTime: 2023-07-19 15:59:24
  * @FilePath: /eatm_ini_config/lib/pages/setting/system_settings/behavior_setting/behavior_setting/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/pages/setting/system_settings/behavior_setting/behavior_setting/subComponents/position_ball_setting.dart';
+import 'package:iniConfig/pages/setting/system_settings/behavior_setting/behavior_setting/subComponents/rework_mark_setting.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/components/index.dart';
@@ -120,7 +125,7 @@ class BehaviorSettingController extends GetxController {
         field: "ReWorkSelectPrgMark",
         section: "SysInfo",
         name: "标记工艺返工是否 选程序,工艺",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
           field: "ShelfIsOffLine",
@@ -277,8 +282,8 @@ class BehaviorSettingController extends GetxController {
       RenderFieldInfo(
         field: "positionerBall",
         section: "SysInfo",
-        name: "记录分中球的位置和芯片Id;例如货位号#条码#机床名",
-        renderType: RenderType.input,
+        name: "记录分中球的位置和芯片Id",
+        renderType: RenderType.custom,
       ),
     ]),
     RenderFieldGroup(groupName: "第三方全局配置", children: [
@@ -404,6 +409,110 @@ class BehaviorSettingController extends GetxController {
     update(["behavior_setting"]);
   }
 
+  initMenu() {
+    for (var element in menuList) {
+      if (element is RenderFieldGroup) {
+        for (var child in element.children) {
+          if (child is RenderFieldInfo) {
+            if (child.field == 'ReWorkSelectPrgMark') {
+              child.builder = (context) {
+                return _buildReWorkSelectPrgMark(context, child);
+              };
+            } else if (child.field == 'positionerBall') {
+              child.builder = (context) {
+                return _buildPositionerBall(context, child);
+              };
+            }
+          }
+        }
+      } else if (element is RenderFieldInfo) {}
+    }
+  }
+
+  // 定制组件------------------------
+  // 工艺反工选程序标志
+  Widget _buildReWorkSelectPrgMark(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: ReworkMarkSetting(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as ReworkMarkSettingState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 分中球位置
+  Widget _buildPositionerBall(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 500,
+                    child: PositionBallSetting(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var state =
+                              _key.currentState! as PositionBallSettingState;
+                          var flag = (state.formKey.currentState! as FormState)
+                              .validate();
+                          if (flag) {
+                            Navigator.of(context).pop();
+                            var value = state.currentValue;
+                            onFieldChange(info.fieldKey, value);
+                          }
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
   // @override
   // void onInit() {
   //   super.onInit();
@@ -412,6 +521,7 @@ class BehaviorSettingController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    initMenu();
     query();
     _initData();
   }

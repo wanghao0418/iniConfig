@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 09:26:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 18:02:54
+ * @LastEditTime: 2023-07-20 13:33:16
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_communication_protocol/view.dart
  * @Description: 通讯协议设置界面
  */
@@ -41,14 +41,16 @@ class _PlcCommunicationProtocolViewGetX
   const _PlcCommunicationProtocolViewGetX({Key? key}) : super(key: key);
 
   // Modbus命令号功能码
-  Widget _buildModbus() {
+  Widget _buildModbus(context) {
     return Expander(
         initiallyExpanded: true,
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child:
-                Text('Modbus命令号功能码').fontWeight(FontWeight.bold).fontSize(16)),
+            child: Text(
+              'Modbus命令号功能码',
+              style: FluentTheme.of(context).typography.display,
+            ).fontWeight(FontWeight.bold).fontSize(16)),
         // header: const Text('Modbus命令号功能码'),
         content: Column(
             children: controller.modbusAreaList.map((e) {
@@ -62,12 +64,15 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 命令区
-  Widget _buildCommand() {
+  Widget _buildCommand(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('命令区').fontWeight(FontWeight.bold).fontSize(16)),
+            child:
+                Text('命令区', style: FluentTheme.of(context).typography.display)
+                    .fontWeight(FontWeight.bold)
+                    .fontSize(16)),
         // header: const Text('命令区'),
         content: Column(
             children: controller.commandAreaList.map((e) {
@@ -81,12 +86,15 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 扩展区
-  Widget _buildExpandArea() {
+  Widget _buildExpandArea(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('扩展区').fontWeight(FontWeight.bold).fontSize(16)),
+            child:
+                Text('扩展区', style: FluentTheme.of(context).typography.display)
+                    .fontWeight(FontWeight.bold)
+                    .fontSize(16)),
         // header: const Text('扩展区'),
         content: Column(
             children: controller.expandAreaList.map((e) {
@@ -100,18 +108,21 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 监控区
-  Widget _buildMonitorArea() {
+  Widget _buildMonitorArea(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('监控区').fontWeight(FontWeight.bold).fontSize(16)),
+            child:
+                Text('监控区', style: FluentTheme.of(context).typography.display)
+                    .fontWeight(FontWeight.bold)
+                    .fontSize(16)),
         content: Column(
             children: controller.monitorAreaList.map((e) {
           if (e is RenderCustomByTag) {
             return Container(
               margin: EdgeInsets.only(bottom: 5.r),
-              child: _buildIdentificationArea(),
+              child: _buildIdentificationArea(context),
             );
           } else if (e is RenderFieldInfo) {
             return FieldChange(
@@ -126,12 +137,15 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 货位区
-  Widget _buildLocationArea() {
+  Widget _buildLocationArea(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('货位区').fontWeight(FontWeight.bold).fontSize(16)),
+            child:
+                Text('货位区', style: FluentTheme.of(context).typography.display)
+                    .fontWeight(FontWeight.bold)
+                    .fontSize(16)),
         content: Column(
             children: controller.locationAreaList.map((e) {
           return FieldChange(
@@ -144,12 +158,13 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 标识区
-  Widget _buildIdentificationArea() {
+  Widget _buildIdentificationArea(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('标识符 基础信息BaseInfo之下的按位区分标识')
+            child: Text('标识符 基础信息BaseInfo之下的按位区分标识',
+                    style: FluentTheme.of(context).typography.display)
                 .fontWeight(FontWeight.bold)
                 .fontSize(16)),
         content: Column(
@@ -164,12 +179,15 @@ class _PlcCommunicationProtocolViewGetX
   }
 
   // 对应区
-  Widget _buildCorrespondingArea() {
+  Widget _buildCorrespondingArea(context) {
     return Expander(
         headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
-            child: Text('DB存储区').fontWeight(FontWeight.bold).fontSize(16)),
+            child:
+                Text('DB存储区', style: FluentTheme.of(context).typography.display)
+                    .fontWeight(FontWeight.bold)
+                    .fontSize(16)),
         content: Column(
             children: controller.correspondingAreaList.map((e) {
           return FieldChange(
@@ -208,19 +226,19 @@ class _PlcCommunicationProtocolViewGetX
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.r),
             child: Column(children: [
-              _buildModbus(),
+              _buildModbus(context),
               15.verticalSpacingRadius,
-              _buildCommand(),
+              _buildCommand(context),
               15.verticalSpacingRadius,
-              _buildExpandArea(),
+              _buildExpandArea(context),
               15.verticalSpacingRadius,
-              _buildMonitorArea(),
+              _buildMonitorArea(context),
               15.verticalSpacingRadius,
-              _buildLocationArea(),
+              _buildLocationArea(context),
               // 15.verticalSpacingRadius,
               // _buildIdentificationArea(),
               15.verticalSpacingRadius,
-              _buildCorrespondingArea()
+              _buildCorrespondingArea(context)
             ]),
           ),
         )),

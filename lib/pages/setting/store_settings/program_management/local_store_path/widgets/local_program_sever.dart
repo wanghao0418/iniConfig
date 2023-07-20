@@ -2,12 +2,13 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 13:28:52
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-03 09:38:11
+ * @LastEditTime: 2023-07-20 13:56:17
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/local_store_path/widgets/local_program_sever.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_change.dart';
@@ -160,12 +161,22 @@ class _LocalProgramSeverState extends State<LocalProgramSever> {
         CommandBarCard(
             child: CommandBar(primaryItems: [
           CommandBarButton(
-              label: Text('保存'), onPressed: save, icon: Icon(FluentIcons.save)),
-          CommandBarSeparator(),
+              label: Text('保存'),
+              onPressed: save,
+              icon: Icon(
+                FluentIcons.save,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
+          CommandBarSeparator(
+            color: GlobalTheme.instance.buttonIconColor,
+          ),
           CommandBarButton(
               label: Text('测试'),
               onPressed: test,
-              icon: Icon(FluentIcons.test_plan)),
+              icon: Icon(
+                FluentIcons.test_plan,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
         ])),
         5.verticalSpacingRadius,
         Expanded(

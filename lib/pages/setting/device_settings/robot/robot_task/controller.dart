@@ -57,7 +57,7 @@ class RobotTaskController extends GetxController {
         section: "RobotTaskConfig",
         field: "TrackLubricationTaskExecTime",
         name: "轨道润滑任务执行时间",
-        renderType: RenderType.input),
+        renderType: RenderType.datePicker),
     RenderFieldInfo(
         section: "RobotTaskConfig",
         field: "TrackLubricationTaskSpaceTime",

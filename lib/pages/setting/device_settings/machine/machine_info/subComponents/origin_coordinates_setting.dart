@@ -1,47 +1,46 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-07-17 14:07:04
+ * @Date: 2023-07-19 10:13:59
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 16:17:29
- * @FilePath: /iniConfig/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/process_preparation.dart
- * @Description: 工艺配制编辑组件
+ * @LastEditTime: 2023-07-20 16:16:26
+ * @FilePath: /iniConfig/lib/pages/setting/device_settings/machine/machine_info/widgets/origin_coordinates_setting.dart
+ * @Description: 原点坐标设置
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
-class ProcessPreparation extends StatefulWidget {
-  const ProcessPreparation({Key? key, required this.showValue})
+class OriginCoordinatesSetting extends StatefulWidget {
+  const OriginCoordinatesSetting({Key? key, required this.showValue})
       : super(key: key);
   final String showValue;
-
   @override
-  ProcessPreparationState createState() => ProcessPreparationState();
+  OriginCoordinatesSettingState createState() =>
+      OriginCoordinatesSettingState();
 }
 
-class ProcessPreparationState extends State<ProcessPreparation> {
+class OriginCoordinatesSettingState extends State<OriginCoordinatesSetting> {
   final List<PlutoRow> rows = [];
   late final PlutoGridStateManager stateManager;
 
   get currentValue => rows
       .where((element) =>
-          element.cells['process']!.value != '' &&
-          element.cells['reportStatus']!.value != '')
-      .map((e) =>
-          '${e.cells['process']!.value}#${e.cells['reportStatus']!.value}')
-      .join('*');
+          element.cells['type']!.value != '' &&
+          element.cells['coordinate']!.value != '')
+      .map((e) => '${e.cells['type']!.value}#${e.cells['coordinate']!.value}')
+      .join('&');
 
   initRows() {
-    var list = widget.showValue.split('*');
-    print(list);
+    var list = widget.showValue.split('&');
     for (var element in list) {
-      var process = element.split('#')[0];
-      var status = element.split('#')[1];
+      var type = element.split('#')[0];
+      var coordinate = element.split('#')[1];
+
       stateManager.appendRows([
         PlutoRow(cells: {
-          'process': PlutoCell(value: process),
-          'reportStatus': PlutoCell(value: status),
+          'type': PlutoCell(value: type),
+          'coordinate': PlutoCell(value: coordinate),
         })
       ]);
     }
@@ -55,8 +54,8 @@ class ProcessPreparationState extends State<ProcessPreparation> {
   add() {
     stateManager.appendRows([
       PlutoRow(cells: {
-        'process': PlutoCell(value: ''),
-        'reportStatus': PlutoCell(value: '1-4'),
+        'type': PlutoCell(value: ''),
+        'coordinate': PlutoCell(value: ''),
       })
     ]);
   }
@@ -65,6 +64,12 @@ class ProcessPreparationState extends State<ProcessPreparation> {
     if (stateManager.currentRow == null) return;
     stateManager.removeRows([stateManager.currentRow!]);
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -99,16 +104,16 @@ class ProcessPreparationState extends State<ProcessPreparation> {
           rows: rows,
           columns: [
             PlutoColumn(
-              title: '工艺',
-              field: 'process',
+              title: '类型',
+              field: 'type',
               type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),
             PlutoColumn(
-              title: '报工状态',
-              field: 'reportStatus',
-              type: PlutoColumnType.select(['1-4', '5']),
+              title: '坐标',
+              field: 'coordinate',
+              type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),

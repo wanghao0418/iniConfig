@@ -1,5 +1,9 @@
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/index.dart';
+import 'package:iniConfig/pages/setting/system_settings/function_setting/function_setting/subComponents/fixed_quality_setting.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/utils/http.dart';
@@ -13,7 +17,7 @@ class FunctionSettingController extends GetxController {
       RenderFieldInfo(
         field: 'FixtureQualit',
         section: 'WorkpriceInfo',
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
         name: "固定质量",
       ),
       RenderFieldInfo(
@@ -72,7 +76,7 @@ class FunctionSettingController extends GetxController {
         field: 'DeskTipShowTime',
         section: 'AutoUiConfig',
         renderType: RenderType.numberInput,
-        name: "显示桌面右下角的弹窗提示",
+        name: "显示桌面右下角的弹窗提示（输入秒数）",
       ),
       RenderFieldInfo(
           field: 'BtnStartUpMachineMark',
@@ -237,8 +241,65 @@ class FunctionSettingController extends GetxController {
     }
   }
 
+  // 定制组件------------------------
+
+  Widget _buildFixedQuality(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: FixedQualitySetting(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as FixedQualitySettingState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
   _initData() {
     update(["function_setting"]);
+  }
+
+  initMenu() {
+    for (var element in menuList) {
+      if (element is RenderFieldGroup) {
+        for (var item in element.children) {
+          if (item is RenderFieldInfo) {
+            if (item.field == 'FixtureQualit') {
+              item.builder = (context) {
+                return _buildFixedQuality(context, item);
+              };
+            }
+          }
+        }
+      } else if (element is RenderFieldInfo) {}
+    }
   }
 
   // @override
@@ -249,6 +310,7 @@ class FunctionSettingController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    initMenu();
     query();
     _initData();
   }

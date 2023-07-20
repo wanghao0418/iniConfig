@@ -2,21 +2,25 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-17 18:20:13
+ * @LastEditTime: 2023-07-20 14:01:43
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:iniConfig/common/utils/popup_message.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
-import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/widgets/row_cell_form.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/subComponents/button_lights_associate.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/subComponents/device_code_form.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/subComponents/row_cell_form.dart';
+import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_info/subComponents/workpiece_spec_limit.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/index.dart';
 import '../../../../../../common/utils/http.dart';
-import 'craft_select_form.dart';
+import '../subComponents/craft_select_form.dart';
 import 'scan_device_form.dart';
 
 class ShelfInfoSetting extends StatefulWidget {
@@ -117,13 +121,13 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         section: 'Shelf',
         field: 'ShelfDeviceCode',
         name: '货位设备编号-芯片号-及夹具限制',
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
           section: 'Shelf',
           field: 'UpLineLightSync',
           name: '接驳上线按钮灯同步',
-          renderType: RenderType.input,
+          renderType: RenderType.custom,
           documentationList: [
             DocumentationData(
                 type: DocumentationType.text, value: '入库时写9的灯，出库时写10的灯')
@@ -134,7 +138,15 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           section: 'Shelf',
           field: 'ScanDeviceLimit',
           name: '扫描设备限制',
-          renderType: RenderType.numberInput),
+          renderType: RenderType.select,
+          options: {
+            "初始值": "0",
+            "条码枪": "1",
+            "巴鲁夫读头": "2",
+            "倍加福读头": "3",
+            "欧姆龙读头": "4",
+            "plc读头": "5"
+          }),
       // RenderFieldInfo(
       //   section: 'Shelf',
       //   field: 'ScanDeviceIndex',
@@ -150,26 +162,32 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         renderType: RenderType.numberInput,
       ),
       RenderFieldInfo(
-        section: 'Shelf',
-        field: 'StorageSpace',
-        name: '货位间距【毫米】(真实零件两边需各减去10毫米 得到80毫米)',
-        renderType: RenderType.numberInput,
-      ),
+          section: 'Shelf',
+          field: 'StorageSpace',
+          name: '货位间距',
+          renderType: RenderType.numberInput,
+          documentationList: [
+            DocumentationData(
+                type: DocumentationType.text,
+                value: '【毫米】(真实零件两边需各减去10毫米 得到80毫米)')
+          ]),
       RenderFieldInfo(
-        section: 'Shelf',
-        field: 'WorkpieceSpecLimit',
-        name:
-            '零件尺寸限制【毫米】（电极的长宽高限制分别为 120，120，120，钢件的长宽高限制分别为 140，140，125，为空，则不判断）',
-        renderType: RenderType.input,
-      ),
+          section: 'Shelf',
+          field: 'WorkpieceSpecLimit',
+          name: '零件尺寸限制',
+          renderType: RenderType.custom,
+          documentationList: [
+            DocumentationData(
+                type: DocumentationType.text,
+                value:
+                    '【毫米】（电极的长宽高限制分别为 120，120，120，钢件的长宽高限制分别为 140，140，125，为空，则不判断）')
+          ]),
     ]),
   ];
   late Shelf shelf;
   List<String> changedList = [];
   List deviceList = [];
   var currentDeviceId = '';
-  ValueNotifier<String> currentShelfSensorTypeNotifier =
-      ValueNotifier<String>('');
 
   bool isChanged(String field) {
     return changedList.contains(field);
@@ -178,6 +196,9 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
   void setFieldValue(String field, String val) {
     var temp = shelf.toSectionMap();
     temp[field] = val;
+    if (field == '${widget.section}/ShelfSensorType') {
+      getSectionList();
+    }
     shelf = Shelf.fromSectionJson(temp, widget.section);
   }
 
@@ -205,12 +226,29 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
           if (element is RenderFieldInfo) {
             element.section = widget.section;
             if (element.field == 'CraftLimit') {
+              // 工艺限制
               element.builder = (context) {
                 return _buildCraftLimitContent(context, element);
               };
             } else if (element.field == 'RowColl') {
+              // 行列配置
               element.builder = (context) {
                 return _buildRowCellSetting(context, element);
+              };
+            } else if (element.field == 'ShelfDeviceCode') {
+              // 货位设备编号-芯片号-及夹具限制
+              element.builder = (context) {
+                return _buildShelfDeviceCode(context, element);
+              };
+            } else if (element.field == 'UpLineLightSync') {
+              // 接驳按钮灯同步
+              element.builder = (context) {
+                return _buildButtonLightAssociate(context, element);
+              };
+            } else if (element.field == 'WorkpieceSpecLimit') {
+              // 尺寸限制
+              element.builder = (context) {
+                return _buildWorkpieceSpecLimit(context, element);
               };
             }
           }
@@ -226,8 +264,6 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     });
     if (res.success == true) {
       shelf = Shelf.fromSectionJson((res.data as List).first, widget.section);
-      currentShelfSensorTypeNotifier =
-          ValueNotifier<String>(currentShelfSensorType ?? '');
       if (currentShelfSensorType == '2') {
         getSectionList();
       }
@@ -314,12 +350,13 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
 
   // 删除扫描设备
   void delete() async {
-    var res = await CommonApi.deleteSection({
+    var lastSection = deviceList.last;
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'ScanDevice',
           "parent_node": widget.section,
-          "node_name": currentDeviceId,
+          "node_name": lastSection,
         }
       ],
     });
@@ -327,8 +364,10 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
       // 删除成功
       // getSectionList();
       setState(() {
-        deviceList.remove(currentDeviceId);
-        currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
+        deviceList.remove(lastSection);
+        if (currentDeviceId == lastSection) {
+          currentDeviceId = deviceList.isNotEmpty ? deviceList.first : "";
+        }
       });
     } else {
       // 删除失败
@@ -347,13 +386,127 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
     super.initState();
     shelf = Shelf(section: widget.section);
     initMenu();
-    currentShelfSensorTypeNotifier.addListener(() {
-      if (currentShelfSensorTypeNotifier.value == '2') {
-        // 获取扫描设备
-        getSectionList();
-      }
-    });
     getSectionDetail();
+  }
+
+  // 尺寸限制
+  Widget _buildWorkpieceSpecLimit(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: WorkpieceSpecLimit(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as WorkpieceSpecLimitState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 接驳按钮灯同步
+  Widget _buildButtonLightAssociate(
+      BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 400,
+                    child: ButtonLightsAssociate(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as ButtonLightsAssociateState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 货位设备编号-芯片号-及夹具限制
+  Widget _buildShelfDeviceCode(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: DeviceCodeForm(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state = _key.currentState! as DeviceCodeFormState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
   }
 
   // 行列配置
@@ -404,7 +557,10 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
               headerHeight: 70,
               header: Padding(
                 padding: EdgeInsets.only(left: 40.r),
-                child: Text('分层条码枪设置').fontWeight(FontWeight.bold).fontSize(16),
+                child: Text(
+                  '分层条码枪设置',
+                  style: FluentTheme.of(context).typography.display,
+                ).fontWeight(FontWeight.bold).fontSize(16),
               ),
               content: SizedBox(
                   height: 500,
@@ -418,13 +574,38 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
                                 onPressed: add,
                                 icon: Icon(
                                   FluentIcons.add,
+                                  color: GlobalTheme.instance.buttonIconColor,
                                 )),
-                            CommandBarSeparator(),
+                            CommandBarSeparator(
+                              color: GlobalTheme.instance.buttonIconColor,
+                            ),
                             CommandBarButton(
                                 label: Text('删除'),
-                                onPressed: delete,
+                                onPressed: () {
+                                  if (deviceList.isEmpty) return;
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return ContentDialog(
+                                            title: Text("删除"),
+                                            content: Text("确认删除最新节点吗?"),
+                                            actions: [
+                                              Button(
+                                                  child: Text("取消"),
+                                                  onPressed: () =>
+                                                      Navigator.pop(context)),
+                                              FilledButton(
+                                                  child: Text("确认"),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    delete();
+                                                  })
+                                            ]);
+                                      });
+                                },
                                 icon: Icon(
                                   FluentIcons.delete,
+                                  color: GlobalTheme.instance.buttonIconColor,
                                 )),
                           ])),
                       5.verticalSpacingRadius,
@@ -440,7 +621,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
                                     final contact = deviceList[index];
                                     return ListTile.selectable(
                                       title: Text(TransUtils.getTransField(
-                                          contact, '扫码枪')),
+                                          contact.split('.')[1], '扫码枪')),
                                       selected: currentDeviceId == contact,
                                       onSelectionChange: (v) =>
                                           onDeviceChange(contact),
@@ -471,6 +652,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         : Container();
   }
 
+  // 工艺限制
   Widget _buildCraftLimitContent(BuildContext context, RenderFieldInfo info) {
     return FilledButton(
         child: const Text('编辑'),
@@ -550,12 +732,22 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         CommandBarCard(
             child: CommandBar(primaryItems: [
           CommandBarButton(
-              label: Text('保存'), onPressed: save, icon: Icon(FluentIcons.save)),
-          CommandBarSeparator(),
+              label: Text('保存'),
+              onPressed: save,
+              icon: Icon(
+                FluentIcons.save,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
+          CommandBarSeparator(
+            color: GlobalTheme.instance.buttonIconColor,
+          ),
           CommandBarButton(
               label: Text('测试'),
               onPressed: test,
-              icon: Icon(FluentIcons.test_plan)),
+              icon: Icon(
+                FluentIcons.test_plan,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
         ])),
         5.verticalSpacingRadius,
         Expanded(

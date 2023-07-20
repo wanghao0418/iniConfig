@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-25 14:12:50
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-27 10:39:41
+ * @LastEditTime: 2023-07-18 09:39:54
  * @FilePath: /eatm_ini_config/lib/common/api/common.dart
  * @Description: 公共api
  */
@@ -50,6 +50,22 @@ class CommonApi {
   static Future<ResponseApiBody> deleteSection(data) async {
     ResponseApiBody responseBodyApi =
         await HttpUtil.post('/Eatm/iniConfig/userConfig/delNode', data: data);
+    return responseBodyApi;
+  }
+
+  // 新增绑定节点
+  static Future<ResponseApiBody> addBindSection(data) async {
+    ResponseApiBody responseBodyApi = await HttpUtil.post(
+        '/Eatm/iniConfig/userConfig/addBindNode',
+        data: data);
+    return responseBodyApi;
+  }
+
+  // 删除末尾节点
+  static Future<ResponseApiBody> deleteLastSection(data) async {
+    ResponseApiBody responseBodyApi = await HttpUtil.post(
+        '/Eatm/iniConfig/userConfig/delLastNode',
+        data: data);
     return responseBodyApi;
   }
 }

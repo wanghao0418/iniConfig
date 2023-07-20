@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:20:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-17 17:30:53
+ * @LastEditTime: 2023-07-20 13:54:31
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,6 +10,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -168,17 +169,25 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
               CommandBarButton(
                   label: Text('新增'),
                   onPressed: controller.add,
-                  icon: Icon(FluentIcons.add)),
-              CommandBarSeparator(),
+                  icon: Icon(
+                    FluentIcons.add,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
+              CommandBarSeparator(
+                color: GlobalTheme.instance.buttonIconColor,
+              ),
               CommandBarButton(
                   label: Text('删除'),
                   onPressed: () {
+                    if (controller.shelfList.isEmpty) {
+                      return;
+                    }
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return ContentDialog(
                               title: Text("删除"),
-                              content: Text("确认删除吗?"),
+                              content: Text("确认删除最新节点吗?"),
                               actions: [
                                 Button(
                                     child: Text("取消"),
@@ -192,7 +201,10 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                               ]);
                         });
                   },
-                  icon: Icon(FluentIcons.delete)),
+                  icon: Icon(
+                    FluentIcons.delete,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
             ])),
         5.verticalSpacingRadius,
         Expanded(

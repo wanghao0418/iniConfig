@@ -2,11 +2,13 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-07-13 11:06:23
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 15:23:28
+ * @LastEditTime: 2023-07-20 15:56:37
  * @FilePath: /iniConfig/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/craft_select_form.dart
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/api/special.dart';
+import 'package:iniConfig/common/utils/http.dart';
 
 class CraftSelectForm extends StatefulWidget {
   const CraftSelectForm({Key? key, required this.showValue}) : super(key: key);
@@ -16,7 +18,7 @@ class CraftSelectForm extends StatefulWidget {
 }
 
 class CraftSelectFormState extends State<CraftSelectForm> {
-  List craftList = ['LCNC', '4-预调', 'CMM'];
+  List craftList = [];
   List selectedList = [];
   TextEditingController textController = TextEditingController();
 
@@ -50,11 +52,29 @@ class CraftSelectFormState extends State<CraftSelectForm> {
     }
   }
 
+  // 获取货架限制工艺
+  getShelfCraft() async {
+    ResponseApiBody result = await SpecialApi.getShelfLimitProcess();
+    if (result.success == true) {
+      var data = result.data as List;
+      print(data);
+      // 去掉括号及注释
+      final regexp = RegExp(r'\((.*?)\)');
+
+      if (data.isNotEmpty) {
+        craftList = data.map((e) => e.replaceAll(regexp, '')).toList();
+        setState(() {});
+      }
+    }
+    initValue();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initValue();
+    // initValue();
+    getShelfCraft();
   }
 
   @override

@@ -2,13 +2,15 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:03:26
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 17:34:57
+ * @LastEditTime: 2023-07-20 13:50:51
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
+import 'package:iniConfig/common/utils/popup_message.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
 import 'index.dart';
 import 'widgets/scan_device_form.dart';
@@ -61,17 +63,25 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
               CommandBarButton(
                   label: Text('新增'),
                   onPressed: controller.add,
-                  icon: Icon(FluentIcons.add)),
-              CommandBarSeparator(),
+                  icon: Icon(
+                    FluentIcons.add,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
+              CommandBarSeparator(
+                color: GlobalTheme.instance.buttonIconColor,
+              ),
               CommandBarButton(
                   label: Text('删除'),
                   onPressed: () {
+                    if (controller.deviceList.isEmpty) {
+                      return;
+                    }
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return ContentDialog(
                               title: Text("删除"),
-                              content: Text("确认删除吗?"),
+                              content: Text("确认删除最新节点吗?"),
                               actions: [
                                 Button(
                                     child: Text("取消"),
@@ -85,7 +95,10 @@ class _RobotScanViewGetX extends GetView<RobotScanController> {
                               ]);
                         });
                   },
-                  icon: Icon(FluentIcons.delete)),
+                  icon: Icon(
+                    FluentIcons.delete,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
             ])),
         5.verticalSpacingRadius,
         Expanded(

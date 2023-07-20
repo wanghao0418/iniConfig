@@ -1,47 +1,45 @@
-/*
- * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-07-17 14:07:04
- * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 16:17:29
- * @FilePath: /iniConfig/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/process_preparation.dart
- * @Description: 工艺配制编辑组件
- */
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
-class ProcessPreparation extends StatefulWidget {
-  const ProcessPreparation({Key? key, required this.showValue})
+class WorkpieceSpecLimit extends StatefulWidget {
+  const WorkpieceSpecLimit({Key? key, required this.showValue})
       : super(key: key);
   final String showValue;
 
   @override
-  ProcessPreparationState createState() => ProcessPreparationState();
+  WorkpieceSpecLimitState createState() => WorkpieceSpecLimitState();
 }
 
-class ProcessPreparationState extends State<ProcessPreparation> {
+class WorkpieceSpecLimitState extends State<WorkpieceSpecLimit> {
   final List<PlutoRow> rows = [];
   late final PlutoGridStateManager stateManager;
 
   get currentValue => rows
       .where((element) =>
-          element.cells['process']!.value != '' &&
-          element.cells['reportStatus']!.value != '')
+          element.cells['cargoSpace']!.value != '' &&
+          element.cells['length']!.value != '' &&
+          element.cells['width']!.value != '' &&
+          element.cells['height']!.value != '')
       .map((e) =>
-          '${e.cells['process']!.value}#${e.cells['reportStatus']!.value}')
-      .join('*');
+          '${e.cells['cargoSpace']!.value}#${e.cells['length']!.value}*${e.cells['width']!.value}*${e.cells['height']!.value}')
+      .join('-');
 
   initRows() {
-    var list = widget.showValue.split('*');
-    print(list);
+    var list = widget.showValue.split('-');
     for (var element in list) {
-      var process = element.split('#')[0];
-      var status = element.split('#')[1];
+      var cargoSpace = element.split('#')[0];
+      var size = element.split('#')[1];
+      var length = size.split('*')[0];
+      var width = size.split('*')[1];
+      var height = size.split('*')[2];
       stateManager.appendRows([
         PlutoRow(cells: {
-          'process': PlutoCell(value: process),
-          'reportStatus': PlutoCell(value: status),
+          'cargoSpace': PlutoCell(value: cargoSpace),
+          'length': PlutoCell(value: length),
+          'width': PlutoCell(value: width),
+          'height': PlutoCell(value: height)
         })
       ]);
     }
@@ -55,8 +53,10 @@ class ProcessPreparationState extends State<ProcessPreparation> {
   add() {
     stateManager.appendRows([
       PlutoRow(cells: {
-        'process': PlutoCell(value: ''),
-        'reportStatus': PlutoCell(value: '1-4'),
+        'cargoSpace': PlutoCell(value: ''),
+        'length': PlutoCell(value: '0'),
+        'width': PlutoCell(value: '0'),
+        'height': PlutoCell(value: '0'),
       })
     ]);
   }
@@ -65,6 +65,12 @@ class ProcessPreparationState extends State<ProcessPreparation> {
     if (stateManager.currentRow == null) return;
     stateManager.removeRows([stateManager.currentRow!]);
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -99,16 +105,30 @@ class ProcessPreparationState extends State<ProcessPreparation> {
           rows: rows,
           columns: [
             PlutoColumn(
-              title: '工艺',
-              field: 'process',
+              title: '货位',
+              field: 'cargoSpace',
               type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),
             PlutoColumn(
-              title: '报工状态',
-              field: 'reportStatus',
-              type: PlutoColumnType.select(['1-4', '5']),
+              title: '长',
+              field: 'length',
+              type: PlutoColumnType.number(),
+              enableContextMenu: false,
+              enableSorting: false,
+            ),
+            PlutoColumn(
+              title: '宽',
+              field: 'width',
+              type: PlutoColumnType.number(),
+              enableContextMenu: false,
+              enableSorting: false,
+            ),
+            PlutoColumn(
+              title: '高',
+              field: 'height',
+              type: PlutoColumnType.number(),
               enableContextMenu: false,
               enableSorting: false,
             ),
@@ -116,6 +136,7 @@ class ProcessPreparationState extends State<ProcessPreparation> {
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
             initRows();
+            // initTypes();
           },
           onChanged: onTableCellChanged,
           configuration: const PlutoGridConfiguration(

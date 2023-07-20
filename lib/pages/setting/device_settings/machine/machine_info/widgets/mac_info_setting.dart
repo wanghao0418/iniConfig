@@ -2,6 +2,12 @@ import 'package:fluent_ui/fluent_ui.dart' hide Tab;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/components/field_change.dart';
 import 'package:iniConfig/common/index.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
+import 'package:iniConfig/pages/setting/device_settings/machine/machine_info/subComponents/chuck_number_info.dart';
+import 'package:iniConfig/pages/setting/device_settings/machine/machine_info/subComponents/mac_process_limit.dart';
+import 'package:iniConfig/pages/setting/device_settings/machine/machine_info/subComponents/origin_coordinates_setting.dart';
+import 'package:iniConfig/pages/setting/device_settings/machine/machine_info/subComponents/origin_program_info.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_group.dart';
@@ -33,6 +39,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       section: 'MachineInfo',
       name: "机床号",
       renderType: RenderType.input,
+      readOnly: true,
     ),
     RenderFieldInfo(
       field: 'ServiceAddr',
@@ -139,6 +146,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           section: 'MachineInfo',
           name: "机床类型",
           renderType: RenderType.select,
+          readOnly: true,
           options: {
             "CNC": "CNC",
             "CMM": "CMM",
@@ -150,13 +158,13 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'ChuckNum',
         section: 'MachineInfo',
         name: "机床卡盘号信息",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacProcessLimit',
         section: 'MachineInfo',
         name: "机床限制工艺",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
           field: 'CncPrgCallMode',
@@ -539,11 +547,11 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         renderType: RenderType.numberInput,
       ),
       RenderFieldInfo(
-        field: 'MacCmmCheckPosMacroPos',
-        section: 'MachineInfo',
-        name: "读取宏变量检测点位置",
-        renderType: RenderType.input,
-      ),
+          field: 'MacCmmCheckPosMacroPos',
+          section: 'MachineInfo',
+          name: "读取宏变量检测点位置",
+          renderType: RenderType.customMultipleChoice,
+          splitKey: '&'),
       RenderFieldInfo(
         field: 'MacCmmResultMacroPos',
         section: 'MachineInfo',
@@ -653,7 +661,8 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'AfterPrgCalibrationKnifeTarget',
         section: 'MachineInfo',
         name: "序后对刀目标，0/NULL:所有，具体值：具体刀具",
-        renderType: RenderType.input,
+        renderType: RenderType.customMultipleChoice,
+        splitKey: ',',
       ),
       RenderFieldInfo(
         field: 'AfterPrgCalibrationKnifeFlag',
@@ -1101,43 +1110,43 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'MacPosX',
         section: 'MachineInfo',
         name: "电极原点坐标X",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosY',
         section: 'MachineInfo',
         name: "电极原点坐标Y",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosZ',
         section: 'MachineInfo',
         name: "电极原点坐标Z",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosU',
         section: 'MachineInfo',
         name: "电极原点坐标U",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosA',
         section: 'MachineInfo',
         name: "电极原点坐标A",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosW',
         section: 'MachineInfo',
         name: "电极原点坐标W",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacOriginPrgNameInfo',
         section: 'MachineInfo',
         name: "机床原点程序名称信息",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
           field: 'WorkSteelAbalmIsPutDown',
@@ -1222,7 +1231,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       field: 'AheadTaskMonitorFolder',
       section: 'MachineInfo',
       name: "提前任务监控文件夹，CMM快检测完成时，eact会在该文件夹下生成txt通知eatm",
-      renderType: RenderType.input,
+      renderType: RenderType.path,
     ),
     RenderFieldInfo(
       field: 'ZeissStartFileFolder',
@@ -1534,43 +1543,43 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         field: 'MacPosX',
         section: 'MachineInfo',
         name: "电极原点坐标X",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosY',
         section: 'MachineInfo',
         name: "电极原点坐标Y",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosZ',
         section: 'MachineInfo',
         name: "电极原点坐标Z",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosU',
         section: 'MachineInfo',
         name: "电极原点坐标U",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosA',
         section: 'MachineInfo',
         name: "电极原点坐标A",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacPosW',
         section: 'MachineInfo',
         name: "电极原点坐标W",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
         field: 'MacOriginPrgNameInfo',
         section: 'MachineInfo',
         name: "机床原点程序名称信息",
-        renderType: RenderType.input,
+        renderType: RenderType.custom,
       ),
       RenderFieldInfo(
           field: 'WorkSteelAbalmIsPutDown',
@@ -1653,7 +1662,29 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
           element.section = widget.section;
         } else if (element is RenderFieldGroup) {
           for (var element in element.children) {
-            if (element is RenderFieldInfo) element.section = widget.section;
+            if (element is RenderFieldInfo) {
+              element.section = widget.section;
+              if (element.field == 'ChuckNum') {
+                element.builder =
+                    (context) => _buildChuckNumberInformation(context, element);
+              } else if (element.field == 'MacProcessLimit') {
+                element.builder =
+                    (context) => _buildMacProcessLimit(context, element);
+              } else if ([
+                'MacPosX',
+                'MacPosY',
+                'MacPosZ',
+                'MacPosU',
+                'MacPosA',
+                'MacPosW'
+              ].contains(element.field)) {
+                element.builder =
+                    (context) => _buildOriginCoordinates(context, element);
+              } else if (element.field == 'MacOriginPrgNameInfo') {
+                element.builder =
+                    (context) => _buildOriginProgramInfo(context, element);
+              }
+            }
           }
         }
       }
@@ -1825,6 +1856,168 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
     );
   }
 
+  // ------ 定制设置组件 ----------------
+  // 卡盘号信息设置
+  Widget _buildChuckNumberInformation(
+      BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: ChuckNumberInfo(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as ChuckNumberInfoState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 机床限制工艺
+  Widget _buildMacProcessLimit(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: MacProcessLimit(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as MacProcessLimitState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 原点坐标
+  Widget _buildOriginCoordinates(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: OriginCoordinatesSetting(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state = _key.currentState!
+                              as OriginCoordinatesSettingState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 原点程序名称信息
+  Widget _buildOriginProgramInfo(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: OriginProgramInfo(
+                      key: _key,
+                      showValue: getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as OriginProgramInfoState;
+                          var value = state.currentValue;
+                          onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1833,12 +2026,22 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
         CommandBarCard(
             child: CommandBar(primaryItems: [
           CommandBarButton(
-              label: Text('保存'), onPressed: save, icon: Icon(FluentIcons.save)),
-          CommandBarSeparator(),
+              label: Text('保存'),
+              onPressed: save,
+              icon: Icon(
+                FluentIcons.save,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
+          CommandBarSeparator(
+            color: GlobalTheme.instance.buttonIconColor,
+          ),
           CommandBarButton(
               label: Text('测试'),
               onPressed: test,
-              icon: Icon(FluentIcons.test_plan)),
+              icon: Icon(
+                FluentIcons.test_plan,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
         ])),
         5.verticalSpacingRadius,
         FluentTab(

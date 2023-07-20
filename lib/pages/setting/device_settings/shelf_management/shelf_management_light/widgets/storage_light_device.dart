@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/field_change.dart';
@@ -147,12 +148,22 @@ class _StorageLightDeviceState extends State<StorageLightDevice> {
         CommandBarCard(
             child: CommandBar(primaryItems: [
           CommandBarButton(
-              label: Text('保存'), onPressed: save, icon: Icon(FluentIcons.save)),
-          CommandBarSeparator(),
+              label: Text('保存'),
+              onPressed: save,
+              icon: Icon(
+                FluentIcons.save,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
+          CommandBarSeparator(
+            color: GlobalTheme.instance.buttonIconColor,
+          ),
           CommandBarButton(
               label: Text('测试'),
               onPressed: test,
-              icon: Icon(FluentIcons.test_plan)),
+              icon: Icon(
+                FluentIcons.test_plan,
+                color: GlobalTheme.instance.buttonIconColor,
+              )),
         ])),
         5.verticalSpacingRadius,
         Expanded(

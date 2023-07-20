@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import 'choose_list.dart';
@@ -13,6 +14,7 @@ enum RenderType {
   select,
   toggleSwitch,
   radio,
+  datePicker,
   path,
   choose,
   custom,
@@ -97,6 +99,9 @@ class _FieldChangeState extends State<FieldChange> {
       case RenderType.radio:
         currentComponent = renderRadio(context, renderFieldInfo);
         break;
+      case RenderType.datePicker:
+        currentComponent = renderDatePicker(context, renderFieldInfo);
+        break;
       case RenderType.path:
         currentComponent = renderPath(context, renderFieldInfo);
         break;
@@ -128,7 +133,7 @@ class _FieldChangeState extends State<FieldChange> {
                   height: 10.r,
                   decoration: BoxDecoration(
                     color: widget.isChanged!
-                        ? Colors.blue.normal
+                        ? GlobalTheme.instance.accentColor
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(5.r),
                   )),
@@ -136,7 +141,7 @@ class _FieldChangeState extends State<FieldChange> {
               IconButton(
                   icon: Icon(
                     FluentIcons.info_solid,
-                    color: Colors.blue,
+                    color: GlobalTheme.instance.accentColor,
                     size: 18,
                   ),
                   onPressed: () {
@@ -164,10 +169,10 @@ class _FieldChangeState extends State<FieldChange> {
                                         ],
                                       )
                                     : Text(
-                                        '敬请期待',
+                                        '暂无说明',
                                         softWrap: true,
                                         maxLines: null,
-                                      ).fontSize(22.sp),
+                                      ).fontSize(14),
                               ),
                             ),
                             actions: [
@@ -194,6 +199,7 @@ class _FieldChangeState extends State<FieldChange> {
                             softWrap: true,
                             maxLines: null,
                             // overflow: TextOverflow.ellipsis,
+                            style: FluentTheme.of(context).typography.display,
                           ).fontSize(14).fontWeight(FontWeight.bold),
                         )),
                   )),
@@ -205,6 +211,7 @@ class _FieldChangeState extends State<FieldChange> {
                       child: Text(
                       replaceEscape(widget.showValue ?? ''),
                       overflow: TextOverflow.ellipsis,
+                      style: FluentTheme.of(context).typography.display,
                     ).fontSize(14))
                   : Expanded(
                       child: Container(),
@@ -234,6 +241,7 @@ class _FieldChangeState extends State<FieldChange> {
                       content: TextBox(
                         controller: controller,
                         autofocus: true,
+                        maxLines: null,
                       ),
                       actions: [
                         Button(
@@ -311,7 +319,8 @@ class _FieldChangeState extends State<FieldChange> {
                   : '',
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.right,
-            ),
+              style: FluentTheme.of(context).typography.display,
+            ).fontSize(14),
           )
         : SizedBox(
             width: 400.r,
@@ -353,7 +362,10 @@ class _FieldChangeState extends State<FieldChange> {
                     v ? '1' : '0');
               }),
           10.horizontalSpaceRadius,
-          Text(widget.showValue == '1' ? '是' : '否')
+          Text(
+            widget.showValue == '1' ? '是' : '否',
+            style: FluentTheme.of(context).typography.display,
+          ).fontSize(14)
         ],
       ),
     );
@@ -367,7 +379,10 @@ class _FieldChangeState extends State<FieldChange> {
             .map((e) => Container(
                 margin: const EdgeInsets.only(left: 20),
                 child: RadioButton(
-                    content: Text(e.key),
+                    content: Text(
+                      e.key,
+                      style: FluentTheme.of(context).typography.display,
+                    ).fontSize(14),
                     checked: e.value == widget.showValue,
                     onChanged: (value) {
                       if (fieldInfo.readOnly == true) return;
@@ -376,6 +391,23 @@ class _FieldChangeState extends State<FieldChange> {
                           e.value);
                     })))
             .toList(),
+      ),
+    );
+  }
+
+  // 渲染日期组件
+  Widget renderDatePicker(BuildContext context, RenderFieldInfo fieldInfo) {
+    var selected = DateTime.tryParse(widget.showValue ?? '') ?? DateTime.now();
+    return SizedBox(
+      width: 400.0,
+      child: DatePicker(
+        selected: selected,
+        onChanged: (time) => setState(() {
+          selected = time;
+          widget.onChanged!(
+              "${widget.renderFieldInfo.section}/${widget.renderFieldInfo.field}",
+              '${time.year}-${time.month}-${time.day}');
+        }),
       ),
     );
   }

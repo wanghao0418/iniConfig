@@ -25,7 +25,7 @@ class ShelfManagementLightController extends GetxController {
         section: "MoreLightsInfo",
         field: "SenSorLightColorSet",
         name: "传感器灯颜色设置",
-        renderType: RenderType.input),
+        renderType: RenderType.custom),
   ];
   List<String> changedList = [];
   List sectionList = [];
@@ -120,24 +120,23 @@ class ShelfManagementLightController extends GetxController {
 
   // 删除
   void delete() async {
-    if (currentSection.value.isEmpty) {
-      PopupMessage.showWarningInfoBar('请选择要删除的节点');
-      return;
-    }
-    var res = await CommonApi.deleteSection({
+    var lastSection = sectionList.last;
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'StorageLightDevice',
           "parent_node": "NULL",
-          "node_name": currentSection.value,
+          "node_name": lastSection,
         }
       ],
     });
     if (res.success == true) {
       // 删除成功
       // getSectionList();
-      sectionList.remove(currentSection.value);
-      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      sectionList.remove(lastSection);
+      if (currentSection.value == lastSection) {
+        currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      }
       _initData();
     } else {
       // 删除失败

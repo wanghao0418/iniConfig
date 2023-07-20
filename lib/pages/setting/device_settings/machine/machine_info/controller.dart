@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-14 14:32:21
+ * @LastEditTime: 2023-07-19 09:09:36
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/api/machine.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/api/common.dart';
@@ -16,7 +17,7 @@ import '../../../../../common/components/index.dart';
 import '../../../../../common/utils/http.dart';
 import '../../../../../common/utils/popup_message.dart';
 import 'widgets/add_mac_form.dart';
-import 'widgets/machine_association_setting.dart';
+import 'subComponents/machine_association_setting.dart';
 
 class MachineInfoController extends GetxController {
   MachineInfoController();
@@ -172,11 +173,12 @@ class MachineInfoController extends GetxController {
                     return;
                   }
                   print(addForm.addMacForm.toJson());
-                  var res = await CommonApi.addSection({
+                  var res = await MachineApi.addMachine({
                     "params": [
                       {
                         "list_node": addForm.addMacForm.system,
                         "parent_node": "NULL",
+                        // "bind_field": "MachineName"
                       }
                     ],
                   });
@@ -199,24 +201,24 @@ class MachineInfoController extends GetxController {
 
   // 删除
   void delete() async {
-    if (currentSection.value.isEmpty) {
-      PopupMessage.showWarningInfoBar('请选择要删除的机床');
-      return;
-    }
-    var res = await CommonApi.deleteSection({
+    var lastSection = sectionList.last;
+    print(lastSection);
+    var res = await CommonApi.deleteLastSection({
       "params": [
         {
           "list_node": 'MachineInfo',
           "parent_node": "NULL",
-          "node_name": currentSection.value,
+          "node_name": lastSection,
         }
       ],
     });
     if (res.success == true) {
       // 删除成功
       // getSectionList();
-      sectionList.remove(currentSection.value);
-      currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      sectionList.remove(lastSection);
+      if (currentSection.value == lastSection) {
+        currentSection.value = sectionList.isNotEmpty ? sectionList.first : "";
+      }
       _initData();
     } else {
       // 删除失败

@@ -44,20 +44,7 @@ class HomeController extends GetxController {
   // var tabs = [].obs;
   Key? currentMenuKey = const Key('');
   final List<NavigationPaneItem> menuItems = [];
-  final List<NavigationPaneItem> footerItems = [
-    PaneItemSeparator(),
-    PaneItem(
-      key: const Key('/settings'),
-      icon: const Icon(FluentIcons.settings),
-      title: const Text('Settings'),
-      body: const SizedBox.shrink(),
-      onTap: () {
-        // // 切换主题
-        // Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
-        // print(Get.isDarkMode);
-      },
-    ),
-  ];
+  final List<NavigationPaneItem> footerItems = [];
 
   final List<PrimaryMenu> menuList = [
     PrimaryMenu(id: '1', title: '设备设置', iconData: FluentIcons.list, children: [

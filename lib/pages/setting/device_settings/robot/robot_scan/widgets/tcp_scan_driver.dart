@@ -2,12 +2,13 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:58:19
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-29 15:42:22
+ * @LastEditTime: 2023-07-20 13:54:18
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/robot/robot_scan/widgets/tcp_scan_driver.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/index.dart';
@@ -183,12 +184,20 @@ class _TcpScanDriverState extends State<TcpScanDriver> {
               CommandBarButton(
                   label: Text('保存'),
                   onPressed: save,
-                  icon: Icon(FluentIcons.save)),
-              CommandBarSeparator(),
+                  icon: Icon(
+                    FluentIcons.save,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
+              CommandBarSeparator(
+                color: GlobalTheme.instance.buttonIconColor,
+              ),
               CommandBarButton(
                   label: Text('测试'),
                   onPressed: test,
-                  icon: Icon(FluentIcons.test_plan)),
+                  icon: Icon(
+                    FluentIcons.test_plan,
+                    color: GlobalTheme.instance.buttonIconColor,
+                  )),
             ])),
             5.verticalSpacingRadius,
             Expanded(

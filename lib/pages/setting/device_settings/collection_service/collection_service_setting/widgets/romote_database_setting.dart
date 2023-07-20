@@ -2,12 +2,13 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 20:22:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-03 09:37:27
+ * @LastEditTime: 2023-07-20 13:52:34
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/collection_service/collection_service_setting/widgets/romote_database_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 
 import '../../../../../../common/api/common.dart';
 import '../../../../../../common/components/index.dart';
@@ -167,12 +168,20 @@ class _RomoteDatabaseSettingState extends State<RomoteDatabaseSetting> {
             CommandBarButton(
                 label: Text('保存'),
                 onPressed: save,
-                icon: Icon(FluentIcons.save)),
-            CommandBarSeparator(),
+                icon: Icon(
+                  FluentIcons.save,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
+            CommandBarSeparator(
+              color: GlobalTheme.instance.buttonIconColor,
+            ),
             CommandBarButton(
                 label: Text('测试'),
                 onPressed: test,
-                icon: Icon(FluentIcons.test_plan)),
+                icon: Icon(
+                  FluentIcons.test_plan,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
           ])),
           5.verticalSpacingRadius,
           Expanded(

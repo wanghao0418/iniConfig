@@ -2,18 +2,21 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-15 14:57:37
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 17:38:04
+ * @LastEditTime: 2023-07-20 13:55:34
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_management_light/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:iniConfig/common/utils/trans_field.dart';
 import 'package:iniConfig/pages/setting/device_settings/shelf_management/shelf_management_light/widgets/storage_light_device.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/components/field_change.dart';
 import 'index.dart';
+import 'widgets/light_color_setting.dart';
 
 class ShelfManagementLightPage extends StatefulWidget {
   const ShelfManagementLightPage({Key? key}) : super(key: key);
@@ -38,6 +41,46 @@ class _ShelfManagementLightPageState extends State<ShelfManagementLightPage>
 class _ShelfManagementLightViewGetX
     extends GetView<ShelfManagementLightController> {
   const _ShelfManagementLightViewGetX({Key? key}) : super(key: key);
+
+  // 各状态颜色设置
+  Widget _buildLightColorSetting(BuildContext context, RenderFieldInfo info) {
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          var _key = GlobalKey();
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  title: Text('${info.name}').fontSize(24.sp),
+                  content: SizedBox(
+                    height: 300,
+                    child: LightColorSetting(
+                      key: _key,
+                      showValue: controller.getFieldValue(info.fieldKey) ?? '',
+                    ),
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          var state =
+                              _key.currentState! as LightColorSettingState;
+                          var value = state.currentValue;
+                          controller.onFieldChange(info.fieldKey, value);
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
 
   // 主视图
   Widget _buildView(BuildContext context) {
@@ -69,6 +112,9 @@ class _ShelfManagementLightViewGetX
                       renderFieldInfo: e,
                       showValue: controller.getFieldValue(e.fieldKey),
                       onChanged: controller.onFieldChange,
+                      builder: e.field == 'SenSorLightColorSet'
+                          ? (context) => _buildLightColorSetting(context, e)
+                          : null,
                     ))
                 .toList(),
           ],
@@ -87,17 +133,25 @@ class _ShelfManagementLightViewGetX
             CommandBarButton(
                 label: Text('新增'),
                 onPressed: controller.add,
-                icon: Icon(FluentIcons.add)),
-            CommandBarSeparator(),
+                icon: Icon(
+                  FluentIcons.add,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
+            CommandBarSeparator(
+              color: GlobalTheme.instance.buttonIconColor,
+            ),
             CommandBarButton(
                 label: Text('删除'),
                 onPressed: () {
+                  if (controller.sectionList.isEmpty) {
+                    return;
+                  }
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ContentDialog(
                             title: Text("删除"),
-                            content: Text("确认删除吗?"),
+                            content: Text("确认删除最新节点吗?"),
                             actions: [
                               Button(
                                   child: Text("取消"),
@@ -111,8 +165,13 @@ class _ShelfManagementLightViewGetX
                             ]);
                       });
                 },
-                icon: Icon(FluentIcons.delete)),
-            CommandBarSeparator(),
+                icon: Icon(
+                  FluentIcons.delete,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
+            CommandBarSeparator(
+              color: GlobalTheme.instance.buttonIconColor,
+            ),
           ])),
       5.verticalSpacingRadius,
       Expanded(

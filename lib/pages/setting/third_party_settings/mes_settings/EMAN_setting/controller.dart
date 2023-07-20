@@ -40,7 +40,7 @@ class EmanSettingController extends GetxController {
         field: "WorkpieceCraft",
         section: "EManServer",
         name: "EMan与EAtm对应工艺",
-        renderType: RenderType.input),
+        renderType: RenderType.custom),
     RenderFieldInfo(
         field: "LoginUser",
         section: "EManServer",
@@ -250,11 +250,19 @@ class EmanSettingController extends GetxController {
       // 查询成功
       var data = res.data;
       var result = (data as List).first as String;
-      macCorrespondList = result.isEmpty
-          ? []
-          : result.split('-').map((e) => MacCorrespond(macSection: e)).toList();
-      // 获取已有值并赋值
-      initMacCorrespondList();
+      var sectionList = result.isEmpty ? [] : result.split('-');
+      var machineNameQueryList = sectionList.map((e) => '$e/MachineName');
+      ResponseApiBody res2 = await CommonApi.fieldQuery({
+        "params": machineNameQueryList.toList(),
+      });
+      if (res2.success == true) {
+        var data = res2.data as Map<String, dynamic>;
+        macCorrespondList = data.values.isEmpty
+            ? []
+            : data.values.map((e) => MacCorrespond(macSection: e)).toList();
+        // 获取已有值并赋值
+        initMacCorrespondList();
+      }
     } else {
       // 查询失败
       PopupMessage.showFailInfoBar(res.message as String);

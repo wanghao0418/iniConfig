@@ -2,13 +2,14 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 10:09:31
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-13 16:56:50
+ * @LastEditTime: 2023-07-20 14:41:48
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/components/field_subTitle.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -508,13 +509,18 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
   Widget _buildSrcPrgExternTable() {
     return Container(
       margin: EdgeInsets.only(bottom: 5.r),
-      height: 250,
+      height: 300,
       child: Card(
           child: PlutoGrid(
         createHeader: (stateManager) {
           return Container(
-            padding: EdgeInsetsDirectional.all(5),
-            child: Text('源程式后缀').fontSize(16),
+            width: double.infinity,
+            padding: EdgeInsets.only(bottom: 5),
+            child: Text(
+              '源程式后缀',
+              style: FluentTheme.of(context).typography.bodyStrong,
+              textAlign: TextAlign.center,
+            ).fontSize(16),
           );
         },
         columns: [
@@ -540,6 +546,15 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         },
         onChanged: onTableCellChanged,
         configuration: PlutoGridConfiguration(
+          style: PlutoGridStyleConfig(
+            gridBorderColor: Colors.grey[30],
+            gridBackgroundColor: FluentTheme.of(context).cardColor,
+            iconColor: GlobalTheme.instance.buttonIconColor,
+            rowColor: FluentTheme.of(context).cardColor,
+            cellTextStyle: FluentTheme.of(context).typography.body!,
+            columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
+            activatedColor: FluentTheme.of(context).accentColor,
+          ),
           localeText: const PlutoGridLocaleText.china(),
           columnSize: const PlutoGridColumnSizeConfig(
               autoSizeMode: PlutoAutoSizeMode.equal),
@@ -594,8 +609,13 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
           child: PlutoGrid(
         createHeader: (stateManager) {
           return Container(
-            padding: EdgeInsetsDirectional.all(5),
-            child: Text('执行程式后缀').fontSize(16),
+            width: double.infinity,
+            padding: EdgeInsets.only(bottom: 5),
+            child: Text(
+              '执行程式后缀',
+              style: FluentTheme.of(context).typography.bodyStrong,
+              textAlign: TextAlign.center,
+            ).fontSize(16),
           );
         },
         columns: [
@@ -621,6 +641,15 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
         },
         onChanged: onTableCellChanged2,
         configuration: PlutoGridConfiguration(
+          style: PlutoGridStyleConfig(
+            gridBorderColor: Colors.grey[30],
+            gridBackgroundColor: FluentTheme.of(context).cardColor,
+            iconColor: GlobalTheme.instance.buttonIconColor,
+            rowColor: FluentTheme.of(context).cardColor,
+            cellTextStyle: FluentTheme.of(context).typography.body!,
+            columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
+            activatedColor: FluentTheme.of(context).accentColor,
+          ),
           localeText: const PlutoGridLocaleText.china(),
           columnSize: const PlutoGridColumnSizeConfig(
               autoSizeMode: PlutoAutoSizeMode.equal),
@@ -659,12 +688,20 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
             CommandBarButton(
                 label: Text('保存'),
                 onPressed: save,
-                icon: Icon(FluentIcons.save)),
-            CommandBarSeparator(),
+                icon: Icon(
+                  FluentIcons.save,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
+            CommandBarSeparator(
+              color: GlobalTheme.instance.buttonIconColor,
+            ),
             CommandBarButton(
                 label: Text('测试'),
                 onPressed: test,
-                icon: Icon(FluentIcons.test_plan)),
+                icon: Icon(
+                  FluentIcons.test_plan,
+                  color: GlobalTheme.instance.buttonIconColor,
+                )),
           ])),
           5.verticalSpacingRadius,
           Expanded(

@@ -2,15 +2,19 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-12 13:34:49
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-05 18:35:03
+ * @LastEditTime: 2023-07-20 13:19:18
  * @FilePath: /eatm_ini_config/lib/pages/system/home/view.dart
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description:  主页
  */
 import 'package:fluent_ui/fluent_ui.dart' hide Tab;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/common/style/global_theme.dart';
+import 'package:iniConfig/pages/system/home/widgets/setting_view.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import 'index.dart';
 import 'widgets/cached_page_view.dart';
@@ -98,19 +102,49 @@ class _HomeViewGetX extends GetView<HomeController> {
   //   );
   // }
 
+  // 打开设置弹窗
+  void _openSettings(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return ContentDialog(
+            title: const Text('设置').fontSize(24.sp),
+            constraints: const BoxConstraints(
+              maxWidth: 600,
+            ),
+            content: Container(
+              height: 500,
+              child: SettingView(),
+            ),
+            actions: [
+              Button(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('取消'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('确定'),
+              ),
+            ],
+          );
+        });
+  }
+
   // 主视图
   Widget _buildView(context) {
     return NavigationView(
       key: controller.viewKey,
-      // appBar: kIsWeb
-      //     ? null
-      //     : NavigationAppBar(
-      //         height: 40,
-      //         automaticallyImplyLeading: false,
-      //         actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      //           if (!kIsWeb) const WindowButtons(),
-      //         ]),
-      //       ),
+      // appBar:
+      //     GlobalTheme.instance.navigationIndicator != PaneDisplayMode.minimal
+      //         ? null
+      //         : NavigationAppBar(
+      //             height: 40,
+      //             automaticallyImplyLeading: false,
+      //           ),
       paneBodyBuilder: (item, child) {
         return _buildTabView(context);
       },
@@ -127,11 +161,11 @@ class _HomeViewGetX extends GetView<HomeController> {
               // final color = AppTheme.systemAccentColor.defaultBrushFor(
               //   Get.theme.brightness,
               // );
-              final color = Colors.blue;
+              final color = GlobalTheme.instance.accentColor;
               return LinearGradient(
                 colors: [
                   color,
-                  color,
+                  color.withOpacity(0.5),
                 ],
               ).createShader(rect);
             },
@@ -141,7 +175,7 @@ class _HomeViewGetX extends GetView<HomeController> {
             ),
           ),
         ),
-        displayMode: PaneDisplayMode.open,
+        displayMode: GlobalTheme.instance.navigationIndicator,
         items: controller.menuItems,
         autoSuggestBox: AutoSuggestBox(
           key: controller.searchKey,
@@ -172,7 +206,16 @@ class _HomeViewGetX extends GetView<HomeController> {
           placeholder: 'Search',
         ),
         autoSuggestBoxReplacement: const Icon(FluentIcons.search),
-        footerItems: controller.footerItems,
+        footerItems: [
+          PaneItemSeparator(),
+          PaneItem(
+            key: const Key('/settings'),
+            icon: const Icon(FluentIcons.settings),
+            title: const Text('设置'),
+            body: const SizedBox.shrink(),
+            onTap: () => _openSettings(context),
+          )
+        ],
       ),
       // onOpenSearch: () {
       //   searchFocusNode.requestFocus();

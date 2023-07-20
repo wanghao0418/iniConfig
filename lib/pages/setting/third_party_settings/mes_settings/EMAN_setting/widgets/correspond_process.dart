@@ -1,47 +1,46 @@
 /*
  * @Author: wanghao wanghao@oureman.com
- * @Date: 2023-07-17 14:07:04
+ * @Date: 2023-07-20 09:17:17
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 16:17:29
- * @FilePath: /iniConfig/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/process_preparation.dart
- * @Description: 工艺配制编辑组件
+ * @LastEditTime: 2023-07-20 16:17:25
+ * @FilePath: /iniConfig/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/correspond_process.dart
+ * @Description: 对应工艺设置组件
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
-class ProcessPreparation extends StatefulWidget {
-  const ProcessPreparation({Key? key, required this.showValue})
+class CorrespondProcess extends StatefulWidget {
+  const CorrespondProcess({Key? key, required this.showValue})
       : super(key: key);
   final String showValue;
-
   @override
-  ProcessPreparationState createState() => ProcessPreparationState();
+  CorrespondProcessState createState() => CorrespondProcessState();
 }
 
-class ProcessPreparationState extends State<ProcessPreparation> {
+class CorrespondProcessState extends State<CorrespondProcess> {
   final List<PlutoRow> rows = [];
   late final PlutoGridStateManager stateManager;
 
   get currentValue => rows
       .where((element) =>
           element.cells['process']!.value != '' &&
-          element.cells['reportStatus']!.value != '')
+          element.cells['correspondProcess']!.value != '')
       .map((e) =>
-          '${e.cells['process']!.value}#${e.cells['reportStatus']!.value}')
-      .join('*');
+          '${e.cells['process']!.value}*${e.cells['correspondProcess']!.value}')
+      .join('-');
 
   initRows() {
-    var list = widget.showValue.split('*');
+    var list = widget.showValue.split('-');
     print(list);
     for (var element in list) {
-      var process = element.split('#')[0];
-      var status = element.split('#')[1];
+      var process = element.split('*')[0];
+      var correspondProcess = element.split('*')[1];
       stateManager.appendRows([
         PlutoRow(cells: {
           'process': PlutoCell(value: process),
-          'reportStatus': PlutoCell(value: status),
+          'correspondProcess': PlutoCell(value: correspondProcess),
         })
       ]);
     }
@@ -56,7 +55,7 @@ class ProcessPreparationState extends State<ProcessPreparation> {
     stateManager.appendRows([
       PlutoRow(cells: {
         'process': PlutoCell(value: ''),
-        'reportStatus': PlutoCell(value: '1-4'),
+        'correspondProcess': PlutoCell(value: ''),
       })
     ]);
   }
@@ -106,9 +105,9 @@ class ProcessPreparationState extends State<ProcessPreparation> {
               enableSorting: false,
             ),
             PlutoColumn(
-              title: '报工状态',
-              field: 'reportStatus',
-              type: PlutoColumnType.select(['1-4', '5']),
+              title: '对应工艺',
+              field: 'correspondProcess',
+              type: PlutoColumnType.text(),
               enableContextMenu: false,
               enableSorting: false,
             ),
