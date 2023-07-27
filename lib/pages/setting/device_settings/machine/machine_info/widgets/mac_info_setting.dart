@@ -590,7 +590,7 @@ class _MacInfoSettingState extends State<MacInfoSetting> {
       ),
     ]),
     RenderFieldGroup(groupName: "程序修改", children: [
-      RenderFieldSubTitle(title: "机床G代码，M代码"),
+      // RenderFieldSubTitle(title: "机床G代码，M代码"),
       RenderFieldInfo(
         field: 'MainPrgFinishMark',
         section: 'MachineInfo',

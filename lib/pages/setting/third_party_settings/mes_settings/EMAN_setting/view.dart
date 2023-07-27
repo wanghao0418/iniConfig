@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:31:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 15:06:00
+ * @LastEditTime: 2023-07-21 18:04:10
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/EMAN_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,8 +10,9 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/style/global_theme.dart';
-import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/correspond_process.dart';
-import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/widgets/process_preparation.dart';
+import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/subComponents/correspond_process.dart';
+import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/subComponents/eman_correspond_source.dart';
+import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EMAN_setting/subComponents/process_preparation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -39,79 +40,6 @@ class _EmanSettingPageState extends State<EmanSettingPage>
 
 class _EmanSettingViewGetX extends GetView<EmanSettingController> {
   const _EmanSettingViewGetX({Key? key}) : super(key: key);
-
-  // 表格
-  Widget _buildTable(context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.r),
-      child: Expander(
-        initiallyExpanded: true,
-        headerHeight: 70,
-        header: Padding(
-            padding: EdgeInsets.only(left: 40.r),
-            child: Text(
-              '机床对应关系',
-              style: FluentTheme.of(context).typography.body,
-            ).fontWeight(FontWeight.bold).fontSize(16)),
-        content: SizedBox(
-            height: 300,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return PlutoGrid(
-                  noRowsWidget: Center(child: Text('暂无数据')),
-                  columns: [
-                    PlutoColumn(
-                      title: '自动化机床名称',
-                      field: 'macSection',
-                      type: PlutoColumnType.text(),
-                      readOnly: true,
-                      enableContextMenu: false,
-                      enableSorting: false,
-                    ),
-                    // PlutoColumn(
-                    //   title: '对应机床名称',
-                    //   field: 'correspondMacName',
-                    //   type: PlutoColumnType.text(),
-                    //   sort: PlutoColumnSort.none,
-                    //   enableContextMenu: false,
-                    //   enableSorting: false,
-                    // ),
-                    PlutoColumn(
-                      title: 'eman对应的资源ID',
-                      field: 'correspondMacMonitorId',
-                      type: PlutoColumnType.text(),
-                      sort: PlutoColumnSort.none,
-                      enableContextMenu: false,
-                      enableSorting: false,
-                    ),
-                  ],
-                  rows: controller.rows,
-                  // columnGroups: columnGroups,
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    controller.stateManager = event.stateManager;
-                  },
-                  onChanged: controller.onTableCellChanged,
-                  configuration: PlutoGridConfiguration(
-                    style: PlutoGridStyleConfig(
-                      gridBorderColor: Colors.grey[30],
-                      gridBackgroundColor: FluentTheme.of(context).cardColor,
-                      iconColor: GlobalTheme.instance.buttonIconColor,
-                      rowColor: FluentTheme.of(context).cardColor,
-                      cellTextStyle: FluentTheme.of(context).typography.body!,
-                      columnTextStyle:
-                          FluentTheme.of(context).typography.bodyLarge!,
-                      activatedColor: FluentTheme.of(context).accentColor,
-                    ),
-                    localeText: const PlutoGridLocaleText.china(),
-                    columnSize: const PlutoGridColumnSizeConfig(
-                        autoSizeMode: PlutoAutoSizeMode.equal),
-                  ),
-                );
-              },
-            )),
-      ),
-    );
-  }
 
   _buildRenderField(RenderField info, context) {
     if (info is RenderFieldGroup) {
@@ -185,6 +113,15 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
               controller.onFieldChange(field, value);
             },
             builder: (context) => _buildCorrespondingProcess(context, info));
+      } else if (info.field == 'MacMonitorId') {
+        return FieldChange(
+            renderFieldInfo: info as RenderFieldInfo,
+            showValue: controller.getFieldValue(info.fieldKey),
+            isChanged: controller.isChanged(info.fieldKey),
+            onChanged: (field, value) {
+              controller.onFieldChange(field, value);
+            },
+            builder: (context) => _buildCorrespondingMonitorId(context, info));
       }
       return FieldChange(
         renderFieldInfo: info as RenderFieldInfo,
@@ -194,11 +131,8 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
           controller.onFieldChange(field, value);
         },
       );
-    } else if (info is RenderCustomByTag) {
-      if (info.tag == 'table') {
-        return _buildTable(context);
-      }
     }
+    return Container();
   }
 
   // 对应工艺
@@ -228,6 +162,44 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
                         onPressed: () {
                           var value =
                               (_key.currentState as CorrespondProcessState)
+                                  .currentValue;
+                          controller.onFieldChange(info.fieldKey, value);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
+  }
+
+  // 对应资源
+  Widget _buildCorrespondingMonitorId(
+      BuildContext context, RenderFieldInfo info) {
+    var _key = GlobalKey();
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: BoxConstraints(maxWidth: 800, maxHeight: 500),
+                  title: Text('${info.name}').fontSize(20.sp),
+                  content: EmanCorrespondSource(
+                    key: _key,
+                    showValue: controller.getFieldValue(info.fieldKey) ?? '',
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var value =
+                              (_key.currentState as EmanCorrespondSourceState)
                                   .currentValue;
                           controller.onFieldChange(info.fieldKey, value);
                           Navigator.of(context).pop();

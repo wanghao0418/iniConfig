@@ -397,6 +397,8 @@ class _FieldChangeState extends State<FieldChange> {
 
   // 渲染日期组件
   Widget renderDatePicker(BuildContext context, RenderFieldInfo fieldInfo) {
+    print(widget.showValue);
+    print(DateTime.tryParse(widget.showValue ?? ''));
     var selected = DateTime.tryParse(widget.showValue ?? '') ?? DateTime.now();
     return SizedBox(
       width: 400.0,
@@ -406,7 +408,7 @@ class _FieldChangeState extends State<FieldChange> {
           selected = time;
           widget.onChanged!(
               "${widget.renderFieldInfo.section}/${widget.renderFieldInfo.field}",
-              '${time.year}-${time.month}-${time.day}');
+              '${time.year}-${time.month < 10 ? '0${time.month}' : time.month}-${time.day < 10 ? '0${time.day}' : time.day}');
         }),
       ),
     );

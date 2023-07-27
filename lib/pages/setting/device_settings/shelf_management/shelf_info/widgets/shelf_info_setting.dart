@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:26:12
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 14:01:43
+ * @LastEditTime: 2023-07-21 14:41:31
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/widgets/shelf_info_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -550,6 +550,116 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
 
   // 分层条码枪设置
   Widget _buildLayered() {
+    return currentShelfSensorType == '2'
+        ? Container(
+            margin: EdgeInsets.only(bottom: 5.r),
+            child: Column(children: [
+              Card(
+                  child: Column(children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.r),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '分层条码枪设置',
+                        style: FluentTheme.of(context).typography.subtitle,
+                        textAlign: TextAlign.left,
+                      ).fontWeight(FontWeight.bold).fontSize(16),
+                    ],
+                  ),
+                ),
+                20.verticalSpacingRadius,
+                Divider(),
+                20.verticalSpacingRadius,
+                SizedBox(
+                    height: 500,
+                    child: Column(
+                      children: [
+                        CommandBarCard(
+                            backgroundColor: FluentTheme.of(context).menuColor,
+                            child: CommandBar(primaryItems: [
+                              CommandBarButton(
+                                  label: Text('新增'),
+                                  onPressed: add,
+                                  icon: Icon(
+                                    FluentIcons.add,
+                                    color: GlobalTheme.instance.buttonIconColor,
+                                  )),
+                              CommandBarSeparator(
+                                color: GlobalTheme.instance.buttonIconColor,
+                              ),
+                              CommandBarButton(
+                                  label: Text('删除'),
+                                  onPressed: () {
+                                    if (deviceList.isEmpty) return;
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ContentDialog(
+                                              title: Text("删除"),
+                                              content: Text("确认删除最新节点吗?"),
+                                              actions: [
+                                                Button(
+                                                    child: Text("取消"),
+                                                    onPressed: () =>
+                                                        Navigator.pop(context)),
+                                                FilledButton(
+                                                    child: Text("确认"),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      delete();
+                                                    })
+                                              ]);
+                                        });
+                                  },
+                                  icon: Icon(
+                                    FluentIcons.delete,
+                                    color: GlobalTheme.instance.buttonIconColor,
+                                  )),
+                            ])),
+                        5.verticalSpacingRadius,
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 200,
+                                color: FluentTheme.of(context).menuColor,
+                                child: ListView.builder(
+                                    itemCount: deviceList.length,
+                                    itemBuilder: (context, index) {
+                                      final contact = deviceList[index];
+                                      return ListTile.selectable(
+                                        title: Text(TransUtils.getTransField(
+                                            contact.split('.')[1], '扫码枪')),
+                                        selected: currentDeviceId == contact,
+                                        onSelectionChange: (v) =>
+                                            onDeviceChange(contact),
+                                      );
+                                    }),
+                              ),
+                              10.horizontalSpaceRadius,
+                              Expanded(
+                                  child: Container(
+                                      color: FluentTheme.of(context).menuColor,
+                                      padding: EdgeInsets.all(10.0),
+                                      child: currentDeviceId.isEmpty
+                                          ? Container(
+                                              color: FluentTheme.of(context)
+                                                  .menuColor,
+                                            )
+                                          : ScanDeviceForm(
+                                              key: ValueKey(currentDeviceId),
+                                              section: currentDeviceId,
+                                            ))),
+                            ],
+                          ),
+                        )
+                      ],
+                    ))
+              ]))
+            ]))
+        : Container();
     return currentShelfSensorType == '2'
         ? Container(
             margin: EdgeInsets.only(bottom: 5.r),

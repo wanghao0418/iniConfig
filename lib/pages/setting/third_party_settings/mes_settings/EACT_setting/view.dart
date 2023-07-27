@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-26 19:20:36
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 14:47:58
+ * @LastEditTime: 2023-07-21 17:47:21
  * @FilePath: /eatm_ini_config/lib/pages/setting/third_party_settings/mes_settings/EACT_setting/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -38,71 +38,6 @@ class _EactSettingPageState extends State<EactSettingPage>
 class _EactSettingViewGetX extends GetView<EactSettingController> {
   const _EactSettingViewGetX({Key? key}) : super(key: key);
 
-  Widget _buildTable(context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.r),
-      child: Expander(
-        initiallyExpanded: true,
-        headerHeight: 70,
-        header: Padding(
-            padding: EdgeInsets.only(left: 40.r),
-            child: Text(
-              '编号对应关系',
-              style: FluentTheme.of(context).typography.body,
-            ).fontWeight(FontWeight.bold).fontSize(16)),
-        content: SizedBox(
-            height: 300,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return PlutoGrid(
-                  noRowsWidget: Center(child: Text('暂无数据')),
-                  columns: [
-                    PlutoColumn(
-                      title: '自动化机床名称',
-                      field: 'macSection',
-                      type: PlutoColumnType.text(),
-                      readOnly: true,
-                      enableContextMenu: false,
-                      // enableDropToResize: false,
-                      enableSorting: false,
-                    ),
-                    PlutoColumn(
-                      title: 'Eact中对应设备的唯一编号',
-                      field: 'correspondMacMarkCode',
-                      type: PlutoColumnType.text(),
-                      enableContextMenu: false,
-                      // enableDropToResize: false,
-                      enableSorting: false,
-                    ),
-                  ],
-                  rows: controller.rows,
-                  // columnGroups: columnGroups,
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    controller.stateManager = event.stateManager;
-                  },
-                  onChanged: controller.onTableCellChanged,
-                  configuration: PlutoGridConfiguration(
-                    style: PlutoGridStyleConfig(
-                      gridBorderColor: Colors.grey[30],
-                      gridBackgroundColor: FluentTheme.of(context).cardColor,
-                      iconColor: GlobalTheme.instance.buttonIconColor,
-                      rowColor: FluentTheme.of(context).cardColor,
-                      cellTextStyle: FluentTheme.of(context).typography.body!,
-                      columnTextStyle:
-                          FluentTheme.of(context).typography.bodyLarge!,
-                      activatedColor: FluentTheme.of(context).accentColor,
-                    ),
-                    localeText: const PlutoGridLocaleText.china(),
-                    columnSize: const PlutoGridColumnSizeConfig(
-                        autoSizeMode: PlutoAutoSizeMode.equal),
-                  ),
-                );
-              },
-            )),
-      ),
-    );
-  }
-
   _buildRenderField(RenderField info, context) {
     if (info is RenderFieldGroup) {
       return Container(
@@ -131,11 +66,8 @@ class _EactSettingViewGetX extends GetView<EactSettingController> {
                 info.associatedValue
             : true,
       );
-    } else if (info is RenderCustomByTag) {
-      if (info.tag == 'table') {
-        return _buildTable(context);
-      }
     }
+    return Container();
   }
 
   // 主视图

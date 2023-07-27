@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 13:38:43
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-19 09:09:36
+ * @LastEditTime: 2023-07-21 14:16:29
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/machine/machine_info/controller.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,30 +26,30 @@ class MachineInfoController extends GetxController {
   var currentSection = ''.obs;
   GlobalKey addFormKey = GlobalKey();
   List<RenderField> menuList = [
-    RenderFieldGroup(groupName: "全局配置", children: [
-      RenderFieldInfo(
-          field: 'AbnormalairIsOffLineMac',
-          section: 'MachineGlobelConfig',
-          name: "机床气密性异常是否下线",
-          renderType: RenderType.radio,
-          options: {"默认下线": "0", "只提示不下线": "1"}),
-      RenderFieldInfo(
-          field: 'MacToolManage',
-          section: 'MachineGlobelConfig',
-          name: "标记机床是否有刀具管理",
-          renderType: RenderType.customMultipleChoice,
-          splitKey: '-'),
-      RenderFieldInfo(
-          field: "MachineOnlineSync",
-          section: "SysInfo",
-          name: "机床关联设置",
-          renderType: RenderType.custom,
-          documentationList: [
-            DocumentationData(
-                type: DocumentationType.text,
-                value: '1和2关联， 3和4号机床关联，效果是上下线默认是同步的，操作一台，另一台也等同操作了。')
-          ]),
-    ])
+    // RenderFieldGroup(groupName: "全局配置", children: [
+    RenderFieldInfo(
+        field: 'AbnormalairIsOffLineMac',
+        section: 'MachineGlobelConfig',
+        name: "机床气密性异常是否下线",
+        renderType: RenderType.radio,
+        options: {"默认下线": "0", "只提示不下线": "1"}),
+    RenderFieldInfo(
+        field: 'MacToolManage',
+        section: 'MachineGlobelConfig',
+        name: "标记机床是否有刀具管理",
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
+    RenderFieldInfo(
+        field: "MachineOnlineSync",
+        section: "SysInfo",
+        name: "机床关联设置",
+        renderType: RenderType.custom,
+        documentationList: [
+          DocumentationData(
+              type: DocumentationType.text,
+              value: '1和2关联， 3和4号机床关联，效果是上下线默认是同步的，操作一台，另一台也等同操作了。')
+        ]),
+    // ])
   ];
 
   List<String> changedList = [];

@@ -25,7 +25,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="eatm_ini_config">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
@@ -39,9 +38,19 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <link rel="stylesheet" type="text/css" href="./loading/index.css">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  <script src="./loading/loading.js"></script>
 </head>
 <body>
-  <!-- <div id="loading">
+  <div id="loading">
+    <div class="info">
+      <div class="logo">
+      </div>
+      <div class="welcome">欢迎使用</div>
+      <div class="welcome">益模自动化ini配置工具</div>
+      <p>资源加载中，请稍候...</p>
+  </div>
     <div class="spinner">
         <div class="re1"></div>
         <div class="re2"></div>
@@ -49,12 +58,7 @@
         <div class="re4"></div>
         <div class="re5"></div>
     </div>
-    <div class="info">
-        <div class="welcome">欢迎使用</div>
-        <div class="welcome">益模自动化ini配置工具</div>
-        <p>资源加载中，请稍候...</p>
-    </div>
-</div> -->
+</div>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js

@@ -30,7 +30,12 @@ class EmanSettingController extends GetxController {
         section: "EManServer",
         name: "Eman服务端口",
         renderType: RenderType.input),
-    RenderCustomByTag(tag: "table"),
+    // RenderCustomByTag(tag: "table"),
+    RenderFieldInfo(
+        field: "MacMonitorId",
+        section: "EManServer",
+        name: "资源对应关系",
+        renderType: RenderType.custom),
     RenderFieldInfo(
         field: "EnterpriseCopid",
         section: "EManServer",
@@ -170,7 +175,6 @@ class EmanSettingController extends GetxController {
       // 查询成功
       eMANSetting = EMANSetting.fromJson(res.data);
       _initData();
-      getSectionList();
     } else {
       // 保存失败
       PopupMessage.showFailInfoBar(res.message as String);
@@ -201,186 +205,6 @@ class EmanSettingController extends GetxController {
       // 保存失败
       PopupMessage.showFailInfoBar(res.message as String);
     }
-  }
-
-  // 表格相关
-  // final List<PlutoColumn> columns = <PlutoColumn>[
-  //   PlutoColumn(
-  //     title: '线内机床',
-  //     field: 'id',
-  //     type: PlutoColumnType.text(),
-  //     readOnly: true,
-  //     sort: PlutoColumnSort.none,
-  //     enableContextMenu: false,
-  //   ),
-  //   PlutoColumn(
-  //     title: '对应机床名称',
-  //     field: 'name',
-  //     type: PlutoColumnType.text(),
-  //     sort: PlutoColumnSort.none,
-  //     enableContextMenu: false,
-  //   ),
-  //   PlutoColumn(
-  //     title: '对应监控ID',
-  //     field: 'age',
-  //     type: PlutoColumnType.text(),
-  //     sort: PlutoColumnSort.none,
-  //     enableContextMenu: false,
-  //   ),
-  // ];
-  get currentMacEscapeChineName =>
-      getFieldValue('EManServer/MacEscapeChineName') ?? '';
-  get currentMacMonitorId => getFieldValue('EManServer/MacMonitorId') ?? '';
-
-  List<MacCorrespond> macCorrespondList = [];
-
-  final List<PlutoRow> rows = [];
-
-  // 获取线内机床列表
-  void getSectionList() async {
-    ResponseApiBody res = await CommonApi.getSectionList({
-      "params": [
-        {
-          "list_node": "MachineInfo",
-          "parent_node": "NULL",
-        }
-      ],
-    });
-    if (res.success == true) {
-      // 查询成功
-      var data = res.data;
-      var result = (data as List).first as String;
-      var sectionList = result.isEmpty ? [] : result.split('-');
-      var machineNameQueryList = sectionList.map((e) => '$e/MachineName');
-      ResponseApiBody res2 = await CommonApi.fieldQuery({
-        "params": machineNameQueryList.toList(),
-      });
-      if (res2.success == true) {
-        var data = res2.data as Map<String, dynamic>;
-        macCorrespondList = data.values.isEmpty
-            ? []
-            : data.values.map((e) => MacCorrespond(macSection: e)).toList();
-        // 获取已有值并赋值
-        initMacCorrespondList();
-      }
-    } else {
-      // 查询失败
-      PopupMessage.showFailInfoBar(res.message as String);
-    }
-  }
-
-  initMacCorrespondList() {
-    Map nameMap = {};
-    if (currentMacEscapeChineName.isNotEmpty) {
-      var nameList = currentMacEscapeChineName.split('#');
-      print(nameList);
-      for (var element in nameList) {
-        var temp = element.split('&');
-        print(temp);
-        nameMap[temp[0]] = temp[1];
-
-        for (var e in macCorrespondList) {
-          if (e.macSection == temp[0]) {
-            e.correspondMacName = temp[1];
-          }
-        }
-      }
-    }
-
-    Map idMap = {};
-    if (currentMacMonitorId.isNotEmpty) {
-      var idList = currentMacMonitorId.split('#');
-      print(idList);
-      for (var element in idList) {
-        var temp = element.split('&');
-        print(temp);
-        idMap[temp[0]] = temp[1];
-
-        for (var e in macCorrespondList) {
-          if (e.macSection == temp[0]) {
-            e.correspondMacMonitorId = temp[1];
-          }
-        }
-      }
-    }
-    print(nameMap);
-    print(idMap);
-    initTableRow();
-  }
-
-  initTableRow() {
-    for (var element in macCorrespondList) {
-      stateManager.appendRows([
-        PlutoRow(
-          cells: {
-            'macSection': PlutoCell(value: element.macSection!),
-            'correspondMacName':
-                PlutoCell(value: element.correspondMacName ?? ''),
-            'correspondMacMonitorId':
-                PlutoCell(value: element.correspondMacMonitorId ?? ''),
-          },
-        )
-      ]);
-    }
-    _initData();
-  }
-
-  onTableCellChanged(PlutoGridOnChangedEvent event) {
-    print(event);
-    var currentRow = stateManager.rows.elementAt(event.rowIdx);
-    var macSection = currentRow.cells.entries
-        .where((element) => element.key == 'macSection')
-        .first
-        .value
-        .value;
-    var changedKey = currentRow.cells.entries.elementAt(event.columnIdx).key;
-    print(macSection);
-    print(changedKey);
-    MacCorrespond macCorrespond = macCorrespondList
-        .firstWhere((element) => element.macSection == macSection);
-    if (changedKey == 'correspondMacName') {
-      macCorrespond.correspondMacName = event.value;
-    } else if (changedKey == 'correspondMacMonitorId') {
-      macCorrespond.correspondMacMonitorId = event.value;
-    }
-    updateMacCorrespondFields();
-  }
-
-  updateMacCorrespondFields() {
-    var macEscapeChineName = '';
-    var macMonitorId = '';
-    for (var element in macCorrespondList) {
-      if (element.correspondMacName != null &&
-          element.correspondMacName != '') {
-        macEscapeChineName +=
-            '${element.macSection}&${element.correspondMacName}#';
-      }
-      if (element.correspondMacMonitorId != null &&
-          element.correspondMacMonitorId != '') {
-        macMonitorId +=
-            '${element.macSection}&${element.correspondMacMonitorId}#';
-      }
-    }
-    macEscapeChineName = macEscapeChineName.isNotEmpty
-        ? macEscapeChineName.substring(0, macEscapeChineName.length - 1)
-        : "";
-    macMonitorId = macMonitorId.isNotEmpty
-        ? macMonitorId.substring(0, macMonitorId.length - 1)
-        : "";
-
-    if (macEscapeChineName != currentMacEscapeChineName) {
-      setFieldValue('EManServer/MacEscapeChineName', macEscapeChineName);
-      if (!changedList.contains('EManServer/MacEscapeChineName')) {
-        changedList.add('EManServer/MacEscapeChineName');
-      }
-    }
-    if (macMonitorId != currentMacMonitorId) {
-      setFieldValue('EManServer/MacMonitorId', macMonitorId);
-      if (!changedList.contains('EManServer/MacMonitorId')) {
-        changedList.add('EManServer/MacMonitorId');
-      }
-    }
-    _initData();
   }
 
   _initData() {

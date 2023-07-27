@@ -1,5 +1,9 @@
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:iniConfig/pages/setting/third_party_settings/mes_settings/EACT_setting/subComponents/eact_correspond_code.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../../common/api/common.dart';
 import '../../../../../common/components/index.dart';
@@ -37,15 +41,14 @@ class EactSettingController extends GetxController {
           options: {"合并NC加工程式": "1"},
           associatedField: "EActServer/EactUnitePrg",
           associatedValue: "1"),
-
-      // RenderFieldInfo(
-      //   field: "MachineMarkCode",
-      //   section: "EActServer",
-      //   name: "机床标识码，供半自动化合并程式使用机床标识码，对应eact 的CMMBarCode或者 CNCBarCode",
-      //   renderType: RenderType.input,
-      // ),
+      RenderFieldInfo(
+        field: "MachineMarkCode",
+        section: "EActServer",
+        name: "编号对应关系",
+        renderType: RenderType.custom,
+      ),
     ]),
-    RenderCustomByTag(tag: "table"),
+    // RenderCustomByTag(tag: "table"),
     RenderFieldGroup(groupName: "检测相关", children: [
       RenderFieldInfo(
         field: "CmmSPsync",
@@ -106,7 +109,7 @@ class EactSettingController extends GetxController {
       // 查询成功
       eactSetting = EACTSetting.fromJson(res.data);
       _initData();
-      getSectionList();
+      // getSectionList();
     } else {
       // 保存失败
       PopupMessage.showFailInfoBar(res.message as String);
@@ -139,154 +142,57 @@ class EactSettingController extends GetxController {
     }
   }
 
-  get currentMachineMarkCode =>
-      getFieldValue('EActServer/MachineMarkCode') ?? '';
-  // get currentMacMonitorId => getFieldValue('EManServer/MacMonitorId') ?? '';
-
-  List<MacCorrespond> macCorrespondList = [];
-
-  final List<PlutoRow> rows = [];
-
-  // 获取线内机床列表
-  void getSectionList() async {
-    ResponseApiBody res = await CommonApi.getSectionList({
-      "params": [
-        {
-          "list_node": "MachineInfo",
-          "parent_node": "NULL",
-        }
-      ],
-    });
-    if (res.success == true) {
-      // 查询成功
-      var data = res.data;
-      var result = (data as List).first as String;
-      var sectionList = result.isEmpty ? [] : result.split('-');
-      var machineNameQueryList = sectionList.map((e) => '$e/MachineName');
-      ResponseApiBody res2 = await CommonApi.fieldQuery({
-        "params": machineNameQueryList.toList(),
-      });
-      if (res2.success == true) {
-        var data = res2.data as Map<String, dynamic>;
-        macCorrespondList = data.values.isEmpty
-            ? []
-            : data.values.map((e) => MacCorrespond(macSection: e)).toList();
-        // 获取已有值并赋值
-        initMacCorrespondList();
-      }
-    } else {
-      // 查询失败
-      PopupMessage.showFailInfoBar(res.message as String);
-    }
+  _initData() {
+    update(["eact_setting"]);
   }
 
-  initMacCorrespondList() {
-    Map markCodeMap = {};
-    if (currentMachineMarkCode.isNotEmpty) {
-      var markCodeList = currentMachineMarkCode.split('#');
-      print(markCodeList);
-      for (var element in markCodeList) {
-        var temp = element.split('&');
-        print(temp);
-        markCodeMap[temp[0]] = temp[1];
-
-        for (var e in macCorrespondList) {
-          if (e.macSection == temp[0]) {
-            e.correspondMacMarkCode = temp[1];
+  initMenu() {
+    for (var element in menuList) {
+      if (element is RenderFieldGroup) {
+        for (var info in element.children) {
+          if (info is RenderFieldInfo) {
+            if (info.field == 'MachineMarkCode') {
+              info.builder = (context) {
+                var _key = GlobalKey();
+                return FilledButton(
+                    child: const Text('编辑'),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ContentDialog(
+                              constraints:
+                                  BoxConstraints(maxWidth: 800, maxHeight: 500),
+                              title: Text('${info.name}').fontSize(20.sp),
+                              content: EactCorrespondCode(
+                                key: _key,
+                                showValue: getFieldValue(info.fieldKey) ?? '',
+                              ),
+                              actions: [
+                                Button(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('取消')),
+                                FilledButton(
+                                    onPressed: () {
+                                      var value = (_key.currentState
+                                              as EactCorrespondCodeState)
+                                          .currentValue;
+                                      onFieldChange(info.fieldKey, value);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('确定'))
+                              ],
+                            );
+                          });
+                    });
+              };
+            }
           }
         }
       }
     }
-
-    // Map idMap = {};
-    // if (currentMacMonitorId.isNotEmpty) {
-    //   var idList = currentMacMonitorId.split('#');
-    //   print(idList);
-    //   for (var element in idList) {
-    //     var temp = element.split('&');
-    //     print(temp);
-    //     idMap[temp[0]] = temp[1];
-
-    //     for (var e in macCorrespondList) {
-    //       if (e.macSection == temp[0]) {
-    //         e.correspondMacMonitorId = temp[1];
-    //       }
-    //     }
-    //   }
-    // }
-    print(markCodeMap);
-    // print(idMap);
-    initTableRow();
-  }
-
-  initTableRow() {
-    for (var element in macCorrespondList) {
-      stateManager.appendRows([
-        PlutoRow(
-          cells: {
-            'macSection': PlutoCell(value: element.macSection!),
-            'correspondMacMarkCode':
-                PlutoCell(value: element.correspondMacMarkCode ?? ''),
-            // 'correspondMacMonitorId':
-            //     PlutoCell(value: element.correspondMacMonitorId ?? ''),
-          },
-        )
-      ]);
-    }
-    _initData();
-  }
-
-  onTableCellChanged(PlutoGridOnChangedEvent event) {
-    print(event);
-    var currentRow = stateManager.rows.elementAt(event.rowIdx);
-    var macSection = currentRow.cells.entries
-        .where((element) => element.key == 'macSection')
-        .first
-        .value
-        .value;
-    var changedKey = currentRow.cells.entries.elementAt(event.columnIdx).key;
-    print(macSection);
-    print(changedKey);
-    MacCorrespond macCorrespond = macCorrespondList
-        .firstWhere((element) => element.macSection == macSection);
-    if (changedKey == 'correspondMacMarkCode') {
-      macCorrespond.correspondMacMarkCode = event.value;
-    }
-
-    // else if (changedKey == 'correspondMacMonitorId') {
-    //   macCorrespond.correspondMacMonitorId = event.value;
-    // }
-    updateMacCorrespondFields();
-  }
-
-  updateMacCorrespondFields() {
-    var macMarkCode = '';
-    for (var element in macCorrespondList) {
-      if (element.correspondMacMarkCode != null &&
-          element.correspondMacMarkCode != '') {
-        macMarkCode +=
-            '${element.macSection}&${element.correspondMacMarkCode}#';
-      }
-    }
-    macMarkCode = macMarkCode.isNotEmpty
-        ? macMarkCode.substring(0, macMarkCode.length - 1)
-        : "";
-
-    if (macMarkCode != currentMachineMarkCode) {
-      setFieldValue('EActServer/MachineMarkCode', macMarkCode);
-      if (!changedList.contains('EActServer/MachineMarkCode')) {
-        changedList.add('EActServer/MachineMarkCode');
-      }
-    }
-    // if (macMonitorId != currentMacMonitorId) {
-    //   setFieldValue('EManServer/MacMonitorId', macMonitorId);
-    //   changedList.add('EManServer/MacMonitorId');
-    // }
-    _initData();
-  }
-
-  _initData() {
-    update(["eact_setting"]);
   }
 
   // @override
@@ -297,6 +203,7 @@ class EactSettingController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    initMenu();
     query();
     _initData();
   }

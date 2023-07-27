@@ -14,25 +14,25 @@ class ShelfInfoController extends GetxController {
   GlobalKey shelfInfoSettingKey = GlobalKey();
   ShelfInfo shelfInfo = ShelfInfo();
   List<RenderField> menuList = [
-    RenderFieldGroup(groupName: '全局设置', children: [
-      RenderFieldInfo(
-          section: "ShelfInfo",
-          field: "rightBtnPutShelf",
-          name: "右键下料指定的货架号",
-          renderType: RenderType.custom),
-      RenderFieldInfo(
-          field: 'STEEL',
-          section: 'FixtureTypeInfo',
-          name: '钢件夹具类型',
-          renderType: RenderType.customMultipleChoice,
-          splitKey: '-'),
-      RenderFieldInfo(
-          field: 'ELEC',
-          section: 'FixtureTypeInfo',
-          name: '电极夹具类型',
-          renderType: RenderType.customMultipleChoice,
-          splitKey: '-'),
-    ])
+    // RenderFieldGroup(groupName: '全局设置', children: [
+    RenderFieldInfo(
+        section: "ShelfInfo",
+        field: "rightBtnPutShelf",
+        name: "右键下料指定的货架号",
+        renderType: RenderType.custom),
+    RenderFieldInfo(
+        field: 'STEEL',
+        section: 'FixtureTypeInfo',
+        name: '钢件夹具类型',
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
+    RenderFieldInfo(
+        field: 'ELEC',
+        section: 'FixtureTypeInfo',
+        name: '电极夹具类型',
+        renderType: RenderType.customMultipleChoice,
+        splitKey: '-'),
+    // ])
   ];
   List<String> changedList = [];
 

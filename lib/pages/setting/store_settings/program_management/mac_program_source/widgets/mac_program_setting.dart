@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-21 10:09:31
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 14:41:48
+ * @LastEditTime: 2023-07-24 10:08:57
  * @FilePath: /eatm_ini_config/lib/pages/setting/store_settings/program_management/mac_program_source/widgets/mac_program_setting.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,6 +10,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iniConfig/common/components/field_subTitle.dart';
 import 'package:iniConfig/common/style/global_theme.dart';
+import 'package:iniConfig/pages/setting/store_settings/program_management/mac_program_source/subComponents/exec_prg_extern_setting.dart';
+import 'package:iniConfig/pages/setting/store_settings/program_management/mac_program_source/subComponents/src_prg_extern_setting.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -46,20 +48,20 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
       name: "ftp或共享文件夹的IP",
       renderType: RenderType.input,
     ),
-    RenderCustomByTag(tag: 'SrcPrgExternTable'),
-    RenderCustomByTag(tag: 'ExecPrgExternTable'),
-    // RenderFieldInfo(
-    //   field: 'SrcPrgExtern',
-    //   section: 'PrgServerInfo',
-    //   name: "各系统类型对应的服务器上的源程式后缀",
-    //   renderType: RenderType.input,
-    // ),
-    // RenderFieldInfo(
-    //   field: 'ExecPrgExtern',
-    //   section: 'PrgServerInfo',
-    //   name: "各系统类型对应的服务器上的执行程式后缀",
-    //   renderType: RenderType.input,
-    // ),
+    // RenderCustomByTag(tag: 'SrcPrgExternTable'),
+    // RenderCustomByTag(tag: 'ExecPrgExternTable'),
+    RenderFieldInfo(
+      field: 'SrcPrgExtern',
+      section: 'PrgServerInfo',
+      name: "各系统类型对应的服务器上的源程式后缀",
+      renderType: RenderType.custom,
+    ),
+    RenderFieldInfo(
+      field: 'ExecPrgExtern',
+      section: 'PrgServerInfo',
+      name: "各系统类型对应的服务器上的执行程式后缀",
+      renderType: RenderType.custom,
+    ),
     RenderFieldGroup(groupName: "FTP登陆设置", children: [
       RenderFieldInfo(
         field: 'Port',
@@ -333,9 +335,16 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     for (var element in menuList) {
       if (element is RenderFieldInfo) {
         element.section = widget.section;
+        if (element.field == 'SrcPrgExtern') {
+          element.builder = (context) => _buildSrcPrgExtern(context, element);
+        } else if (element.field == 'ExecPrgExtern') {
+          element.builder = (context) => _buildExecPrgExtern(context, element);
+        }
       } else if (element is RenderFieldGroup) {
         for (var element in element.children) {
-          if (element is RenderFieldInfo) element.section = widget.section;
+          if (element is RenderFieldInfo) {
+            element.section = widget.section;
+          }
         }
       }
     }
@@ -353,8 +362,8 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     } else {
       PopupMessage.showFailInfoBar(res.message as String);
     }
-    initRows();
-    initRows2();
+    // initRows();
+    // initRows2();
   }
 
   save() async {
@@ -384,287 +393,363 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     return params;
   }
 
-  String? get currentSrcPrgExtern =>
-      getFieldValue('${widget.section}/SrcPrgExtern');
-
-  Map getSrcPrgExternList() {
-    if (currentSrcPrgExtern != null) {
-      var list = currentSrcPrgExtern!.split('#');
-      // print(list);
-      var list2 = list
-          .map((e) => e.split('-'))
-          .toList()
-          .where((element) => element.length == 2);
-      // print(list2);
-      var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
-      // print(map);
-      return map;
-    } else {
-      return {};
-    }
+  // 源程式后缀编辑
+  Widget _buildSrcPrgExtern(BuildContext context, RenderFieldInfo info) {
+    var _key = GlobalKey();
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: BoxConstraints(maxWidth: 800, maxHeight: 500),
+                  title: Text('${info.name}').fontSize(20.sp),
+                  content: SrcPrgExternSetting(
+                    key: _key,
+                    showValue: getFieldValue(info.fieldKey) ?? '',
+                    macSectionList: widget.macSectionList,
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var value =
+                              (_key.currentState as SrcPrgExternSettingState)
+                                  .currentValue;
+                          onFieldChange(info.fieldKey, value);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
   }
 
-  String? get currentExecPrgExtern =>
-      getFieldValue('${widget.section}/ExecPrgExtern');
-
-  Map getExecPrgExternList() {
-    if (currentExecPrgExtern != null) {
-      var list = currentExecPrgExtern!.split('#');
-      // print(list);
-      var list2 = list
-          .map((e) => e.split('-'))
-          .toList()
-          .where((element) => element.length == 2);
-      // print(list2);
-      var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
-      // print(map);
-      return map;
-    } else {
-      return {};
-    }
+  // 执行程式后缀编辑
+  Widget _buildExecPrgExtern(BuildContext context, RenderFieldInfo info) {
+    var _key = GlobalKey();
+    return FilledButton(
+        child: const Text('编辑'),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return ContentDialog(
+                  constraints: BoxConstraints(maxWidth: 800, maxHeight: 500),
+                  title: Text('${info.name}').fontSize(20.sp),
+                  content: ExecPrgExternSetting(
+                    key: _key,
+                    showValue: getFieldValue(info.fieldKey) ?? '',
+                    macSectionList: widget.macSectionList,
+                  ),
+                  actions: [
+                    Button(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('取消')),
+                    FilledButton(
+                        onPressed: () {
+                          var value =
+                              (_key.currentState as ExecPrgExternSettingState)
+                                  .currentValue;
+                          onFieldChange(info.fieldKey, value);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('确定'))
+                  ],
+                );
+              });
+        });
   }
 
-  final List allSystemList = [
-    'FANUC',
-    'HDH',
-    'HASS',
-    'JD',
-    'SLCNC',
-    'KND',
-    'GSK',
-    'OKUMA',
-    'TEST',
-    'HEXAGON',
-    'VISUALRATE',
-    'ZEISS',
-    'MAKINO',
-    'SODICK',
-    'CLEAN',
-    'DRY'
-  ];
+  // String? get currentSrcPrgExtern =>
+  //     getFieldValue('${widget.section}/SrcPrgExtern');
 
-  final List systemList = [];
+  // Map getSrcPrgExternList() {
+  //   if (currentSrcPrgExtern != null) {
+  //     var list = currentSrcPrgExtern!.split('#');
+  //     // print(list);
+  //     var list2 = list
+  //         .map((e) => e.split('-'))
+  //         .toList()
+  //         .where((element) => element.length == 2);
+  //     // print(list2);
+  //     var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
+  //     // print(map);
+  //     return map;
+  //   } else {
+  //     return {};
+  //   }
+  // }
 
-  late final PlutoGridStateManager stateManager;
-  late final PlutoGridStateManager stateManager2;
-  List<PlutoRow> rows = [];
-  List<PlutoRow> rows2 = [];
+  // String? get currentExecPrgExtern =>
+  //     getFieldValue('${widget.section}/ExecPrgExtern');
 
-  initSystemList() {
-    RegExp reg = RegExp(r'[a-zA-Z]+');
-    print(widget.macSectionList);
-    var macSystemList =
-        widget.macSectionList.map((e) => reg.firstMatch(e)!.group(0)).toList();
-    print(macSystemList);
-    var list = allSystemList
-        .where((element) => macSystemList.contains(element))
-        .toList();
-    print(list);
+  // Map getExecPrgExternList() {
+  //   if (currentExecPrgExtern != null) {
+  //     var list = currentExecPrgExtern!.split('#');
+  //     // print(list);
+  //     var list2 = list
+  //         .map((e) => e.split('-'))
+  //         .toList()
+  //         .where((element) => element.length == 2);
+  //     // print(list2);
+  //     var map = Map.fromIterable(list2, key: (e) => e[0], value: (e) => e[1]);
+  //     // print(map);
+  //     return map;
+  //   } else {
+  //     return {};
+  //   }
+  // }
 
-    setState(() {
-      systemList.clear();
-      systemList.addAll(list);
-    });
-  }
+  // final List allSystemList = [
+  //   'FANUC',
+  //   'HDH',
+  //   'HASS',
+  //   'JD',
+  //   'SLCNC',
+  //   'KND',
+  //   'GSK',
+  //   'OKUMA',
+  //   'TEST',
+  //   'HEXAGON',
+  //   'VISUALRATE',
+  //   'ZEISS',
+  //   'MAKINO',
+  //   'SODICK',
+  //   'CLEAN',
+  //   'DRY'
+  // ];
 
-  initRows() {
-    stateManager.removeAllRows();
-    stateManager.appendRows(systemList
-        .map((e) => PlutoRow(
-              cells: {
-                'systemType': PlutoCell(value: e),
-                'srcPrgExtern': PlutoCell(
-                    value: getSrcPrgExternList().containsKey(e)
-                        ? getSrcPrgExternList()[e]
-                        : ''),
-              },
-            ))
-        .toList());
-    setState(() {});
-  }
+  // final List systemList = [];
 
-  onTableCellChanged(PlutoGridOnChangedEvent event) {
-    var srcPrgExtern = '';
-    stateManager.rows.forEach((element) {
-      var index = stateManager.rows.indexOf(element);
-      var system = element.cells.values.elementAt(0).value;
-      var val = element.cells.values.elementAt(1).value;
-      if (val == null || val == '') {
-        return;
-      }
-      srcPrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
-    });
-    print(srcPrgExtern);
-    if (srcPrgExtern == currentSrcPrgExtern) {
-      return;
-    }
-    setFieldValue('${widget.section}/SrcPrgExtern', srcPrgExtern);
-    if (!changedList.contains('${widget.section}/SrcPrgExtern')) {
-      changedList.add('${widget.section}/SrcPrgExtern');
-    }
-    // onFieldChange('${widget.section}/SrcPrgExtern', srcPrgExtern);
-  }
+  // late final PlutoGridStateManager stateManager;
+  // late final PlutoGridStateManager stateManager2;
+  // List<PlutoRow> rows = [];
+  // List<PlutoRow> rows2 = [];
 
-  // 各系统类型源程式后缀表格
-  Widget _buildSrcPrgExternTable() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.r),
-      height: 300,
-      child: Card(
-          child: PlutoGrid(
-        createHeader: (stateManager) {
-          return Container(
-            width: double.infinity,
-            padding: EdgeInsets.only(bottom: 5),
-            child: Text(
-              '源程式后缀',
-              style: FluentTheme.of(context).typography.bodyStrong,
-              textAlign: TextAlign.center,
-            ).fontSize(16),
-          );
-        },
-        columns: [
-          PlutoColumn(
-              title: '系统类型',
-              field: 'systemType',
-              type: PlutoColumnType.text(),
-              enableContextMenu: false,
-              enableSorting: false,
-              readOnly: true),
-          PlutoColumn(
-            title: '机床程序在文件服务器上的拓展名',
-            field: 'srcPrgExtern',
-            type: PlutoColumnType.text(),
-            enableContextMenu: false,
-            enableSorting: false,
-          ),
-        ],
-        rows: rows,
-        onLoaded: (PlutoGridOnLoadedEvent event) {
-          stateManager = event.stateManager;
-          initRows();
-        },
-        onChanged: onTableCellChanged,
-        configuration: PlutoGridConfiguration(
-          style: PlutoGridStyleConfig(
-            gridBorderColor: Colors.grey[30],
-            gridBackgroundColor: FluentTheme.of(context).cardColor,
-            iconColor: GlobalTheme.instance.buttonIconColor,
-            rowColor: FluentTheme.of(context).cardColor,
-            cellTextStyle: FluentTheme.of(context).typography.body!,
-            columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
-            activatedColor: FluentTheme.of(context).accentColor,
-          ),
-          localeText: const PlutoGridLocaleText.china(),
-          columnSize: const PlutoGridColumnSizeConfig(
-              autoSizeMode: PlutoAutoSizeMode.equal),
-        ),
-      )),
-    );
-  }
+  // initSystemList() {
+  //   RegExp reg = RegExp(r'[a-zA-Z]+');
+  //   print(widget.macSectionList);
+  //   var macSystemList =
+  //       widget.macSectionList.map((e) => reg.firstMatch(e)!.group(0)).toList();
+  //   print(macSystemList);
+  //   var list = allSystemList
+  //       .where((element) => macSystemList.contains(element))
+  //       .toList();
+  //   print(list);
 
-  initRows2() {
-    stateManager2.removeAllRows();
-    stateManager2.appendRows(systemList
-        .map((e) => PlutoRow(
-              cells: {
-                'systemType': PlutoCell(value: e),
-                'execPrgExtern': PlutoCell(
-                    value: getExecPrgExternList().containsKey(e)
-                        ? getExecPrgExternList()[e]
-                        : ''),
-              },
-            ))
-        .toList());
-    setState(() {});
-  }
+  //   setState(() {
+  //     systemList.clear();
+  //     systemList.addAll(list);
+  //   });
+  // }
 
-  onTableCellChanged2(PlutoGridOnChangedEvent event) {
-    var exePrgExtern = '';
-    stateManager2.rows.forEach((element) {
-      var index = stateManager2.rows.indexOf(element);
-      var system = element.cells.values.elementAt(0).value;
-      var val = element.cells.values.elementAt(1).value;
-      if (val == null || val == '') {
-        return;
-      }
-      exePrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
-    });
-    print(exePrgExtern);
-    if (exePrgExtern == currentExecPrgExtern) {
-      return;
-    }
-    setFieldValue('${widget.section}/ExecPrgExtern', exePrgExtern);
-    if (!changedList.contains('${widget.section}/ExecPrgExtern')) {
-      changedList.add('${widget.section}/ExecPrgExtern');
-    }
-  }
+  // initRows() {
+  //   stateManager.removeAllRows();
+  //   stateManager.appendRows(systemList
+  //       .map((e) => PlutoRow(
+  //             cells: {
+  //               'systemType': PlutoCell(value: e),
+  //               'srcPrgExtern': PlutoCell(
+  //                   value: getSrcPrgExternList().containsKey(e)
+  //                       ? getSrcPrgExternList()[e]
+  //                       : ''),
+  //             },
+  //           ))
+  //       .toList());
+  //   setState(() {});
+  // }
 
-  // 各系统类型执行程式后缀
-  Widget _buildExePrgExtern() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.r),
-      height: 250,
-      child: Card(
-          child: PlutoGrid(
-        createHeader: (stateManager) {
-          return Container(
-            width: double.infinity,
-            padding: EdgeInsets.only(bottom: 5),
-            child: Text(
-              '执行程式后缀',
-              style: FluentTheme.of(context).typography.bodyStrong,
-              textAlign: TextAlign.center,
-            ).fontSize(16),
-          );
-        },
-        columns: [
-          PlutoColumn(
-              title: '系统类型',
-              field: 'systemType',
-              type: PlutoColumnType.text(),
-              enableContextMenu: false,
-              enableSorting: false,
-              readOnly: true),
-          PlutoColumn(
-            title: '机床程序在文件服务器上的拓展名',
-            field: 'execPrgExtern',
-            type: PlutoColumnType.text(),
-            enableContextMenu: false,
-            enableSorting: false,
-          ),
-        ],
-        rows: rows2,
-        onLoaded: (PlutoGridOnLoadedEvent event) {
-          stateManager2 = event.stateManager;
-          initRows2();
-        },
-        onChanged: onTableCellChanged2,
-        configuration: PlutoGridConfiguration(
-          style: PlutoGridStyleConfig(
-            gridBorderColor: Colors.grey[30],
-            gridBackgroundColor: FluentTheme.of(context).cardColor,
-            iconColor: GlobalTheme.instance.buttonIconColor,
-            rowColor: FluentTheme.of(context).cardColor,
-            cellTextStyle: FluentTheme.of(context).typography.body!,
-            columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
-            activatedColor: FluentTheme.of(context).accentColor,
-          ),
-          localeText: const PlutoGridLocaleText.china(),
-          columnSize: const PlutoGridColumnSizeConfig(
-              autoSizeMode: PlutoAutoSizeMode.equal),
-        ),
-      )),
-    );
-  }
+  // onTableCellChanged(PlutoGridOnChangedEvent event) {
+  //   var srcPrgExtern = '';
+  //   stateManager.rows.forEach((element) {
+  //     var index = stateManager.rows.indexOf(element);
+  //     var system = element.cells.values.elementAt(0).value;
+  //     var val = element.cells.values.elementAt(1).value;
+  //     if (val == null || val == '') {
+  //       return;
+  //     }
+  //     srcPrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
+  //   });
+  //   print(srcPrgExtern);
+  //   if (srcPrgExtern == currentSrcPrgExtern) {
+  //     return;
+  //   }
+  //   setFieldValue('${widget.section}/SrcPrgExtern', srcPrgExtern);
+  //   if (!changedList.contains('${widget.section}/SrcPrgExtern')) {
+  //     changedList.add('${widget.section}/SrcPrgExtern');
+  //   }
+  //   // onFieldChange('${widget.section}/SrcPrgExtern', srcPrgExtern);
+  // }
 
-  @override
-  void didUpdateWidget(covariant MacProgramSetting oldWidget) {
-    print('参数变化');
-    initSystemList();
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-  }
+  // // 各系统类型源程式后缀表格
+  // Widget _buildSrcPrgExternTable() {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 5.r),
+  //     height: 300,
+  //     child: Card(
+  //         child: PlutoGrid(
+  //       createHeader: (stateManager) {
+  //         return Container(
+  //           width: double.infinity,
+  //           padding: EdgeInsets.only(bottom: 5),
+  //           child: Text(
+  //             '源程式后缀',
+  //             style: FluentTheme.of(context).typography.bodyStrong,
+  //             textAlign: TextAlign.center,
+  //           ).fontSize(16),
+  //         );
+  //       },
+  //       columns: [
+  //         PlutoColumn(
+  //             title: '系统类型',
+  //             field: 'systemType',
+  //             type: PlutoColumnType.text(),
+  //             enableContextMenu: false,
+  //             enableSorting: false,
+  //             readOnly: true),
+  //         PlutoColumn(
+  //           title: '机床程序在文件服务器上的拓展名',
+  //           field: 'srcPrgExtern',
+  //           type: PlutoColumnType.text(),
+  //           enableContextMenu: false,
+  //           enableSorting: false,
+  //         ),
+  //       ],
+  //       rows: rows,
+  //       onLoaded: (PlutoGridOnLoadedEvent event) {
+  //         stateManager = event.stateManager;
+  //         initRows();
+  //       },
+  //       onChanged: onTableCellChanged,
+  //       configuration: PlutoGridConfiguration(
+  //         style: PlutoGridStyleConfig(
+  //           gridBorderColor: Colors.grey[30],
+  //           gridBackgroundColor: FluentTheme.of(context).cardColor,
+  //           iconColor: GlobalTheme.instance.buttonIconColor,
+  //           rowColor: FluentTheme.of(context).cardColor,
+  //           cellTextStyle: FluentTheme.of(context).typography.body!,
+  //           columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
+  //           activatedColor: FluentTheme.of(context).accentColor,
+  //         ),
+  //         localeText: const PlutoGridLocaleText.china(),
+  //         columnSize: const PlutoGridColumnSizeConfig(
+  //             autoSizeMode: PlutoAutoSizeMode.equal),
+  //       ),
+  //     )),
+  //   );
+  // }
+
+  // initRows2() {
+  //   stateManager2.removeAllRows();
+  //   stateManager2.appendRows(systemList
+  //       .map((e) => PlutoRow(
+  //             cells: {
+  //               'systemType': PlutoCell(value: e),
+  //               'execPrgExtern': PlutoCell(
+  //                   value: getExecPrgExternList().containsKey(e)
+  //                       ? getExecPrgExternList()[e]
+  //                       : ''),
+  //             },
+  //           ))
+  //       .toList());
+  //   setState(() {});
+  // }
+
+  // onTableCellChanged2(PlutoGridOnChangedEvent event) {
+  //   var exePrgExtern = '';
+  //   stateManager2.rows.forEach((element) {
+  //     var index = stateManager2.rows.indexOf(element);
+  //     var system = element.cells.values.elementAt(0).value;
+  //     var val = element.cells.values.elementAt(1).value;
+  //     if (val == null || val == '') {
+  //       return;
+  //     }
+  //     exePrgExtern += index == 0 ? '$system-$val' : '#$system-$val';
+  //   });
+  //   print(exePrgExtern);
+  //   if (exePrgExtern == currentExecPrgExtern) {
+  //     return;
+  //   }
+  //   setFieldValue('${widget.section}/ExecPrgExtern', exePrgExtern);
+  //   if (!changedList.contains('${widget.section}/ExecPrgExtern')) {
+  //     changedList.add('${widget.section}/ExecPrgExtern');
+  //   }
+  // }
+
+  // // 各系统类型执行程式后缀
+  // Widget _buildExePrgExtern() {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 5.r),
+  //     height: 250,
+  //     child: Card(
+  //         child: PlutoGrid(
+  //       createHeader: (stateManager) {
+  //         return Container(
+  //           width: double.infinity,
+  //           padding: EdgeInsets.only(bottom: 5),
+  //           child: Text(
+  //             '执行程式后缀',
+  //             style: FluentTheme.of(context).typography.bodyStrong,
+  //             textAlign: TextAlign.center,
+  //           ).fontSize(16),
+  //         );
+  //       },
+  //       columns: [
+  //         PlutoColumn(
+  //             title: '系统类型',
+  //             field: 'systemType',
+  //             type: PlutoColumnType.text(),
+  //             enableContextMenu: false,
+  //             enableSorting: false,
+  //             readOnly: true),
+  //         PlutoColumn(
+  //           title: '机床程序在文件服务器上的拓展名',
+  //           field: 'execPrgExtern',
+  //           type: PlutoColumnType.text(),
+  //           enableContextMenu: false,
+  //           enableSorting: false,
+  //         ),
+  //       ],
+  //       rows: rows2,
+  //       onLoaded: (PlutoGridOnLoadedEvent event) {
+  //         stateManager2 = event.stateManager;
+  //         initRows2();
+  //       },
+  //       onChanged: onTableCellChanged2,
+  //       configuration: PlutoGridConfiguration(
+  //         style: PlutoGridStyleConfig(
+  //           gridBorderColor: Colors.grey[30],
+  //           gridBackgroundColor: FluentTheme.of(context).cardColor,
+  //           iconColor: GlobalTheme.instance.buttonIconColor,
+  //           rowColor: FluentTheme.of(context).cardColor,
+  //           cellTextStyle: FluentTheme.of(context).typography.body!,
+  //           columnTextStyle: FluentTheme.of(context).typography.bodyLarge!,
+  //           activatedColor: FluentTheme.of(context).accentColor,
+  //         ),
+  //         localeText: const PlutoGridLocaleText.china(),
+  //         columnSize: const PlutoGridColumnSizeConfig(
+  //             autoSizeMode: PlutoAutoSizeMode.equal),
+  //       ),
+  //     )),
+  //   );
+  // }
+
+  // @override
+  // void didUpdateWidget(covariant MacProgramSetting oldWidget) {
+  //   print('参数变化');
+  //   initSystemList();
+  //   // TODO: implement didUpdateWidget
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   void initState() {
@@ -673,7 +758,7 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
     prgServerInfo = PrgServerInfo(section: widget.section);
     initMenu();
     getSectionDetail();
-    initSystemList();
+    // initSystemList();
   }
 
   @override
@@ -729,19 +814,22 @@ class _MacProgramSettingState extends State<MacProgramSetting> {
                       title: e.title,
                     ),
                   );
-                } else if (e is RenderCustomByTag) {
-                  if (e.tag == 'SrcPrgExternTable') {
-                    return _buildSrcPrgExternTable();
-                  } else if (e.tag == 'ExecPrgExternTable') {
-                    return _buildExePrgExtern();
-                  } else {
-                    return Container();
-                  }
-                } else {
+                }
+                // else if (e is RenderCustomByTag) {
+                //   if (e.tag == 'SrcPrgExternTable') {
+                //     return _buildSrcPrgExternTable();
+                //   } else if (e.tag == 'ExecPrgExternTable') {
+                //     return _buildExePrgExtern();
+                //   } else {
+                //     return Container();
+                //   }
+                // }
+                else {
                   return FieldChange(
                     renderFieldInfo: e as RenderFieldInfo,
                     showValue: getFieldValue(e.fieldKey),
                     isChanged: isChanged(e.fieldKey),
+                    builder: e.builder,
                     onChanged: (field, value) {
                       onFieldChange(field, value);
                     },

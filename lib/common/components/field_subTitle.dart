@@ -2,12 +2,13 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-25 09:29:20
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-06-25 09:46:42
+ * @LastEditTime: 2023-07-21 14:25:00
  * @FilePath: /eatm_ini_config/lib/common/components/field_subTitle.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import 'field_group.dart';
 
@@ -40,7 +41,7 @@ class _FieldSubTitleState extends State<FieldSubTitle> {
               child: Text(
                 widget.title,
                 style: FluentTheme.of(context).typography.subtitle,
-              ),
+              ).fontWeight(FontWeight.bold).fontSize(16),
             ),
             10.verticalSpacingRadius,
             Divider()

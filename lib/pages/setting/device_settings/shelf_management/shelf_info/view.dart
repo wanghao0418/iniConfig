@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-20 09:20:48
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 13:54:31
+ * @LastEditTime: 2023-07-21 14:30:29
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/shelf_management/shelf_info/view.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -133,7 +133,7 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
       children: [
         PageHeader(
             title: Text(
-              "全局设置",
+              "货架全局设置",
               style: FluentTheme.of(context).typography.subtitle,
             ),
             commandBar: FilledButton(
@@ -207,44 +207,47 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
                   )),
             ])),
         5.verticalSpacingRadius,
-        Expanded(
+        Container(
+            height: 750,
             child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.r),
-          child: Card(
-              child: SizedBox(
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: ListView.builder(
-                      itemCount: controller.shelfList.length,
-                      itemBuilder: (context, index) {
-                        final contact = controller.shelfList[index];
-                        return ListTile.selectable(
-                          title: Text(TransUtils.getTransField(contact, '货架')),
-                          selected: controller.currentShelf.value == contact,
-                          onSelectionChange: (v) =>
-                              controller.onShelfChange(contact),
-                        );
-                      }),
+              padding: EdgeInsets.symmetric(horizontal: 10.r),
+              child: Card(
+                  child: SizedBox(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: ListView.builder(
+                          itemCount: controller.shelfList.length,
+                          itemBuilder: (context, index) {
+                            final contact = controller.shelfList[index];
+                            return ListTile.selectable(
+                              title:
+                                  Text(TransUtils.getTransField(contact, '货架')),
+                              selected:
+                                  controller.currentShelf.value == contact,
+                              onSelectionChange: (v) =>
+                                  controller.onShelfChange(contact),
+                            );
+                          }),
+                    ),
+                    10.horizontalSpaceRadius,
+                    Expanded(
+                        child: Container(
+                            color: FluentTheme.of(context).menuColor,
+                            padding: EdgeInsets.all(10.0),
+                            child: controller.currentShelf.value.isEmpty
+                                ? Container(
+                                    color: FluentTheme.of(context).menuColor,
+                                  )
+                                : ShelfInfoSetting(
+                                    key: Key(controller.currentShelf.value),
+                                    section: controller.currentShelf.value,
+                                  )))
+                  ],
                 ),
-                10.horizontalSpaceRadius,
-                Expanded(
-                    child: Container(
-                        color: FluentTheme.of(context).menuColor,
-                        padding: EdgeInsets.all(10.0),
-                        child: controller.currentShelf.value.isEmpty
-                            ? Container(
-                                color: FluentTheme.of(context).menuColor,
-                              )
-                            : ShelfInfoSetting(
-                                key: Key(controller.currentShelf.value),
-                                section: controller.currentShelf.value,
-                              )))
-              ],
-            ),
-          )),
-        ))
+              )),
+            ))
       ],
     );
   }
@@ -255,10 +258,7 @@ class _ShelfInfoViewGetX extends GetView<ShelfInfoController> {
       init: ShelfInfoController(),
       id: "shelf_info",
       builder: (_) {
-        return ScaffoldPage(
-            content: Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: _buildView(context)));
+        return ScaffoldPage.scrollable(children: [_buildView(context)]);
       },
     );
   }

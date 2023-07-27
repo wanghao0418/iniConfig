@@ -500,7 +500,476 @@ class PlcCommunicationProtocolController extends GetxController {
         name: "对射货架初始读取地址",
         renderType: RenderType.input),
   ];
+  List<RenderField> menuList = [
+    RenderFieldGroup(groupName: 'Modbus命令号功能码', children: [
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_R_OPUTS',
+        name: '读取多个I点',
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_R_IPUTS',
+        name: '读取多个O点',
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_R_REGS',
+        name: '读取多个寄存器',
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_W_OPUT',
+        name: '写单个O点',
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_W_OPUTS',
+        name: '写多个O点',
+        renderType: RenderType.input,
+      ),
+      RenderFieldInfo(
+        section: 'Plc_M_Block',
+        field: 'CMD_ID_W_REGS',
+        name: '写多寄存器',
+        renderType: RenderType.input,
+      ),
+    ]),
+    RenderFieldGroup(groupName: '命令区', children: [
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'RobotMainPrgRun',
+          name: '机器人主程序运行',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'RobotPause',
+          name: '机器人暂停继续',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'Buzzer',
+          name: '蜂鸣器地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'GuideRun',
+          name: '导轨运动标识',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'ServoAlarmReset',
+          name: '伺服报警复位',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'OpenDoor',
+          name: '货架电磁门开门（用于1-16号货架门）',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'OpenDoor2',
+          name: '货架电磁门开门（用于17-64号货架门）',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MachineRun',
+          name: '机床启动的起始地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MachineRest',
+          name: '机床复位的起始地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MahicneNumToPlc',
+          name: '执行机器人任务时传递给PLC的机床号地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'StorageNumToPlc',
+          name: '执行机器人任务时传递给PLC的货位号地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'ShelfUpLineCtrl',
+          name: '货架上下线控制',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MachineUpLineCtrl',
+          name: '机床上下线控制',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MachineStatusLightCtrl',
+          name: '机床状态灯的控制',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'RotatShelfRun',
+          name: '启动旋转货架旋转',
+          renderType: RenderType.input),
+    ]),
+    RenderFieldGroup(groupName: '扩展区', children: [
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'RobotTaskType',
+          name: '任务类型',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TakeStorageNum',
+          name: '取货位号',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'PutStorageNum',
+          name: '放货位号',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'CmmMachineStatusByIO',
+          name: 'IO给出的CMM机床状态',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferShelfOnLineAsk',
+          name: '装载站上线请求',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferShelfOffLineAsk',
+          name: '装载站下线请求',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferStorageSensorStatus',
+          name: '装载站货位状态',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferShelfButtonStatus',
+          name: '装载站货架按钮灯',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferStorageRotatLocationStatus',
+          name: '装载站旋定位状态',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TransferDoorStatus',
+          name: '装载站门状态',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'OilGrooveUpCtrl',
+          name: '油槽升降地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'OilGroCtrlMacNum',
+          name: '配合油槽升降的机床号',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'StopBlow',
+          name: '机床吹气',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'ConnectStationOffX',
+          name: '给机器人写接驳站偏移量X的起始地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'ConnectStationOffY',
+          name: '给机器人写接驳站偏移量Y的起始地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'ConnectStationOffZ',
+          name: '给机器人写接驳站偏移量Z的起始地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MacStartPumpingAdd',
+          name: '火花机抽油启动地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'MacPumpingStopTime',
+          name: '火花机抽油时间地址',
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: 'TranSportStorageStatus',
+          name: '配合武城职接驳站单独拎出来用于判断接驳站货位状态',
+          renderType: RenderType.input),
+    ]),
+    RenderFieldGroup(groupName: '监控区', children: [
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "BaseInfo",
+          name: "基础信息, 同时也是监控区的起始地址",
+          renderType: RenderType.input),
+      // RenderCustomByTag(tag: 'identificationArea'),
+      RenderFieldGroup(groupName: '标识符 基础信息BaseInfo之下的按位区分标识', children: [
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_PRESSURE",
+            name: "压力标识",
+            renderType: RenderType.input),
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_CLAMP",
+            name: "卡爪夹取标识",
+            renderType: RenderType.input),
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_ROBOT_CONTROL_CABINET",
+            name: "机器人控制柜标识",
+            renderType: RenderType.input),
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_ROBOT_HANDY_PANEL",
+            name: "机器人手持盒标识",
+            renderType: RenderType.input),
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_CHUCK_SCAN",
+            name: "卡盘电极扫描标识",
+            renderType: RenderType.input),
+        RenderFieldInfo(
+            section: 'Plc_M_Block',
+            field: "CMD_IDF_ROBOT_SAFE_POSITION",
+            name: "机器人安全位置",
+            renderType: RenderType.input),
+      ]),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfDoor",
+          name: "货架门（用于1-16号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfDoor2",
+          name: "货架门（用于17-64号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacFenceDoorStatus",
+          name: "机床围栏门状态",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacFenceDoorBrakingStatus",
+          name: "机床围栏门急停",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "FencePneumaticDoorStatus",
+          name: "机床外围的安全气动门状态(由plc控制)",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "FenceDoor",
+          name: "围栏门",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "AccompanyPlat",
+          name: "随行台and导轨",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MachineFinish",
+          name: "PLC控制启动的机床（用于1-16号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MachineFinish2",
+          name: "PLC控制启动的机床（用于17-64号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfOnlineAsk",
+          name: "货架上线请求（用于1-16号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfOnlineAsk2",
+          name: "货架上线请求（用于17-64号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfOfflineAsk",
+          name: "货架下线请求（用于1-16号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfOfflineAsk2",
+          name: "货架下线请求（用于17-64号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfOpenDoorAsk",
+          name: "货架开门信号",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfEmergencyStop",
+          name: "货架急停用于（1-16号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ShelfEmergencyStop2",
+          name: "货架急停（用于17-64号货架门）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "FenceEmergencyStop",
+          name: "电脑柜and围栏门急停",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ChuckLockUnLockStatus",
+          name: "卡盘锁紧松开状态",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ChuckAirtightness",
+          name: "机床卡盘气密性状态（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ChuckAirtightness2",
+          name: "机床卡盘气密性状态（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ChuckOpenCloseStatus",
+          name: "卡盘锁紧/松开功能异常（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "ChuckOpenCloseStatus2",
+          name: "卡盘锁紧/松开功能异常（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "PressureValue",
+          name: "气压值",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacAutoDoorStatus",
+          name: "机床自动门异常（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacAutoDoorStatus2",
+          name: "机床自动门异常（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOriginPosCheck",
+          name: "机床原点检测（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOriginPosCheck2",
+          name: "机床原点检测（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOnlineAsk",
+          name: "机床上线请求（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOnlineAsk2",
+          name: "机床上线请求（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOfflineAsk",
+          name: "机床下线请求（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacOfflineAsk2",
+          name: "机床下线请求（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MachineError",
+          name: "机床报警（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MachineError2",
+          name: "机床报警（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "RotatShelfScanFinish",
+          name: "旋转货架扫描完成（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "RotatShelfScanFinish2",
+          name: "旋转货架扫描完成（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacObstructionCheck",
+          name: "机床上料阻碍标识检测（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacObstructionCheck2",
+          name: "机床上料阻碍标识检测（用于17-64号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacWasteMonitor",
+          name: "机床废料监控（用于1-16号）",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "MacWasteMonitor2",
+          name: "机床废料监控（用于17-64号）",
+          renderType: RenderType.input),
+    ]),
+    RenderFieldGroup(groupName: '货位区', children: [
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "StorageSensorStatus",
+          name: "货位状态地址",
+          renderType: RenderType.input),
+      RenderFieldInfo(
+          section: 'Plc_M_Block',
+          field: "StorageLightCtrl",
+          name: "货位灯的地址",
+          renderType: RenderType.input),
+    ]),
+    RenderFieldGroup(groupName: 'DB存储区', children: [
+      RenderFieldInfo(
+          section: 'PlcDbBlock',
+          field: "RfidRead",
+          name: "对射货架初始读取地址",
+          renderType: RenderType.input),
+    ]),
+  ];
   List<String> changedList = [];
+
   _initData() {
     update(["plc_communication_protocol"]);
   }

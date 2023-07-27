@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-06-14 09:26:02
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 13:33:16
+ * @LastEditTime: 2023-07-21 13:48:46
  * @FilePath: /eatm_ini_config/lib/pages/setting/device_settings/plc/plc_communication_protocol/view.dart
  * @Description: 通讯协议设置界面
  */
@@ -199,6 +199,39 @@ class _PlcCommunicationProtocolViewGetX
         }).toList()));
   }
 
+  _buildRenderField(RenderField info, context) {
+    if (info is RenderFieldGroup) {
+      return Container(
+        margin: EdgeInsets.only(bottom: 5.r),
+        child: FieldGroup(
+          visible: info.visible ?? true,
+          groupName: info.groupName,
+          getValue: controller.getFieldValue,
+          children: info.children,
+          isChanged: controller.isChanged,
+          onChanged: (field, value) {
+            controller.onFieldChange(field, value);
+          },
+        ),
+      );
+    } else if (info is RenderFieldInfo) {
+      return FieldChange(
+        renderFieldInfo: info as RenderFieldInfo,
+        showValue: controller.getFieldValue(info.fieldKey),
+        isChanged: controller.isChanged(info.fieldKey),
+        onChanged: (field, value) {
+          controller.onFieldChange(field, value);
+        },
+        visible: (info.associatedField != null && info.associatedValue != null)
+            ? controller.getFieldValue(info.associatedField!) ==
+                info.associatedValue
+            : true,
+      );
+    } else {
+      return Container();
+    }
+  }
+
   // 主视图
   Widget _buildView(context) {
     return Column(
@@ -226,19 +259,23 @@ class _PlcCommunicationProtocolViewGetX
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.r),
             child: Column(children: [
-              _buildModbus(context),
-              15.verticalSpacingRadius,
-              _buildCommand(context),
-              15.verticalSpacingRadius,
-              _buildExpandArea(context),
-              15.verticalSpacingRadius,
-              _buildMonitorArea(context),
-              15.verticalSpacingRadius,
-              _buildLocationArea(context),
+              ...controller.menuList.map((e) {
+                return _buildRenderField(e, context);
+              }).toList()
+
+              // _buildModbus(context),
               // 15.verticalSpacingRadius,
-              // _buildIdentificationArea(),
-              15.verticalSpacingRadius,
-              _buildCorrespondingArea(context)
+              // _buildCommand(context),
+              // 15.verticalSpacingRadius,
+              // _buildExpandArea(context),
+              // 15.verticalSpacingRadius,
+              // _buildMonitorArea(context),
+              // 15.verticalSpacingRadius,
+              // _buildLocationArea(context),
+              // // 15.verticalSpacingRadius,
+              // // _buildIdentificationArea(),
+              // 15.verticalSpacingRadius,
+              // _buildCorrespondingArea(context)
             ]),
           ),
         )),

@@ -1,0 +1,144 @@
+
+.info {
+    margin: 100px auto;
+    width: 500px;
+    text-align: center;
+}
+
+.info .welcome{
+    color: #999;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.info p {
+    color: #999;
+    font-size: 20px;
+}
+
+.info .logo{
+    width: 220px;
+    height: 100px;
+    object-fit:contain;
+    margin: 0 auto;
+    background-image: url('./images/eman.png');
+    background-size: 100% 100%;
+}
+
+.spinner {
+    margin: 100px auto;
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 10px;
+}
+
+.spinner>div {
+    background-color: #999;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+    animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .re2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+.spinner .re3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+.spinner .re4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.spinner .re5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+
+@-webkit-keyframes stretchdelay {
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4)
+    }
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
+}
+
+@keyframes stretchdelay {
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+    20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+    }
+}
+
+html {
+    height: 100%
+  }
+  
+  body {
+    margin: 0;
+    min-height: 100%;
+    background-color: #fff;
+    background-size: 100% 100%;
+  }
+  
+  .center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  
+  .contain {
+    display:block;
+    width:100%; height:100%;
+    object-fit: contain;
+  }
+  
+  .stretch {
+    display:block;
+    width:100%; height:100%;
+  }
+  
+  .cover {
+    display:block;
+    width:100%; height:100%;
+    object-fit: cover;
+  }
+  
+  .bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+  }
+  
+  .bottomLeft {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .bottomRight {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }

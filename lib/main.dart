@@ -2,7 +2,7 @@
  * @Author: wanghao wanghao@oureman.com
  * @Date: 2023-05-17 10:05:30
  * @LastEditors: wanghao wanghao@oureman.com
- * @LastEditTime: 2023-07-20 13:44:02
+ * @LastEditTime: 2023-07-21 16:05:54
  * @FilePath: /eatm_ini_config/lib/main.dart
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -18,6 +18,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:iniConfig/common/routers/index.dart';
 import 'package:iniConfig/common/style/global_theme.dart';
+// import 'package:iniConfig/common/widgets/deferred_widget.dart';
 // import 'package:window_manager/window_manager.dart';
 
 import 'common/routers/pages.dart';
@@ -25,7 +26,8 @@ import 'common/store/config.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'common/style/global_theme.dart';
-// import 'global.dart';
+// import 'package:iniConfig/pages/setting/device_settings/plc/plc.dart'
+//     deferred as plc;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,10 @@ void main() async {
     Future.delayed(Duration.zero).then((value) => win.maximize());
   });
   runApp(const MyApp());
+
+  // Future.wait([
+  //   DeferredWidget.preload(plc.loadLibrary),
+  // ]);
 }
 
 init() async {
@@ -78,7 +84,7 @@ class MyApp extends StatelessWidget {
             theme: FluentThemeData(
               brightness: Brightness.light,
               accentColor: globalTheme.accentColor,
-              fontFamily: 'MyFont',
+              fontFamily: 'Roboto',
               visualDensity: VisualDensity.standard,
               focusTheme: FocusThemeData(
                 glowFactor: is10footScreen(context) ? 2.0 : 0.0,
@@ -90,7 +96,7 @@ class MyApp extends StatelessWidget {
             darkTheme: FluentThemeData(
               brightness: Brightness.dark,
               accentColor: globalTheme.accentColor,
-              fontFamily: 'MyFont',
+              fontFamily: 'Roboto',
               visualDensity: VisualDensity.standard,
               focusTheme: FocusThemeData(
                 glowFactor: is10footScreen(context) ? 2.0 : 0.0,
