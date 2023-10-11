@@ -46,7 +46,7 @@ class _EmanSettingViewGetX extends GetView<EmanSettingController> {
       margin: EdgeInsets.only(bottom: 5.r),
       child: Expander(
         initiallyExpanded: true,
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child: Text(
