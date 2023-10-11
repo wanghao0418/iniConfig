@@ -44,7 +44,7 @@ class _PlcCommunicationProtocolViewGetX
   Widget _buildModbus(context) {
     return Expander(
         initiallyExpanded: true,
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child: Text(
@@ -66,7 +66,7 @@ class _PlcCommunicationProtocolViewGetX
   // 命令区
   Widget _buildCommand(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child:
@@ -88,7 +88,7 @@ class _PlcCommunicationProtocolViewGetX
   // 扩展区
   Widget _buildExpandArea(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child:
@@ -110,7 +110,7 @@ class _PlcCommunicationProtocolViewGetX
   // 监控区
   Widget _buildMonitorArea(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child:
@@ -139,7 +139,7 @@ class _PlcCommunicationProtocolViewGetX
   // 货位区
   Widget _buildLocationArea(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child:
@@ -160,7 +160,7 @@ class _PlcCommunicationProtocolViewGetX
   // 标识区
   Widget _buildIdentificationArea(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child: Text('标识符 基础信息BaseInfo之下的按位区分标识',
@@ -181,7 +181,7 @@ class _PlcCommunicationProtocolViewGetX
   // 对应区
   Widget _buildCorrespondingArea(context) {
     return Expander(
-        headerHeight: 70,
+        // headerHeight: 70,
         header: Padding(
             padding: EdgeInsets.only(left: 40.r),
             child:
