@@ -664,7 +664,7 @@ class _ShelfInfoSettingState extends State<ShelfInfoSetting> {
         ? Container(
             margin: EdgeInsets.only(bottom: 5.r),
             child: Expander(
-              headerHeight: 70,
+              // headerHeight: 70,
               header: Padding(
                 padding: EdgeInsets.only(left: 40.r),
                 child: Text(

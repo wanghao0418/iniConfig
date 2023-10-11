@@ -157,7 +157,7 @@ class _FieldGroupState extends State<FieldGroup> {
     return widget.visible == true
         ? Expander(
             initiallyExpanded: widget.isExpanded ?? false,
-            headerHeight: 70,
+            // headerHeight: 70,
             header: Padding(
                 padding: EdgeInsets.only(left: 40.r),
                 child: Text(
